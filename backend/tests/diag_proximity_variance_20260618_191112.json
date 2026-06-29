@@ -1,0 +1,481 @@
+{
+  "K": 5,
+  "temp": 0.8,
+  "summary": {
+    "STABLE": 10,
+    "VARIANCE": 3,
+    "BIAS": 0
+  },
+  "records": [
+    {
+      "id": "it_mobility",
+      "query": "Cerco un immobile con mezzi di trasporto nelle vicinanze.",
+      "gold": [
+        "mobility"
+      ],
+      "hi_runs": [
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [],
+        []
+      ],
+      "lo_baseline": [
+        "mobility"
+      ],
+      "oracle_cats": [
+        "mobility"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "mobility": {
+          "appeared_in_k": 3,
+          "label": "VARIANCE"
+        }
+      }
+    },
+    {
+      "id": "it_sport",
+      "query": "Cerco un immobile con palestre e centri sportivi nelle vicinanze.",
+      "gold": [
+        "sport"
+      ],
+      "hi_runs": [
+        [
+          "sport"
+        ],
+        [
+          "sport"
+        ],
+        [
+          "sport"
+        ],
+        [
+          "sport"
+        ],
+        [
+          "sport"
+        ]
+      ],
+      "lo_baseline": [
+        "sport"
+      ],
+      "oracle_cats": [
+        "sport"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "sport": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "it_healthcare",
+      "query": "Cerco un immobile con servizi sanitari nelle vicinanze.",
+      "gold": [
+        "healthcare"
+      ],
+      "hi_runs": [
+        [
+          "healthcare"
+        ],
+        [
+          "healthcare"
+        ],
+        [
+          "healthcare"
+        ],
+        [
+          "healthcare"
+        ],
+        [
+          "healthcare"
+        ]
+      ],
+      "lo_baseline": [
+        "healthcare"
+      ],
+      "oracle_cats": [
+        "healthcare"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "healthcare": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "it_education",
+      "query": "Cerco un immobile con scuole e università nelle vicinanze.",
+      "gold": [
+        "education"
+      ],
+      "hi_runs": [
+        [
+          "education"
+        ],
+        [
+          "education"
+        ],
+        [
+          "education"
+        ],
+        [
+          "education"
+        ],
+        [
+          "education"
+        ]
+      ],
+      "lo_baseline": [
+        "education"
+      ],
+      "oracle_cats": [
+        "education"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "education": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "it_commercial",
+      "query": "Cerco un immobile con negozi e supermercati nelle vicinanze.",
+      "gold": [
+        "commercial"
+      ],
+      "hi_runs": [
+        [
+          "commercial"
+        ],
+        [
+          "commercial"
+        ],
+        [
+          "commercial"
+        ],
+        [
+          "commercial"
+        ],
+        [
+          "commercial"
+        ]
+      ],
+      "lo_baseline": [
+        "commercial"
+      ],
+      "oracle_cats": [
+        "commercial"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "commercial": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "it_green",
+      "query": "Cerco un immobile con parchi e aree verdi nelle vicinanze.",
+      "gold": [
+        "green"
+      ],
+      "hi_runs": [
+        [
+          "green"
+        ],
+        [
+          "green"
+        ],
+        [
+          "green"
+        ],
+        [
+          "green"
+        ],
+        [
+          "green"
+        ]
+      ],
+      "lo_baseline": [
+        "green"
+      ],
+      "oracle_cats": [
+        "green"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "green": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "it_mob_alt",
+      "query": "Cerco un immobile vicino ai mezzi di trasporto pubblici.",
+      "gold": [
+        "mobility"
+      ],
+      "hi_runs": [
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ]
+      ],
+      "lo_baseline": [
+        "mobility"
+      ],
+      "oracle_cats": [
+        "mobility"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "mobility": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "it_mob_collo",
+      "query": "Cerco un immobile ben collegato dai trasporti pubblici.",
+      "gold": [
+        "mobility"
+      ],
+      "hi_runs": [
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ]
+      ],
+      "lo_baseline": [
+        "mobility"
+      ],
+      "oracle_cats": [
+        "mobility"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "mobility": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "en_mob",
+      "query": "I'm looking for a property near public transport.",
+      "gold": [
+        "mobility"
+      ],
+      "hi_runs": [
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ]
+      ],
+      "lo_baseline": [
+        "mobility"
+      ],
+      "oracle_cats": [
+        "mobility"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "mobility": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "it_sport_short",
+      "query": "Cerco un immobile vicino a palestre.",
+      "gold": [
+        "sport"
+      ],
+      "hi_runs": [
+        [
+          "sport"
+        ],
+        [
+          "sport"
+        ],
+        [
+          "sport"
+        ],
+        [
+          "sport"
+        ],
+        [
+          "sport"
+        ]
+      ],
+      "lo_baseline": [
+        "sport"
+      ],
+      "oracle_cats": [
+        "sport"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "sport": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "en_sport",
+      "query": "I'm looking for a property close to gyms.",
+      "gold": [
+        "sport"
+      ],
+      "hi_runs": [
+        [
+          "sport"
+        ],
+        [
+          "sport"
+        ],
+        [
+          "sport"
+        ],
+        [
+          "sport"
+        ],
+        [
+          "sport"
+        ]
+      ],
+      "lo_baseline": [
+        "sport"
+      ],
+      "oracle_cats": [
+        "sport"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "sport": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "it_multi",
+      "query": "Cerco un'abitazione con scuole e mezzi di trasporto nelle vicinanze.",
+      "gold": [
+        "education",
+        "mobility"
+      ],
+      "hi_runs": [
+        [],
+        [
+          "education",
+          "mobility"
+        ],
+        [
+          "education",
+          "mobility"
+        ],
+        [
+          "education",
+          "mobility"
+        ],
+        [
+          "education",
+          "mobility"
+        ]
+      ],
+      "lo_baseline": [],
+      "oracle_cats": [
+        "education",
+        "mobility"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 0.0,
+      "extras_union": [],
+      "per_cat": {
+        "education": {
+          "appeared_in_k": 4,
+          "label": "VARIANCE"
+        },
+        "mobility": {
+          "appeared_in_k": 4,
+          "label": "VARIANCE"
+        }
+      }
+    }
+  ]
+}

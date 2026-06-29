@@ -112,6 +112,7 @@ class AnalysisService:
         use_relaxation: bool = True,
         architecture: str = "multiagent",
         model_type: Optional[str] = None,
+        constraint_mode: str = "observe",
     ) -> Dict[str, Any]:
         """
         Run a complete real estate analysis.
@@ -238,6 +239,7 @@ class AnalysisService:
                 use_relaxation=use_relaxation,
                 analysis_mode=analysis_mode,
                 architecture=architecture,
+                constraint_mode=constraint_mode,
             )
 
             logger.info(f"Analysis {run_id} completed successfully")

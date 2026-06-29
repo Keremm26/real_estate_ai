@@ -113,6 +113,11 @@ class Settings(BaseSettings):
         elif model_type == "gpt-5.4":
             self.LLM_MODEL = "gpt-5.4"
             self.OPENAI_API_BASE = None # Base OpenAI
+        elif model_type == "gpt-5.4-mini":
+            # Smaller/cheaper sibling of gpt-5.4 on base OpenAI; used for batch
+            # evaluation runs where cost matters more than peak extraction quality.
+            self.LLM_MODEL = "gpt-5.4-mini"
+            self.OPENAI_API_BASE = None # Base OpenAI
 
 
     # Agent Temperature - 0.0 for fully deterministic outputs (consistency)

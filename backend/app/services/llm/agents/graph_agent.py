@@ -111,6 +111,8 @@ class GraphState(TypedDict):
     energy_result: Optional[EnergyAgentResult]
     regulatory_result: Optional[RegulatoryAgentResult]
     ranking_result: Optional[RankingAgentResult]
+    constraint_ir: Optional[Any]  # structured constraint snapshot built from agent outputs
+    constraint_mode: str  # "observe" (v1: log only) | "enforce" (v2: repair + IR fallback)
     sql_query: str
     selected_data: pd.DataFrame  # Results filtered by SQL
     execution_error: Optional[str]
@@ -292,6 +294,7 @@ class GraphOrchestratorAgent(BaseAgent):
         use_relaxation: bool = True,
         analysis_mode: str = "agent",
         architecture: str = "multiagent",
+        constraint_mode: str = "observe",
     ) -> OrchestratorResult:
         """Execute the full agentic orchestration pipeline for a user query.
 
@@ -374,6 +377,8 @@ class GraphOrchestratorAgent(BaseAgent):
             "energy_result": None,
             "regulatory_result": None,
             "ranking_result": None,
+            "constraint_ir": None,
+            "constraint_mode": (constraint_mode or "observe").lower(),
             "sql_query": "",
             "selected_data": pd.DataFrame(),
             "execution_error": None,
@@ -1072,7 +1077,7 @@ class GraphOrchestratorAgent(BaseAgent):
                 )
             result = self.building_agent.run(
                 query=query, mode="filtering",
-                available_typologies=str(state["db_metadata"].get("tipologia_bene_immobile", {}).get("values", [])),
+                available_typologies=str(state["dataset_metadata"].get("typologies", [])),
                 statistics=prop_stats
             )
             logger.info("Building agent completed")
@@ -1361,6 +1366,170 @@ class GraphOrchestratorAgent(BaseAgent):
                 
         return sql
 
+    def _build_constraint_ir(self, state: GraphState) -> Any:
+        """Build a ConstraintIR snapshot from the parsed agent outputs.
+
+        OBSERVE-ONLY (v1): the result is stored on state for logging and validation,
+        but it is NOT used to generate or alter the SQL. Building it cannot change
+        pipeline behavior; the caller also wraps this in try/except for safety.
+        """
+        from app.services.llm.constraint_ir import build_constraint_ir
+
+        # 1. Predicate-producing agents. Re-parse raw_text exactly as the rest of
+        #    the pipeline does (schema-less safe_extract_json), so a parse failure
+        #    here mirrors a real failure and becomes a visible failure record.
+        agent_results = {
+            "building": state.get("building_result"),
+            "energy": state.get("energy_result"),
+            "regulatory": state.get("regulatory_result"),
+            "proximity": state.get("proximity_result"),
+        }
+        payloads = []
+        for source_agent, result in agent_results.items():
+            raw_text = getattr(result, "raw_text", None) if result else None
+            parsed = None
+            if raw_text and raw_text not in ("N/D", "N/A"):
+                parsed = safe_extract_json(raw_text)
+            payloads.append(
+                {"source_agent": source_agent, "parsed": parsed, "raw_text": raw_text}
+            )
+
+        # 2. Geo filters (same source the SQL block reads from).
+        places = (
+            state.get("gemini_responses", {})
+            .get("location_extraction", {})
+            .get("places", [])
+        )
+        locations = [
+            {"lat": p.get("lat"), "lon": p.get("lon"), "radius_km": p.get("radius_km")}
+            for p in places
+        ]
+
+        # 3. Per-dimension ranking weights, if already computed.
+        weights: Dict[str, float] = {}
+        ranking_result = state.get("ranking_result")
+        if ranking_result is not None and getattr(ranking_result, "weights", None) is not None:
+            try:
+                weights = ranking_result.weights.model_dump()
+            except Exception:
+                weights = {}
+
+        return build_constraint_ir(
+            query=state.get("query", ""),
+            agent_payloads=payloads,
+            locations=locations,
+            weights=weights,
+        )
+
+    def _record_constraint_layer(self, state: GraphState) -> None:
+        """Validate the generated SQL against the ConstraintIR and record a snapshot.
+
+        OBSERVE-ONLY (v1): writes the IR + validation report + counters into
+        gemini_responses["constraint_layer"] so they are exported for measurement.
+        It never changes the SQL or the control flow. The caller wraps this in
+        try/except for safety.
+        """
+        ir = state.get("constraint_ir")
+        if ir is None:
+            return
+
+        from app.services.llm.constraint_validation import validate_sql_semantics
+
+        sql = state.get("sql_query", "") or ""
+        report = validate_sql_semantics(
+            sql=sql,
+            ir=ir,
+            db_schema=state.get("db_schema", {}) or {},
+            db_metadata=state.get("db_metadata", {}) or {},
+        )
+
+        # Intrinsic counters — the per-run numbers that make up the "before" picture.
+        counters = {
+            "num_entries": len(ir.entries),
+            "num_failures": len(ir.failures),
+            "num_predicates": len(ir.predicates()),
+            "num_geo": len(ir.geo()),
+            "num_hard": len(ir.hard()),
+            "sql_parse_ok": report.sql_parse_ok,
+            "is_valid": report.is_valid,
+            "hard_constraints_preserved": report.hard_constraints_preserved,
+            "typology_preserved": report.typology_preserved,
+            "location_filter_preserved": report.location_filter_preserved,
+            "invalid_columns_count": len(report.invalid_columns),
+            "invalid_categorical_values_count": len(report.invalid_categorical_values),
+            "missing_constraints_count": len(report.missing_constraints),
+            "zero_addition_count": len(report.zero_addition_violations),
+        }
+
+        snapshot = {
+            "constraint_ir": ir.model_dump(),
+            "validation": report.model_dump(),
+            "counters": counters,
+            # v2 fields — populated by enforcement steps; defaults describe the
+            # untouched LLM path so the snapshot is meaningful in observe mode too.
+            "sql_source": "llm",
+            "repairs_applied": [],
+            "fallback_used": None,
+            "validation_after_repair": None,
+            # Relaxation safety (filled during _relax_query):
+            #   hits    = times relaxation touched a HARD constraint
+            #   blocked = subset prevented (= hits in enforce, 0 in observe)
+            "relaxation_safety_hits": 0,
+            "relaxation_safety_blocked": 0,
+            "relaxation_safety_columns": [],
+        }
+        state.setdefault("gemini_responses", {})["constraint_layer"] = snapshot
+
+    def _apply_ir_repair(self, state: GraphState) -> None:
+        """v2 (enforce): repair alias-mismatched columns before execution.
+
+        Safe, logic-preserving step: it only renames columns that are not literal
+        dataset columns but resolve (via the shared alias map) to one that is —
+        e.g. ``surface_area`` -> ``superficie_di_riferimento_mq``. This is the
+        exact failure observed in v1, caught before execution instead of after.
+
+        Columns that do not resolve are left alone (a genuine invalid column is a
+        job for the deterministic fallback, not for repair). No-op in observe
+        mode. The caller wraps this in try/except so it can never break the run.
+        """
+        if (state.get("constraint_mode") or "observe").lower() != "enforce":
+            return
+
+        snapshot = state.get("gemini_responses", {}).get("constraint_layer")
+        if not snapshot:
+            return
+
+        from app.services.llm.ir_sql_repair import repair_column_aliases
+        from app.services.llm.constraint_validation import validate_sql_semantics
+
+        sql = state.get("sql_query", "") or ""
+        if not sql.strip():
+            return
+
+        result = repair_column_aliases(sql, state.get("db_schema", {}) or {})
+        if not result.changed:
+            return
+
+        # Apply the repair and record what changed.
+        state["sql_query"] = result.sql
+        snapshot["sql_source"] = "repaired_llm"
+        snapshot["repairs_applied"] = result.repairs
+        logger.info(f"v2 alias repair applied: {result.repairs}")
+
+        # Re-validate the repaired SQL so the snapshot shows the after-picture.
+        ir = state.get("constraint_ir")
+        if ir is not None:
+            try:
+                after = validate_sql_semantics(
+                    sql=result.sql,
+                    ir=ir,
+                    db_schema=state.get("db_schema", {}) or {},
+                    db_metadata=state.get("db_metadata", {}) or {},
+                )
+                snapshot["validation_after_repair"] = after.model_dump()
+            except Exception as e:
+                logger.error(f"post-repair validation failed (non-fatal): {e}")
+
     def _format_agent_requirements(self, agent_result: Any) -> str:
         """Formats an agent's requirements (Energy or Regulatory) in compact format [col] [op] [val]."""
         if not agent_result or not agent_result.raw_text or agent_result.raw_text == "N/A":
@@ -1501,6 +1670,14 @@ class GraphOrchestratorAgent(BaseAgent):
 
         all_requirements_str = "\n".join([f"- {r}" for r in all_reqs]) if all_reqs else "N/D"
 
+        # OBSERVE-ONLY (v1): build a ConstraintIR snapshot for logging/validation.
+        # Wrapped in try/except so any failure here can never affect SQL generation.
+        try:
+            state["constraint_ir"] = self._build_constraint_ir(state)
+        except Exception as e:
+            logger.error(f"ConstraintIR build failed (non-fatal, observe-only): {e}")
+            state["constraint_ir"] = None
+
         # Determination of whether to use Retry Prompt
         # Prepare failed query and error message for the SQL Agent.
         is_sql_error = bool(state.get("execution_error"))
@@ -1530,6 +1707,21 @@ class GraphOrchestratorAgent(BaseAgent):
 
         # sql_result.sql now contains the cleaned SQL
         state["sql_query"] = sql_result.sql
+
+        # OBSERVE-ONLY (v1): validate the generated SQL against the IR and record
+        # the report for export. Wrapped so it can never affect SQL or flow.
+        try:
+            self._record_constraint_layer(state)
+        except Exception as e:
+            logger.error(f"Constraint-layer logging failed (non-fatal): {e}")
+
+        # v2 (enforce mode only): repair alias-mismatched columns before execution.
+        # No-op in observe mode, so the v1 baseline stays byte-identical.
+        try:
+            self._apply_ir_repair(state)
+        except Exception as e:
+            logger.error(f"v2 IR repair failed (non-fatal): {e}")
+
         key = (
             "sql_generation"
             if retry_count == 0
@@ -1709,6 +1901,52 @@ class GraphOrchestratorAgent(BaseAgent):
             "status_msg": "Rilassamento criteri attivato per mancanza di risultati."
         }
 
+    def _relaxation_protected(self, state: GraphState):
+        """Return (protected_canonical_columns, reverse_map) for HARD constraints.
+
+        A relaxation that touches one of these columns would weaken a must-have
+        (typology, regulatory, building identity). The reverse map canonicalizes
+        column names so the IR's names (often English) and the SQL's dataset
+        names (Italian) compare as the same column. Empty set when there is no IR.
+        """
+        from app.services.llm.constraint_validation import COLUMN_ALIASES, _build_reverse
+
+        reverse = _build_reverse(COLUMN_ALIASES)
+        protected: set = set()
+        ir = state.get("constraint_ir")
+        if ir is not None:
+            for e in ir.hard():
+                if getattr(e, "kind", None) == "predicate" and e.target_column:
+                    protected.add(reverse.get(e.target_column, e.target_column))
+        return protected, reverse
+
+    def _condition_protected_column(self, cond, protected, reverse):
+        """If a WHERE condition touches a protected hard column, return its name."""
+        if not protected:
+            return None
+        for col in cond.find_all(exp.Column):
+            if reverse.get(col.name, col.name) in protected:
+                return col.name
+        return None
+
+    def _record_relaxation_safety(self, state: GraphState, column: str, *, blocked: bool) -> None:
+        """Accumulate a relaxation-safety event into the constraint-layer snapshot.
+
+        ``hits`` counts every time relaxation targeted a hard constraint;
+        ``blocked`` counts the subset we prevented (enforce mode). In observe mode
+        nothing is blocked, so the hit count is the measured "before" violation
+        number; in enforce mode blocked == hits, i.e. zero violations survive.
+        """
+        snap = state.get("gemini_responses", {}).get("constraint_layer")
+        if snap is None:
+            return
+        snap["relaxation_safety_hits"] = snap.get("relaxation_safety_hits", 0) + 1
+        if blocked:
+            snap["relaxation_safety_blocked"] = snap.get("relaxation_safety_blocked", 0) + 1
+        cols = set(snap.get("relaxation_safety_columns", []))
+        cols.add(column)
+        snap["relaxation_safety_columns"] = sorted(cols)
+
     def _apply_ast_relaxation_workflow(self, state, initial_sql, proposals):
         """Applica rilassamenti uno alla volta, dall'ultimo al primo, testando i risultati."""
         threshold = 10
@@ -1716,7 +1954,12 @@ class GraphOrchestratorAgent(BaseAgent):
         if not expression or not base_conditions: return initial_sql
 
         current_active_conditions = [c.copy() for c in base_conditions]
-        
+
+        # v2 relaxation safety: identify which conditions guard a HARD constraint.
+        # observe -> measure only (behavior unchanged); enforce -> never relax/drop them.
+        enforce = (state.get("constraint_mode") or "observe").lower() == "enforce"
+        protected, reverse = self._relaxation_protected(state)
+
         # STEP 1: Prova i rilassamenti suggeriti dall'LLM (Progressione: Low -> Medium -> High)
         for level in ["low", "medium", "high"]:
             # Iterate from last to first
@@ -1724,34 +1967,48 @@ class GraphOrchestratorAgent(BaseAgent):
                 orig_cond_sql = base_conditions[i].sql(dialect="duckdb")
                 # Trova la proposta per questa specifica stringa SQL e livello
                 match = next((p for p in proposals if p.livello_rilassamento.lower() == level and p.condizione_iniziale.strip() == orig_cond_sql.strip()), None)
-                
+
                 if match:
+                    # Safety gate: never relax a hard constraint (typology, regulatory...).
+                    prot_col = self._condition_protected_column(base_conditions[i], protected, reverse)
+                    if prot_col is not None:
+                        self._record_relaxation_safety(state, prot_col, blocked=enforce)
+                        if enforce:
+                            continue
+
                     temp_conditions = [c.copy() for c in current_active_conditions]
                     try:
                         temp_conditions[i] = parse_one(self._fix_sql_quotes(match.condizione_relaxed), read="duckdb")
                     except: continue
-                    
+
                     trial_sql = self._rebuild_sql(expression, temp_conditions)
                     trial_df, error = self.execute_sql_fn(trial_sql, state.get("base_dataset"), dataset_path=state.get("dataset_path"))
-                    
+
                     if not error and len(trial_df) >= threshold:
                         logger.info(f"Successo relaxation '{level}' su cond {i}: trovato {len(trial_df)} immobili.")
                         return trial_sql
-                    
+
                     # Se migliora ma non raggiunge la soglia, manteniamo il rilassamento e proseguiamo (Greedy)
                     if not error and len(trial_df) > len(state.get("selected_data", [])):
                         current_active_conditions[i] = temp_conditions[i]
 
         # STEP 2: Fallback Estremo - Rimozione progressiva dall'ultima alla prima
         for i in range(len(current_active_conditions) - 1, -1, -1):
+            # Safety gate: never REMOVE a hard constraint to pad the result count.
+            prot_col = self._condition_protected_column(current_active_conditions[i], protected, reverse)
+            if prot_col is not None:
+                self._record_relaxation_safety(state, prot_col, blocked=enforce)
+                if enforce:
+                    continue
+
             temp_conditions = [c.copy() for j, c in enumerate(current_active_conditions) if i != j]
             trial_sql = self._rebuild_sql(expression, temp_conditions, remove_where=not temp_conditions)
             trial_df, error = self.execute_sql_fn(trial_sql, state.get("base_dataset"), dataset_path=state.get("dataset_path"))
-            
+
             if not error and len(trial_df) >= threshold:
                  logger.info(f"Successo via rimozione cond {i}: trovato {len(trial_df)} immobili.")
                  return trial_sql
-            
+
             if not error and len(trial_df) > len(state.get("selected_data", [])):
                 current_active_conditions = temp_conditions # Rimaniamo con la condizione in meno
 
@@ -1771,14 +2028,86 @@ class GraphOrchestratorAgent(BaseAgent):
         return new_expression.sql(dialect="duckdb", pretty=True)
 
 
+    def _try_ir_fallback(self, state: GraphState) -> bool:
+        """v2 deterministic fallback: render SQL from the IR and execute it.
+
+        Tries the full IR first (hard + soft + geo); if that returns no rows, it
+        retries with hard-only (must-haves + location), which is maximally
+        permissive while still respecting typology / regulatory constraints.
+
+        Returns True if a non-empty result was produced (and stores it on state);
+        False otherwise, so the caller proceeds to the legacy generic fallback.
+        No-op (returns False) in observe mode. Fully guarded: any error returns
+        False rather than breaking the run.
+        """
+        if (state.get("constraint_mode") or "observe").lower() != "enforce":
+            return False
+
+        ir = state.get("constraint_ir")
+        if ir is None or not getattr(ir, "entries", None):
+            return False
+
+        try:
+            from app.services.llm.ir_sql_renderer import make_column_resolver, render_sql
+
+            resolver = make_column_resolver(state.get("db_schema", {}) or {})
+            snapshot = state.get("gemini_responses", {}).get("constraint_layer")
+
+            for hard_only in (False, True):
+                rendered = render_sql(ir, resolve_column=resolver, hard_only=hard_only)
+                if not rendered.sql:
+                    continue
+                df, error = self.execute_sql_fn(
+                    rendered.sql,
+                    state.get("base_dataset"),
+                    dataset_path=state.get("dataset_path"),
+                )
+                if error or df is None or df.empty:
+                    continue
+
+                # Success: a valid, constraint-preserving result set.
+                state["selected_data"] = df
+                state["sql_query"] = rendered.sql
+                state["execution_error"] = None
+                if snapshot is not None:
+                    snapshot["sql_source"] = "deterministic_fallback"
+                    snapshot["fallback_used"] = (
+                        "ir_render_hard_only" if hard_only else "ir_render_full"
+                    )
+                    snapshot["fallback_sql"] = rendered.sql
+                    snapshot["fallback_skipped"] = rendered.skipped
+                state.setdefault("gemini_responses", {})["fallback_activated"] = True
+                state["status_msg"] = (
+                    "Risultati ottenuti da una query deterministica costruita dai "
+                    "vincoli estratti (fallback robusto)."
+                )
+                logger.info(
+                    f"v2 deterministic fallback succeeded "
+                    f"(hard_only={hard_only}, rows={len(df)}): {rendered.sql}"
+                )
+                return True
+        except Exception as e:
+            logger.error(f"v2 IR fallback failed (non-fatal): {e}")
+
+        return False
+
     def _fallback_results(self, state: GraphState) -> GraphState:
         """
         Fallback when SQL queries fail after max retries.
-        Returns top results from full dataset so user always gets something.
+
+        v2 (enforce): first try a deterministic query rendered from the
+        ConstraintIR — it preserves the hard constraints (typology, regulatory,
+        location). Only if that yields nothing do we drop to the legacy generic
+        fallback below, which abandons the constraints and returns top results so
+        the user always gets something.
         """
         self._update_progress(
             state, "sql", ""
         )
+
+        if self._try_ir_fallback(state):
+            return state
+
         logger.warning("Fallback activated: loading top results from full dataset")
 
         dataset_path = state.get("dataset_path")
@@ -1837,6 +2166,10 @@ class GraphOrchestratorAgent(BaseAgent):
 
             state["selected_data"] = fallback_df
             state["gemini_responses"]["fallback_activated"] = True
+            snapshot = state.get("gemini_responses", {}).get("constraint_layer")
+            if snapshot is not None:
+                snapshot["sql_source"] = "generic_fallback"
+                snapshot["fallback_used"] = "generic"
             state["status_msg"] = (
                 "Nessun risultato trovato con i criteri specificati. "
                 "Mostro alternative suggerite."
@@ -2557,10 +2890,20 @@ class GraphOrchestratorAgent(BaseAgent):
         if cols_to_drop:
             map_df = map_df.drop(columns=cols_to_drop)
 
-        if not enriched_data.empty:
+        if not enriched_data.empty and "id" in enriched_data.columns:
             actual_overlay_cols = [c for c in overlay_cols if c in enriched_data.columns]
             overlay_df = enriched_data[actual_overlay_cols].drop_duplicates("id")
             map_df = pd.merge(map_df, overlay_df, on="id", how="left")
+        elif not enriched_data.empty:
+            # Defensive: enriched results lost their 'id' column upstream. Skip the
+            # overlay merge (the defaults below still produce a valid map_df) and
+            # log what columns ARE present so we can find where 'id' was dropped.
+            logger.warning(
+                f"_finalize_results: enriched_data has no 'id' column; skipping overlay. "
+                f"columns={list(enriched_data.columns)[:20]} | "
+                f"relaxation_applied={state.get('relaxation_applied')} "
+                f"retry_count={state.get('retry_count')}"
+            )
 
         # Default robusti per flag e score
         if "is_match" not in map_df.columns:

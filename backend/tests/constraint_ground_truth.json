@@ -1,0 +1,200 @@
+{
+  "_doc": "Constraint-level ground truth per query phrase. For each phrase: 'agent' = which IR source agent should produce it; 'expected' = list of constraints that SHOULD appear (empty list = phrase should correctly produce NO filter); 'note' = reasoning; 'verify' = needs human/domain check. Recall is scored mainly at the (agent, column) level; 'value'/'value_contains' are for finer precision checks. Typology values are exact dataset strings from tipologia_bene_immobile.",
+  "_agent_name_map": {
+    "property_technical": "building",
+    "location": "location",
+    "normative": "regulatory",
+    "poi": "proximity",
+    "ape": "energy"
+  },
+  "phrases": {
+    "immobile": {
+      "agent": "building",
+      "expected": [],
+      "note": "Generic term ('property/building'). Building agent prompt: generic terms -> empty typologies. NO typology filter is correct.",
+      "verify": false
+    },
+    "abitazione": {
+      "agent": "building",
+      "expected": [
+        {"column": "tipologia_bene_immobile", "operator": "IN", "severity": "hard", "value_group": "residential",
+         "value_contains": ["Abitazioni adibite a residenza con carattere continuativo", "Abitazioni adibite a residenza con occupazione saltuaria"]}
+      ],
+      "note": "Residential -> typology filter (broad residential group, any residential value counts).",
+      "verify": false
+    },
+    "ufficio": {
+      "agent": "building",
+      "expected": [
+        {"column": "tipologia_bene_immobile", "operator": "IN", "severity": "hard", "value_contains": ["Uffici e assimilabili"]}
+      ],
+      "note": "Office -> typology. Dataset value confirmed.",
+      "verify": false
+    },
+    "negozio": {
+      "agent": "building",
+      "expected": [
+        {"column": "tipologia_bene_immobile", "operator": "IN", "severity": "hard", "value_contains": ["Attività commerciali e assimilabili"]}
+      ],
+      "note": "Shop / commercial unit -> typology. NOTE: distinct from proximity 'negozi e supermercati' (nearby shops).",
+      "verify": false
+    },
+    "capannone": {
+      "agent": "building",
+      "expected": [
+        {"column": "tipologia_bene_immobile", "operator": "IN", "severity": "hard", "value_contains": ["Attività industriali, artigianali e assimilabili"]}
+      ],
+      "note": "Industrial shed -> typology.",
+      "verify": true
+    },
+    "albergo": {
+      "agent": "building",
+      "expected": [
+        {"column": "tipologia_bene_immobile", "operator": "IN", "severity": "hard", "value_contains": ["Edifici adibiti ad albergo, pensione ed attività similari"]}
+      ],
+      "note": "Hotel -> typology.",
+      "verify": true
+    },
+    "Palazzo Nuovo": {"agent": "location", "expected": [{"kind": "geo"}], "note": "Named place -> geo filter.", "verify": false},
+    "Porta Susa": {"agent": "location", "expected": [{"kind": "geo"}], "note": "Named place -> geo filter.", "verify": false},
+    "Porta Nuova": {"agent": "location", "expected": [{"kind": "geo"}], "note": "Named place -> geo filter.", "verify": false},
+    "Politecnico di Torino": {"agent": "location", "expected": [{"kind": "geo"}], "note": "Named place -> geo filter.", "verify": false},
+    "Parco del Valentino": {"agent": "location", "expected": [{"kind": "geo"}], "note": "Named place -> geo filter.", "verify": false},
+    "tra 50 e 80 mq": {
+      "agent": "building",
+      "expected": [{"column": "surface_area", "operator": "BETWEEN", "severity": "soft", "value_range": [50, 80]}],
+      "note": "Surface 50-80. Column-level recall = surface_area present; operator/value are precision.",
+      "verify": true
+    },
+    "sopra i 1000 mq": {
+      "agent": "building",
+      "expected": [{"column": "surface_area", "operator": ">=", "severity": "soft", "value": 1000}],
+      "note": "Surface above 1000 sqm.",
+      "verify": false
+    },
+    "almeno 200 mq": {
+      "agent": "building",
+      "expected": [{"column": "surface_area", "operator": ">=", "severity": "soft", "value": 200}],
+      "note": "At least 200 sqm.",
+      "verify": false
+    },
+    "non più di 100 mq": {
+      "agent": "building",
+      "expected": [{"column": "surface_area", "operator": "<=", "severity": "soft", "value": 100}],
+      "note": "No more than 100 sqm (upper bound).",
+      "verify": true
+    },
+    "tra 100 e 150 mq": {
+      "agent": "building",
+      "expected": [{"column": "surface_area", "operator": "BETWEEN", "severity": "soft", "value_range": [100, 150]}],
+      "note": "Surface 100-150.",
+      "verify": true
+    },
+    "co-housing": {
+      "agent": "regulatory",
+      "expected": [{"column": "surface_area", "operator": ">=", "severity": "hard", "value": null}],
+      "expected_no_typology": true,
+      "value_pending": "minimum surface threshold pending normative docs",
+      "note": "ASSUMPTION (confirmed): future use, not current typology. Regulatory min-surface expected; NO current-typology filter.",
+      "verify": false
+    },
+    "centro per anziani": {
+      "agent": "regulatory",
+      "expected": [{"column": "surface_area", "operator": ">=", "severity": "hard", "value": null}],
+      "expected_no_typology": true,
+      "value_pending": "minimum surface threshold pending normative docs",
+      "note": "ASSUMPTION (confirmed): elderly center = future use. Regulatory min-surface; NO current-typology filter.",
+      "verify": false
+    },
+    "asilo nido": {
+      "agent": "regulatory",
+      "expected": [{"column": "surface_area", "operator": ">=", "severity": "hard", "value": null}],
+      "expected_no_typology": true,
+      "value_pending": "depends on normative docs; may be absent",
+      "note": "Nursery = future use. Regulatory min-surface IF the use-case exists in normative docs; otherwise correctly nothing. NO current-typology.",
+      "verify": true
+    },
+    "studentato": {
+      "agent": "regulatory",
+      "expected": [{"column": "surface_area", "operator": ">=", "severity": "hard", "value": null}],
+      "expected_no_typology": true,
+      "value_pending": "depends on normative docs; may be absent",
+      "note": "Student housing = future use. Same logic as co-housing. NO current-typology.",
+      "verify": true
+    },
+    "ostello": {
+      "agent": "regulatory",
+      "expected": [{"column": "surface_area", "operator": ">=", "severity": "hard", "value": null}],
+      "expected_no_typology": true,
+      "value_pending": "depends on normative docs; may be absent",
+      "note": "Hostel = future use. May or may not exist in normative docs.",
+      "verify": true
+    },
+    "mezzi di trasporto": {
+      "agent": "proximity",
+      "expected": [{"column": "mobility", "operator": ">=", "severity": "soft", "value": 75}],
+      "note": "ASSUMPTION (confirmed): public transport -> proximity mobility >= 75 (0-100 scores).",
+      "verify": false
+    },
+    "palestre e centri sportivi": {
+      "agent": "proximity",
+      "expected": [{"column": "sport", "operator": ">=", "severity": "soft", "value": 75}],
+      "note": "ASSUMPTION (confirmed): gyms/sports -> proximity sport >= 75.",
+      "verify": false
+    },
+    "servizi sanitari": {
+      "agent": "proximity",
+      "expected": [{"column": "healthcare", "operator": ">=", "severity": "soft", "value": 75}],
+      "note": "Healthcare services nearby -> proximity healthcare.",
+      "verify": false
+    },
+    "scuole e università": {
+      "agent": "proximity",
+      "expected": [{"column": "education", "operator": ">=", "severity": "soft", "value": 75}],
+      "note": "Schools/universities nearby -> proximity education. Distinct from typology 'scuola'.",
+      "verify": true
+    },
+    "negozi e supermercati": {
+      "agent": "proximity",
+      "expected": [{"column": "commercial", "operator": ">=", "severity": "soft", "value": 75}],
+      "note": "Shops/supermarkets nearby -> proximity commercial. Distinct from typology 'negozio'.",
+      "verify": true
+    },
+    "parchi e aree verdi": {
+      "agent": "proximity",
+      "expected": [{"column": "green", "operator": ">=", "severity": "soft", "value": 75}],
+      "note": "Parks/green nearby -> proximity green.",
+      "verify": true
+    },
+    "F o G": {
+      "agent": "energy",
+      "expected": [{"column": "classe_target_ape", "operator": "IN", "severity": "soft", "value": ["F", "G"]}],
+      "note": "ASSUMPTION (confirmed): low efficiency F or G on classe_target_ape.",
+      "verify": false
+    },
+    "C o più efficiente": {
+      "agent": "energy",
+      "expected": [{"column": "classe_target_ape", "operator": "IN", "severity": "soft", "value": ["C", "B", "A1", "A2", "A3", "A4"]}],
+      "note": "ASSUMPTION (confirmed): C or better on classe_target_ape.",
+      "verify": false
+    },
+    "classe A": {
+      "agent": "energy",
+      "expected": [{"column": "classe_target_ape", "operator": "IN", "severity": "soft", "value": ["A1", "A2", "A3", "A4"]}],
+      "note": "Class A (all A sub-classes) on classe_target_ape.",
+      "verify": false
+    },
+    "B o superiore": {
+      "agent": "energy",
+      "expected": [{"column": "classe_target_ape", "operator": "IN", "severity": "soft", "value": ["B", "A1", "A2", "A3", "A4"]}],
+      "note": "B or better on classe_target_ape.",
+      "verify": true
+    },
+    "almeno D": {
+      "agent": "energy",
+      "expected": [{"column": "classe_target_ape", "operator": "IN", "severity": "soft", "value": ["D", "C", "B", "A1", "A2", "A3", "A4"]}],
+      "note": "D or better on classe_target_ape.",
+      "verify": true
+    }
+  }
+}

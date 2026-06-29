@@ -124,11 +124,18 @@ class BuildingAgent(BaseAgent):
         weights_count = 0
         transparency_cols = []
 
-        # 1. Ranking by Typology (if present)
-        if ranked_typologies:
+        # Resolve the typology column: agents use "property_type", but the dataset
+        # may name it "tipologia_bene_immobile". Pick whichever exists.
+        typ_col = next(
+            (c for c in ("property_type", "tipologia_bene_immobile") if c in df_ranked.columns),
+            None,
+        )
+
+        # 1. Ranking by Typology (if present and the column exists)
+        if ranked_typologies and typ_col:
             weights_count += 1
             # Use centralized utility for typologies
-            typ_scores = calculate_discrete_score(df_ranked["property_type"], ranked_typologies)
+            typ_scores = calculate_discrete_score(df_ranked[typ_col], ranked_typologies)
             df_ranked["building_typology_score"] = typ_scores
             total_scores += typ_scores
             transparency_cols.append("building_typology_score")
@@ -143,7 +150,7 @@ class BuildingAgent(BaseAgent):
                 target_val = req.get("value")
                 op = str(req.get("operator", "==")).upper()
                 
-                if not col or col not in df_ranked.columns or col == "property_type":
+                if not col or col not in df_ranked.columns or col in ("property_type", typ_col):
                     continue
                 
                 technical_req_count += 1
@@ -198,7 +205,7 @@ class BuildingAgent(BaseAgent):
             df_ranked["building_score"] = 100.0 if not (ranked_typologies or requirements) else 0.0
 
         # Combine all requested columns and deduplicate while preserving order
-        all_requested_cols = ["id", "building_score", "property_type"] + transparency_cols
+        all_requested_cols = ["id", "building_score"] + ([typ_col] if typ_col else []) + transparency_cols
         unique_cols = []
         for c in all_requested_cols:
             if c not in unique_cols and c in df_ranked.columns:

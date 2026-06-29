@@ -1,0 +1,583 @@
+{
+  "K": 5,
+  "temp": 0.8,
+  "summary": {
+    "STABLE": 11,
+    "VARIANCE": 1,
+    "BIAS": 0
+  },
+  "fp_runs": 0,
+  "fp_run_total": 80,
+  "records": [
+    {
+      "id": "T1_3",
+      "tier": 1,
+      "query": "Cerco un immobile con mezzi di trasporto nelle vicinanze.",
+      "gold": [
+        "mobility"
+      ],
+      "named_place": false,
+      "hi_runs": [
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ]
+      ],
+      "lo_baseline": [
+        "mobility"
+      ],
+      "oracle_cats": [
+        "mobility"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "mobility": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "T1_4",
+      "tier": 1,
+      "query": "Cerco un immobile vicino a Porta Nuova.",
+      "gold": [],
+      "named_place": true,
+      "hi_runs": [
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "lo_baseline": [],
+      "oracle_cats": [],
+      "oracle_recall": null,
+      "lo_recall": null,
+      "extras_union": [],
+      "per_cat": {}
+    },
+    {
+      "id": "T2_8",
+      "tier": 2,
+      "query": "Cerco un negozio vicino a Porta Susa.",
+      "gold": [],
+      "named_place": true,
+      "hi_runs": [
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "lo_baseline": [],
+      "oracle_cats": [],
+      "oracle_recall": null,
+      "lo_recall": null,
+      "extras_union": [],
+      "per_cat": {}
+    },
+    {
+      "id": "T2_9",
+      "tier": 2,
+      "query": "Cerco un'abitazione vicino a Parco del Valentino con servizi sanitari nelle vicinanze.",
+      "gold": [
+        "healthcare"
+      ],
+      "named_place": true,
+      "hi_runs": [
+        [
+          "healthcare"
+        ],
+        [
+          "healthcare"
+        ],
+        [
+          "healthcare"
+        ],
+        [
+          "healthcare"
+        ],
+        [
+          "healthcare"
+        ]
+      ],
+      "lo_baseline": [
+        "healthcare"
+      ],
+      "oracle_cats": [
+        "healthcare"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "healthcare": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "T2_11",
+      "tier": 2,
+      "query": "Cerco un albergo vicino a Porta Nuova con mezzi di trasporto nelle vicinanze.",
+      "gold": [
+        "mobility"
+      ],
+      "named_place": true,
+      "hi_runs": [
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ]
+      ],
+      "lo_baseline": [
+        "mobility"
+      ],
+      "oracle_cats": [
+        "mobility"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "mobility": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "T2_12",
+      "tier": 2,
+      "query": "Cerco un immobile vicino a Politecnico di Torino per un progetto di asilo nido.",
+      "gold": [],
+      "named_place": true,
+      "hi_runs": [
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "lo_baseline": [],
+      "oracle_cats": [],
+      "oracle_recall": null,
+      "lo_recall": null,
+      "extras_union": [],
+      "per_cat": {}
+    },
+    {
+      "id": "T2_13",
+      "tier": 2,
+      "query": "Cerco un'abitazione con parchi e aree verdi nelle vicinanze di classe energetica almeno D.",
+      "gold": [
+        "green"
+      ],
+      "named_place": false,
+      "hi_runs": [
+        [
+          "green"
+        ],
+        [
+          "green"
+        ],
+        [
+          "green"
+        ],
+        [
+          "green"
+        ],
+        [
+          "green"
+        ]
+      ],
+      "lo_baseline": [
+        "green"
+      ],
+      "oracle_cats": [
+        "green"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "green": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "T3_15",
+      "tier": 3,
+      "query": "Cerco un'abitazione sopra i 1000 mq vicino a Porta Susa con mezzi di trasporto nelle vicinanze di classe energetica C o più efficiente.",
+      "gold": [
+        "mobility"
+      ],
+      "named_place": true,
+      "hi_runs": [
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ]
+      ],
+      "lo_baseline": [
+        "mobility"
+      ],
+      "oracle_cats": [
+        "mobility"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "mobility": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "T3_16",
+      "tier": 3,
+      "query": "Cerco un ufficio almeno 200 mq vicino a Porta Nuova con mezzi di trasporto nelle vicinanze.",
+      "gold": [
+        "mobility"
+      ],
+      "named_place": true,
+      "hi_runs": [
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ]
+      ],
+      "lo_baseline": [
+        "mobility"
+      ],
+      "oracle_cats": [
+        "mobility"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "mobility": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "T3_17",
+      "tier": 3,
+      "query": "Cerco un'abitazione vicino a Parco del Valentino con parchi e aree verdi nelle vicinanze di classe A.",
+      "gold": [
+        "green"
+      ],
+      "named_place": true,
+      "hi_runs": [
+        [
+          "green"
+        ],
+        [
+          "green"
+        ],
+        [
+          "green"
+        ],
+        [
+          "green"
+        ],
+        [
+          "green"
+        ]
+      ],
+      "lo_baseline": [
+        "green"
+      ],
+      "oracle_cats": [
+        "green"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "green": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "T3_18",
+      "tier": 3,
+      "query": "Cerco un immobile vicino a Politecnico di Torino con servizi sanitari nelle vicinanze per un progetto di centro per anziani.",
+      "gold": [
+        "healthcare"
+      ],
+      "named_place": true,
+      "hi_runs": [
+        [
+          "healthcare"
+        ],
+        [
+          "healthcare"
+        ],
+        [
+          "healthcare"
+        ],
+        [
+          "healthcare"
+        ],
+        [
+          "healthcare"
+        ]
+      ],
+      "lo_baseline": [
+        "healthcare"
+      ],
+      "oracle_cats": [
+        "healthcare"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "healthcare": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "T3_19",
+      "tier": 3,
+      "query": "Cerco un negozio tra 100 e 150 mq vicino a Porta Susa con negozi e supermercati nelle vicinanze.",
+      "gold": [
+        "commercial"
+      ],
+      "named_place": true,
+      "hi_runs": [
+        [
+          "commercial"
+        ],
+        [
+          "commercial"
+        ],
+        [
+          "commercial"
+        ],
+        [
+          "commercial"
+        ],
+        [
+          "commercial"
+        ]
+      ],
+      "lo_baseline": [
+        "commercial"
+      ],
+      "oracle_cats": [
+        "commercial"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "commercial": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "T3_20",
+      "tier": 3,
+      "query": "Cerco un'abitazione tra 50 e 80 mq vicino a Palazzo Nuovo con scuole e università nelle vicinanze di classe energetica F o G.",
+      "gold": [
+        "education"
+      ],
+      "named_place": true,
+      "hi_runs": [
+        [
+          "education"
+        ],
+        [
+          "education"
+        ],
+        [
+          "education"
+        ],
+        [
+          "education"
+        ],
+        [
+          "education"
+        ]
+      ],
+      "lo_baseline": [
+        "education"
+      ],
+      "oracle_cats": [
+        "education"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "education": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "T4_21",
+      "tier": 4,
+      "query": "Cerco un immobile non più di 100 mq con mezzi di trasporto nelle vicinanze.",
+      "gold": [
+        "mobility"
+      ],
+      "named_place": false,
+      "hi_runs": [
+        [],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ],
+        [
+          "mobility"
+        ]
+      ],
+      "lo_baseline": [
+        "mobility"
+      ],
+      "oracle_cats": [
+        "mobility"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "mobility": {
+          "appeared_in_k": 4,
+          "label": "VARIANCE"
+        }
+      }
+    },
+    {
+      "id": "T4_22",
+      "tier": 4,
+      "query": "Cerco un ufficio tra 100 e 150 mq vicino a Porta Nuova con negozi e supermercati nelle vicinanze di classe energetica almeno D.",
+      "gold": [
+        "commercial"
+      ],
+      "named_place": true,
+      "hi_runs": [
+        [
+          "commercial"
+        ],
+        [
+          "commercial"
+        ],
+        [
+          "commercial"
+        ],
+        [
+          "commercial"
+        ],
+        [
+          "commercial"
+        ]
+      ],
+      "lo_baseline": [
+        "commercial"
+      ],
+      "oracle_cats": [
+        "commercial"
+      ],
+      "oracle_recall": 1.0,
+      "lo_recall": 1.0,
+      "extras_union": [],
+      "per_cat": {
+        "commercial": {
+          "appeared_in_k": 5,
+          "label": "STABLE"
+        }
+      }
+    },
+    {
+      "id": "T4_23",
+      "tier": 4,
+      "query": "Cerco un immobile almeno 200 mq vicino a Politecnico di Torino per un progetto di studentato.",
+      "gold": [],
+      "named_place": true,
+      "hi_runs": [
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "lo_baseline": [],
+      "oracle_cats": [],
+      "oracle_recall": null,
+      "lo_recall": null,
+      "extras_union": [],
+      "per_cat": {}
+    }
+  ]
+}
