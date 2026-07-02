@@ -194,4 +194,13 @@ backend/data/metadata/pois_by_category.json
 backend/data/metadata/pois.json
 backend/data/agent_logs
 backend/app/data/geocode_cache.json
+
+# Raw EPC/APE city datasets (large, may contain personal/address data) — never commit
+backend/data/epc_raw/
+
+# Regenerable / large / row-level-location schema-alignment artifacts — keep only the
+# small top-level result JSONs in backend/data/epc_schema/ (vocabulary, matrix, reviews).
+backend/data/epc_profiles/
+backend/data/epc_schema/mappings/
+backend/data/epc_schema/normalized/
 backend/tests/results

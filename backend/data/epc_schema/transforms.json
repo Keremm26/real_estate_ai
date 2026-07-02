@@ -1,0 +1,2883 @@
+[
+  {
+    "concept_id": "building_type",
+    "city": "Amsterdam",
+    "source_columns": [
+      "Gebouwtype"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source values are retained as reported",
+    "note": "Intended logic: recategorize dwelling/unit-level types to a shared coarse building_type scheme after enumerating all observed source levels; not fully specified here because the complete source category list is not provided."
+  },
+  {
+    "concept_id": "building_type",
+    "city": "Barcelona",
+    "source_columns": [
+      "us_edifici"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source values are retained as reported",
+    "note": "Intended logic: recategorize to shared coarse categories once all observed source levels are enumerated; no complete mapping supplied."
+  },
+  {
+    "concept_id": "building_type",
+    "city": "Dublin",
+    "source_columns": [
+      "DwellingTypeDescr"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source values are retained as reported",
+    "note": "Intended logic: recategorize dwelling types to shared coarse building_type categories after full source value inventory; not fully specifiable from current input."
+  },
+  {
+    "concept_id": "building_type",
+    "city": "Liège",
+    "source_columns": [
+      "destination"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source values are retained as reported",
+    "note": "Intended logic: recategorize listed asset types to a shared coarse scheme once full observed levels are available; complete mapping not provided."
+  },
+  {
+    "concept_id": "building_type",
+    "city": "Lisbon",
+    "source_columns": [
+      "Tipo_Edificio"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source values are retained as reported",
+    "note": "Intended logic: use as a scope indicator or recategorize only if source values clearly contain building type classes; current information is insufficient for a deterministic mapping."
+  },
+  {
+    "concept_id": "building_type",
+    "city": "London",
+    "source_columns": [
+      "property_type"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source values are retained as reported",
+    "note": "Intended logic: recategorize property types to a shared coarse building_type scheme after enumerating all observed values; no full mapping available."
+  },
+  {
+    "concept_id": "building_type",
+    "city": "Madrid",
+    "source_columns": [
+      "edif_tipo"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source values are retained as reported",
+    "note": "Intended logic: recategorize residential values to shared coarse categories and separately flag or exclude non-residential/tertiary values; complete mapping cannot be authored without the full observed source levels."
+  },
+  {
+    "concept_id": "building_type",
+    "city": "Paris",
+    "source_columns": [
+      "type_batiment"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source values are retained as reported",
+    "note": "Intended logic: recategorize listed classes to the shared coarse building_type scheme if needed; full mapping of all observed levels is not provided."
+  },
+  {
+    "concept_id": "building_type",
+    "city": "Turin",
+    "source_columns": [
+      "tipologia_bene_immobile"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source values are retained as reported",
+    "note": "Intended logic: recategorize residential-relevant asset types to shared coarse building_type categories and flag broader property classes; deterministic mapping not possible without complete source level list."
+  },
+  {
+    "concept_id": "auxiliary_co2_total",
+    "city": "Dublin",
+    "source_columns": [
+      "CO2PumpsFans"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported annual pumps/fans CO2 total; do not normalize because auxiliary scope differs across methodologies."
+  },
+  {
+    "concept_id": "auxiliary_co2_total",
+    "city": "Paris",
+    "source_columns": [
+      "emission_ges_auxiliaires"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported auxiliaries GHG/CO2 total; cross-city normalization is not appropriate because auxiliary scope may differ."
+  },
+  {
+    "concept_id": "co2_emissions_intensity",
+    "city": "Amsterdam",
+    "source_columns": [
+      "BerekendeCO2Emissie"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve as reported; intended logic assumes this field is already in annual CO2 per m2.year, but no deterministic normalization should be applied without confirmed unit metadata."
+  },
+  {
+    "concept_id": "co2_emissions_intensity",
+    "city": "Barcelona",
+    "source_columns": [
+      "emissions_de_co2"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported CO2 intensity; no normalization because methodology and gas accounting differ across cities."
+  },
+  {
+    "concept_id": "co2_emissions_intensity",
+    "city": "Dublin",
+    "source_columns": [
+      "CO2Rating"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve BER CO2 intensity as reported; cross-city normalization is not appropriate due to differing methodologies."
+  },
+  {
+    "concept_id": "co2_emissions_intensity",
+    "city": "London",
+    "source_columns": [
+      "co2_emiss_curr_per_floor_area"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve current-stage CO2 per floor area; do not normalize across cities because stage, factors, and area basis differ."
+  },
+  {
+    "concept_id": "co2_emissions_intensity",
+    "city": "Paris",
+    "source_columns": [
+      "emission_ges_5_usages_par_m2"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve 5-uses GHG intensity as reported; do not normalize because end-use scope and gas accounting differ."
+  },
+  {
+    "concept_id": "co2_emissions_intensity",
+    "city": "Turin",
+    "source_columns": [
+      "emissioni_co2"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported CO2 intensity; no deterministic normalization without confirmed methodology metadata."
+  },
+  {
+    "concept_id": "co2_emissions_total",
+    "city": "Copenhagen",
+    "source_columns": [
+      "CalculatedEmission"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported total emissions; no deterministic unit conversion specified from provided evidence."
+  },
+  {
+    "concept_id": "co2_emissions_total",
+    "city": "London",
+    "source_columns": [
+      "co2_emissions_current"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve current-rating-stage total CO2 emissions; do not normalize because rating stage differs from other cities."
+  },
+  {
+    "concept_id": "co2_emissions_total",
+    "city": "Madrid",
+    "source_columns": [
+      "norenov_co2global"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported annual total CO2 emissions. Source was marked for unit_conversion upstream, but no from/to units or numeric factor are provided here, so no machine-runnable conversion can be specified."
+  },
+  {
+    "concept_id": "co2_emissions_total",
+    "city": "Paris",
+    "source_columns": [
+      "emission_ges_5_usages"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve 5-uses total GHG emissions as reported; do not normalize because end-use scope is restricted and differs cross-city."
+  },
+  {
+    "concept_id": "cooling_co2_total",
+    "city": "Barcelona",
+    "source_columns": [
+      "emissions_refrigeraci"
+    ],
+    "op": "derive",
+    "params": {
+      "operation": "multiply",
+      "operands": [
+        "emissions_refrigeraci",
+        "concept:floor_area"
+      ]
+    },
+    "guard": null,
+    "note": "Derive annual cooling CO2 total by multiplying reported cooling CO2 intensity by canonical floor_area, if floor_area is available and in m2."
+  },
+  {
+    "concept_id": "cooling_co2_total",
+    "city": "Madrid",
+    "source_columns": [
+      "norenov_co2refrig"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported annual cooling CO2 total. Source was marked for unit_conversion upstream, but no from/to units or numeric factor are provided here."
+  },
+  {
+    "concept_id": "cooling_co2_total",
+    "city": "Paris",
+    "source_columns": [
+      "emission_ges_refroidissement"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported cooling GHG/CO2 total; cross-city normalization is not appropriate due to differing factors and scope."
+  },
+  {
+    "concept_id": "domestic_hot_water_co2_total",
+    "city": "Barcelona",
+    "source_columns": [
+      "emissions_acs"
+    ],
+    "op": "derive",
+    "params": {
+      "operation": "multiply",
+      "operands": [
+        "emissions_acs",
+        "concept:floor_area"
+      ]
+    },
+    "guard": null,
+    "note": "Derive annual DHW CO2 total by multiplying reported DHW CO2 intensity by canonical floor_area, if floor_area is available and in m2."
+  },
+  {
+    "concept_id": "domestic_hot_water_co2_total",
+    "city": "Dublin",
+    "source_columns": [
+      "CO2MainWater"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve main DHW CO2 component only; do not normalize to total because supplementary component is not included in this source column."
+  },
+  {
+    "concept_id": "domestic_hot_water_co2_total",
+    "city": "Madrid",
+    "source_columns": [
+      "norenov_co2acs"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported annual DHW CO2 total. Source was marked for unit_conversion upstream, but no from/to units or numeric factor are provided here."
+  },
+  {
+    "concept_id": "domestic_hot_water_co2_total",
+    "city": "Paris",
+    "source_columns": [
+      "emission_ges_ecs"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported DHW GHG/CO2 total; cross-city normalization is not appropriate due to differing factors and scope."
+  },
+  {
+    "concept_id": "lighting_co2_total",
+    "city": "Barcelona",
+    "source_columns": [
+      "emissions_enllumenament"
+    ],
+    "op": "derive",
+    "params": {
+      "operation": "multiply",
+      "operands": [
+        "emissions_enllumenament",
+        "concept:floor_area"
+      ]
+    },
+    "guard": null,
+    "note": "Derive annual lighting CO2 total by multiplying reported lighting CO2 intensity by canonical floor_area, if floor_area is available and in m2."
+  },
+  {
+    "concept_id": "lighting_co2_total",
+    "city": "Dublin",
+    "source_columns": [
+      "CO2Lighting"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported annual lighting CO2 total; do not normalize across cities because methodology treatment differs."
+  },
+  {
+    "concept_id": "lighting_co2_total",
+    "city": "Madrid",
+    "source_columns": [
+      "norenov_co2ilu"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported annual lighting CO2 total. Source was marked for unit_conversion upstream, but no from/to units or numeric factor are provided here."
+  },
+  {
+    "concept_id": "lighting_co2_total",
+    "city": "Paris",
+    "source_columns": [
+      "emission_ges_eclairage"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported lighting GHG/CO2 total; cross-city normalization is not appropriate due to differing methodology scope."
+  },
+  {
+    "concept_id": "space_heating_co2_total",
+    "city": "Barcelona",
+    "source_columns": [
+      "emissions_calefacci"
+    ],
+    "op": "derive",
+    "params": {
+      "operation": "multiply",
+      "operands": [
+        "emissions_calefacci",
+        "concept:floor_area"
+      ]
+    },
+    "guard": null,
+    "note": "Derive annual space-heating CO2 total by multiplying reported space-heating CO2 intensity by canonical floor_area, if floor_area is available and in m2."
+  },
+  {
+    "concept_id": "space_heating_co2_total",
+    "city": "Dublin",
+    "source_columns": [
+      "CO2MainSpace"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve main space-heating CO2 component only; do not normalize to full total because secondary component is not included in this source column."
+  },
+  {
+    "concept_id": "space_heating_co2_total",
+    "city": "Madrid",
+    "source_columns": [
+      "norenov_co2calef"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported annual space-heating CO2 total. Source was marked for unit_conversion upstream, but no from/to units or numeric factor are provided here."
+  },
+  {
+    "concept_id": "space_heating_co2_total",
+    "city": "Paris",
+    "source_columns": [
+      "emission_ges_chauffage"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported space-heating GHG/CO2 total; cross-city normalization is not appropriate due to differing factors and scope."
+  },
+  {
+    "concept_id": "auxiliary_final_energy_total",
+    "city": "Dublin",
+    "source_columns": [
+      "DeliveredEnergyPumpsFans"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column DeliveredEnergyPumpsFans is non-null",
+    "note": "Preserve delivered-energy values as reported; do not normalize to final energy because no deterministic conversion factor is provided and scope differs across methodologies."
+  },
+  {
+    "concept_id": "auxiliary_final_energy_total",
+    "city": "Paris",
+    "source_columns": [
+      "conso_auxiliaires_ef"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column conso_auxiliaires_ef is non-null",
+    "note": "Value already represents annual auxiliary final energy total."
+  },
+  {
+    "concept_id": "cooling_demand_intensity",
+    "city": "Barcelona",
+    "source_columns": [
+      "energia_refrigeraci_demanda"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column energia_refrigeraci_demanda is non-null",
+    "note": "Value already represents cooling demand intensity as reported by the source methodology."
+  },
+  {
+    "concept_id": "cooling_demand_intensity",
+    "city": "Madrid",
+    "source_columns": [
+      "elec_demrefrig"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column elec_demrefrig is non-null",
+    "note": "Value already represents cooling demand intensity as reported by the source methodology."
+  },
+  {
+    "concept_id": "cooling_demand_total",
+    "city": "Paris",
+    "source_columns": [
+      "besoin_refroidissement"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column besoin_refroidissement is non-null",
+    "note": "Value already represents modeled annual cooling demand total."
+  },
+  {
+    "concept_id": "cooling_final_energy_total",
+    "city": "Barcelona",
+    "source_columns": [
+      "energia_refrigeraci"
+    ],
+    "op": "derive",
+    "params": {
+      "operation": "multiply",
+      "operands": [
+        "energia_refrigeraci",
+        "concept:floor_area"
+      ]
+    },
+    "guard": "apply only when source column energia_refrigeraci is non-null and concept:floor_area is non-null",
+    "note": "Derive annual cooling final energy total by multiplying reported intensity by canonical floor area."
+  },
+  {
+    "concept_id": "cooling_final_energy_total",
+    "city": "Madrid",
+    "source_columns": [
+      "final_refrig",
+      "edif_superf"
+    ],
+    "op": "derive",
+    "params": {
+      "operation": "multiply",
+      "operands": [
+        "final_refrig",
+        "edif_superf"
+      ]
+    },
+    "guard": "apply only when source columns final_refrig and edif_superf are both non-null",
+    "note": "Derive annual cooling final energy total from intensity multiplied by reported floor area."
+  },
+  {
+    "concept_id": "cooling_final_energy_total",
+    "city": "Paris",
+    "source_columns": [
+      "conso_refroidissement_ef"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column conso_refroidissement_ef is non-null",
+    "note": "Value already represents annual cooling final energy total."
+  },
+  {
+    "concept_id": "delivered_energy_total",
+    "city": "Dublin",
+    "source_columns": [
+      "TotalDeliveredEnergy"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column TotalDeliveredEnergy is non-null",
+    "note": "Value already represents total annual delivered energy."
+  },
+  {
+    "concept_id": "domestic_hot_water_demand_total",
+    "city": "Paris",
+    "source_columns": [
+      "besoin_ecs"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column besoin_ecs is non-null",
+    "note": "Value already represents modeled annual domestic hot water demand total."
+  },
+  {
+    "concept_id": "domestic_hot_water_final_energy_total",
+    "city": "Barcelona",
+    "source_columns": [
+      "energia_acs"
+    ],
+    "op": "derive",
+    "params": {
+      "operation": "multiply",
+      "operands": [
+        "energia_acs",
+        "concept:floor_area"
+      ]
+    },
+    "guard": "apply only when source column energia_acs is non-null and concept:floor_area is non-null",
+    "note": "Derive annual DHW final energy total by multiplying reported intensity by canonical floor area."
+  },
+  {
+    "concept_id": "domestic_hot_water_final_energy_total",
+    "city": "Dublin",
+    "source_columns": [
+      "DeliveredEnergyMainWater"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column DeliveredEnergyMainWater is non-null",
+    "note": "Preserve delivered main water-heating energy as reported; no deterministic conversion to final energy is available and supplementary system coverage may be excluded."
+  },
+  {
+    "concept_id": "domestic_hot_water_final_energy_total",
+    "city": "Madrid",
+    "source_columns": [
+      "final_acs",
+      "edif_superf"
+    ],
+    "op": "derive",
+    "params": {
+      "operation": "multiply",
+      "operands": [
+        "final_acs",
+        "edif_superf"
+      ]
+    },
+    "guard": "apply only when source columns final_acs and edif_superf are both non-null",
+    "note": "Derive annual DHW final energy total from intensity multiplied by reported floor area."
+  },
+  {
+    "concept_id": "domestic_hot_water_final_energy_total",
+    "city": "Paris",
+    "source_columns": [
+      "conso_ecs_ef"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column conso_ecs_ef is non-null",
+    "note": "Value already represents annual domestic hot water final energy total."
+  },
+  {
+    "concept_id": "final_energy_intensity",
+    "city": "Amsterdam",
+    "source_columns": [
+      "BerekendeEnergieverbruik"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column BerekendeEnergieverbruik is non-null",
+    "note": "Preserve as reported because no deterministic rule can resolve whether the metric is final or delivered energy intensity."
+  },
+  {
+    "concept_id": "final_energy_intensity",
+    "city": "Barcelona",
+    "source_columns": [
+      "consum_d_energia_final"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column consum_d_energia_final is non-null",
+    "note": "Value already represents final energy intensity."
+  },
+  {
+    "concept_id": "final_energy_intensity",
+    "city": "Madrid",
+    "source_columns": [
+      "final_global"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column final_global is non-null",
+    "note": "Value already represents final energy intensity in the source methodology."
+  },
+  {
+    "concept_id": "final_energy_intensity",
+    "city": "Paris",
+    "source_columns": [
+      "conso_5_usages_par_m2_ef"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column conso_5_usages_par_m2_ef is non-null",
+    "note": "Preserve reported 5-use final energy intensity; scope limitation is conceptual rather than transformable."
+  },
+  {
+    "concept_id": "final_energy_total",
+    "city": "Copenhagen",
+    "source_columns": [
+      "CalculatedConsumption"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column CalculatedConsumption is non-null",
+    "note": "Preserve as reported; no deterministic rule can resolve whether this is final energy total or another total consumption metric."
+  },
+  {
+    "concept_id": "final_energy_total",
+    "city": "Paris",
+    "source_columns": [
+      "conso_5_usages_ef"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column conso_5_usages_ef is non-null",
+    "note": "Preserve reported 5-use final energy total."
+  },
+  {
+    "concept_id": "lighting_final_energy_total",
+    "city": "Barcelona",
+    "source_columns": [
+      "energia_enllumenament"
+    ],
+    "op": "derive",
+    "params": {
+      "operation": "multiply",
+      "operands": [
+        "energia_enllumenament",
+        "concept:floor_area"
+      ]
+    },
+    "guard": "apply only when source column energia_enllumenament is non-null and concept:floor_area is non-null",
+    "note": "Derive annual lighting final energy total by multiplying reported intensity by canonical floor area."
+  },
+  {
+    "concept_id": "lighting_final_energy_total",
+    "city": "Dublin",
+    "source_columns": [
+      "DeliveredLightingEnergy"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column DeliveredLightingEnergy is non-null",
+    "note": "Preserve delivered lighting energy as reported; no deterministic conversion to final energy is available."
+  },
+  {
+    "concept_id": "lighting_final_energy_total",
+    "city": "Madrid",
+    "source_columns": [
+      "final_ilu",
+      "edif_superf"
+    ],
+    "op": "derive",
+    "params": {
+      "operation": "multiply",
+      "operands": [
+        "final_ilu",
+        "edif_superf"
+      ]
+    },
+    "guard": "apply only when source columns final_ilu and edif_superf are both non-null",
+    "note": "Derive annual lighting final energy total from intensity multiplied by reported floor area."
+  },
+  {
+    "concept_id": "lighting_final_energy_total",
+    "city": "Paris",
+    "source_columns": [
+      "conso_eclairage_ef"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column conso_eclairage_ef is non-null",
+    "note": "Value already represents annual lighting final energy total."
+  },
+  {
+    "concept_id": "primary_energy_intensity",
+    "city": "Barcelona",
+    "source_columns": [
+      "energia_prim_ria_no_renovable"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column energia_prim_ria_no_renovable is non-null",
+    "note": "Preserve reported non-renewable primary energy intensity; no deterministic normalization to generic primary energy intensity is available."
+  },
+  {
+    "concept_id": "primary_energy_intensity",
+    "city": "Liège",
+    "source_columns": [
+      "e_spec"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column e_spec is non-null",
+    "note": "Preserve as reported; no deterministic rule can resolve exact primary-energy scope or floor-area basis."
+  },
+  {
+    "concept_id": "primary_energy_intensity",
+    "city": "Paris",
+    "source_columns": [
+      "conso_5_usages_par_m2_ep"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column conso_5_usages_par_m2_ep is non-null",
+    "note": "Preserve reported 5-use primary energy intensity."
+  },
+  {
+    "concept_id": "primary_energy_intensity",
+    "city": "Turin",
+    "source_columns": [
+      "epglnren_ape"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column epglnren_ape is non-null",
+    "note": "Preserve reported non-renewable primary energy intensity; no deterministic normalization to generic primary energy intensity is available."
+  },
+  {
+    "concept_id": "primary_energy_total",
+    "city": "Copenhagen",
+    "source_columns": [
+      "CalculatedEnergyConsumption"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column CalculatedEnergyConsumption is non-null",
+    "note": "Preserve as reported; no deterministic rule can establish that this is primary energy total."
+  },
+  {
+    "concept_id": "primary_energy_total",
+    "city": "Madrid",
+    "source_columns": [
+      "norenov_global"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column norenov_global is non-null",
+    "note": "Preserve as reported; no deterministic conversion can be specified because it is unclear whether the source is already total or is intensity requiring area multiplication."
+  },
+  {
+    "concept_id": "primary_energy_total",
+    "city": "Paris",
+    "source_columns": [
+      "conso_5_usages_ep"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column conso_5_usages_ep is non-null",
+    "note": "Preserve reported 5-use primary energy total."
+  },
+  {
+    "concept_id": "pv_electricity_production_total",
+    "city": "Dublin",
+    "source_columns": [
+      "FirstEnerProdDelivered"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column FirstEnerProdDelivered is non-null",
+    "note": "Preserve as reported; identification as photovoltaic production would require additional source fields indicating the first energy type, which are not provided here."
+  },
+  {
+    "concept_id": "pv_electricity_production_total",
+    "city": "Madrid",
+    "source_columns": [
+      "elec_energia"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column elec_energia is non-null",
+    "note": "Value already represents annual on-site PV electricity production."
+  },
+  {
+    "concept_id": "pv_electricity_production_total",
+    "city": "Paris",
+    "source_columns": [
+      "production_electricite_pv_kwhep_par_an"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column production_electricite_pv_kwhep_par_an is non-null",
+    "note": "Preserve as reported because no deterministic factor from kWhep/year to kWh electricity/year is provided in the source metadata."
+  },
+  {
+    "concept_id": "renewable_energy_share",
+    "city": "Amsterdam",
+    "source_columns": [
+      "AandeelHernieuwbareEnergie"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column AandeelHernieuwbareEnergie is non-null",
+    "note": "Preserve as reported percentage; no scaling applied unless upstream metadata confirms fraction encoding instead."
+  },
+  {
+    "concept_id": "renewable_energy_share",
+    "city": "Dublin",
+    "source_columns": [
+      "RER"
+    ],
+    "op": "scale_fix",
+    "params": {
+      "factor": 100
+    },
+    "guard": "apply only when source column RER is non-null",
+    "note": "Convert ratio/fraction to percent by multiplying by 100."
+  },
+  {
+    "concept_id": "renewable_energy_share",
+    "city": "Madrid",
+    "source_columns": [
+      "termica_acscons"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column termica_acscons is non-null",
+    "note": "Preserve as reported; scope is DHW-specific and cannot be normalized to whole-building renewable energy share."
+  },
+  {
+    "concept_id": "renewable_energy_share",
+    "city": "Turin",
+    "source_columns": [
+      "epglren_ape"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column epglren_ape is non-null",
+    "note": "Preserve as reported; no deterministic rule can establish that this field is a renewable share percentage."
+  },
+  {
+    "concept_id": "space_heating_demand_intensity",
+    "city": "Barcelona",
+    "source_columns": [
+      "energia_calefacci_demanda"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column energia_calefacci_demanda is non-null",
+    "note": "Value already represents space heating demand intensity."
+  },
+  {
+    "concept_id": "space_heating_demand_intensity",
+    "city": "Madrid",
+    "source_columns": [
+      "elec_demcalef"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column elec_demcalef is non-null",
+    "note": "Value already represents space heating demand intensity."
+  },
+  {
+    "concept_id": "space_heating_demand_total",
+    "city": "Paris",
+    "source_columns": [
+      "besoin_chauffage"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column besoin_chauffage is non-null",
+    "note": "Value already represents modeled annual heating demand total."
+  },
+  {
+    "concept_id": "space_heating_final_energy_total",
+    "city": "Barcelona",
+    "source_columns": [
+      "energia_calefacci"
+    ],
+    "op": "derive",
+    "params": {
+      "operation": "multiply",
+      "operands": [
+        "energia_calefacci",
+        "concept:floor_area"
+      ]
+    },
+    "guard": "apply only when source column energia_calefacci is non-null and concept:floor_area is non-null",
+    "note": "Derive annual space-heating final energy total by multiplying reported intensity by canonical floor area."
+  },
+  {
+    "concept_id": "space_heating_final_energy_total",
+    "city": "Dublin",
+    "source_columns": [
+      "DeliveredEnergyMainSpace"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column DeliveredEnergyMainSpace is non-null",
+    "note": "Preserve delivered main space-heating energy as reported; no deterministic conversion to final energy is available and supplementary coverage may be absent."
+  },
+  {
+    "concept_id": "space_heating_final_energy_total",
+    "city": "Madrid",
+    "source_columns": [
+      "final_calef",
+      "edif_superf"
+    ],
+    "op": "derive",
+    "params": {
+      "operation": "multiply",
+      "operands": [
+        "final_calef",
+        "edif_superf"
+      ]
+    },
+    "guard": "apply only when source columns final_calef and edif_superf are both non-null",
+    "note": "Derive annual space-heating final energy total from intensity multiplied by reported floor area."
+  },
+  {
+    "concept_id": "space_heating_final_energy_total",
+    "city": "Paris",
+    "source_columns": [
+      "conso_chauffage_ef"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when source column conso_chauffage_ef is non-null",
+    "note": "Value already represents annual space-heating final energy total."
+  },
+  {
+    "concept_id": "door_area",
+    "city": "Dublin",
+    "source_columns": [
+      "DoorArea"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve as reported total door area in m2. Do not normalize internal/external-door scope without explicit metadata."
+  },
+  {
+    "concept_id": "door_u_value",
+    "city": "Dublin",
+    "source_columns": [
+      "UvalueDoor"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported door U-value in W/m2K. No deterministic normalization across methodologies is available."
+  },
+  {
+    "concept_id": "floor_element_area",
+    "city": "Dublin",
+    "source_columns": [
+      "FloorArea"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported floor-element/envelope area in m2. Do not reinterpret as dwelling/internal floor area."
+  },
+  {
+    "concept_id": "floor_element_area",
+    "city": "Lisbon",
+    "source_columns": [
+      "pavimento_area_total"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported floor envelope element area in m2."
+  },
+  {
+    "concept_id": "floor_u_value",
+    "city": "Dublin",
+    "source_columns": [
+      "UValueFloor"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported floor-element U-value in W/m2K. No deterministic harmonization across aggregation methods."
+  },
+  {
+    "concept_id": "roof_area",
+    "city": "Dublin",
+    "source_columns": [
+      "RoofArea"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported roof area in m2."
+  },
+  {
+    "concept_id": "roof_area",
+    "city": "Lisbon",
+    "source_columns": [
+      "cobertura_area_total"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported roof envelope area in m2."
+  },
+  {
+    "concept_id": "roof_u_value",
+    "city": "Dublin",
+    "source_columns": [
+      "UValueRoof"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported roof U-value in W/m2K."
+  },
+  {
+    "concept_id": "wall_area",
+    "city": "Dublin",
+    "source_columns": [
+      "WallArea"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported wall area in m2."
+  },
+  {
+    "concept_id": "wall_area",
+    "city": "Lisbon",
+    "source_columns": [
+      "parede_area_total"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported wall envelope area in m2."
+  },
+  {
+    "concept_id": "wall_u_value",
+    "city": "Dublin",
+    "source_columns": [
+      "UValueWall"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported wall U-value in W/m2K. No deterministic adjustment for differing aggregation conventions."
+  },
+  {
+    "concept_id": "window_area",
+    "city": "Dublin",
+    "source_columns": [
+      "WindowArea"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported window area in m2."
+  },
+  {
+    "concept_id": "window_area",
+    "city": "Lisbon",
+    "source_columns": [
+      "envidracado_area_total"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported glazed/window area in m2. Do not force equivalence with windows-only definitions without metadata."
+  },
+  {
+    "concept_id": "window_u_value",
+    "city": "Dublin",
+    "source_columns": [
+      "UValueWindow"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": null,
+    "note": "Preserve reported window U-value in W/m2K. No deterministic conversion between whole-window and glazing-only methodologies."
+  },
+  {
+    "concept_id": "building_compactness",
+    "city": "Amsterdam",
+    "source_columns": [
+      "Compactheid"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve raw reported compactness indicator; no safe deterministic normalization is available because the underlying formula is unspecified and cross-city definitions differ."
+  },
+  {
+    "concept_id": "building_compactness",
+    "city": "Madrid",
+    "source_columns": [
+      "edif_compac"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve raw reported compactness/form-factor value; no fully specified conversion is possible without the source formula."
+  },
+  {
+    "concept_id": "building_compactness",
+    "city": "Paris",
+    "source_columns": [
+      "ubat_w_par_m2_k"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Do not normalize. Source measures global heat-loss coefficient per m²K, which is not the same construct as geometric compactness/form factor."
+  },
+  {
+    "concept_id": "floor_area",
+    "city": "Amsterdam",
+    "source_columns": [
+      "GebruiksoppervlakteThermischeZone"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve raw m² value. No safe deterministic rule exists to convert thermal-zone usable area to a harmonized cross-city floor-area basis."
+  },
+  {
+    "concept_id": "floor_area",
+    "city": "Barcelona",
+    "source_columns": [
+      "metres_cadastre"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve raw cadastral area in m²; no deterministic crosswalk to a harmonized floor-area definition is available."
+  },
+  {
+    "concept_id": "floor_area",
+    "city": "Copenhagen",
+    "source_columns": [
+      "TotalHeatedFloorArea"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve raw heated floor area in m²; no fully specified conversion to a common basis is available."
+  },
+  {
+    "concept_id": "floor_area",
+    "city": "Dublin",
+    "source_columns": [
+      "GroundFloorArea(sq m)"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve raw reported area in m²; cannot deterministically harmonize gross/ground floor area to other cities' area bases."
+  },
+  {
+    "concept_id": "floor_area",
+    "city": "Liège",
+    "source_columns": [
+      "total_heated_floor"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve raw heated floor area in m²; no deterministic harmonization to a common floor-area basis."
+  },
+  {
+    "concept_id": "floor_area",
+    "city": "London",
+    "source_columns": [
+      "total_floor_area"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve raw total floor area in m²; no further transformation required."
+  },
+  {
+    "concept_id": "floor_area",
+    "city": "Madrid",
+    "source_columns": [
+      "edif_superf"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve raw reported area in m²; exact area basis is unspecified, so no deterministic normalization is possible."
+  },
+  {
+    "concept_id": "floor_area",
+    "city": "Paris",
+    "source_columns": [
+      "surface_habitable_logement"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve raw habitable area in m²; no deterministic conversion to a common floor-area basis is available."
+  },
+  {
+    "concept_id": "floor_area",
+    "city": "Turin",
+    "source_columns": [
+      "superficie_di_riferimento_mq"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve raw reference area in m²; no fully specified crosswalk to a harmonized floor-area basis."
+  },
+  {
+    "concept_id": "floor_height",
+    "city": "Dublin",
+    "source_columns": [
+      "GroundFloorHeight"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve raw height in meters; no deterministic derivation to a general representative floor height is available from this single field."
+  },
+  {
+    "concept_id": "floor_height",
+    "city": "London",
+    "source_columns": [
+      "floor_height"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve raw height in meters; no transformation required."
+  },
+  {
+    "concept_id": "floor_height",
+    "city": "Paris",
+    "source_columns": [
+      "hauteur_sous_plafond"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve raw clear height in meters; no deterministic conversion to representative floor/storey height is available."
+  },
+  {
+    "concept_id": "number_of_storeys",
+    "city": "Dublin",
+    "source_columns": [
+      "NoStoreys"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve raw integer count; no transformation required."
+  },
+  {
+    "concept_id": "number_of_storeys",
+    "city": "Lisbon",
+    "source_columns": [
+      "Nr de pisos"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve raw integer count; no transformation required."
+  },
+  {
+    "concept_id": "number_of_storeys",
+    "city": "Paris",
+    "source_columns": [
+      "nombre_niveau_logement"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve raw integer count; source represents dwelling levels, not necessarily total building storeys."
+  },
+  {
+    "concept_id": "climate_zone",
+    "city": "Barcelona",
+    "source_columns": [
+      "zona_climatica"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Do not normalize across cities. Preserve original Spanish climate-zone code."
+  },
+  {
+    "concept_id": "climate_zone",
+    "city": "Lisbon",
+    "source_columns": [
+      "Zona Climática de Inverno"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve original Portuguese winter climate-zone value. Do not normalize across cities; seasonal scope differs."
+  },
+  {
+    "concept_id": "climate_zone",
+    "city": "Madrid",
+    "source_columns": [
+      "edif_zonaclim"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Do not normalize across cities. Preserve original Spanish climate-zone code."
+  },
+  {
+    "concept_id": "climate_zone",
+    "city": "Paris",
+    "source_columns": [
+      "zone_climatique"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Do not normalize across cities. Preserve original French DPE climate-zone code."
+  },
+  {
+    "concept_id": "house_number",
+    "city": "Amsterdam",
+    "source_columns": [
+      "Huisnummer"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve text value as provided; no numeric coercion."
+  },
+  {
+    "concept_id": "house_number",
+    "city": "Barcelona",
+    "source_columns": [
+      "numero"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve text value as provided; no numeric coercion."
+  },
+  {
+    "concept_id": "house_number",
+    "city": "Copenhagen",
+    "source_columns": [
+      "HouseNumber"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve text value as provided; no numeric coercion."
+  },
+  {
+    "concept_id": "house_number",
+    "city": "Paris",
+    "source_columns": [
+      "numero_voie_ban"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve text value as provided; no numeric coercion."
+  },
+  {
+    "concept_id": "house_number",
+    "city": "Turin",
+    "source_columns": [
+      "numero_civico"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve text value as provided; no numeric coercion."
+  },
+  {
+    "concept_id": "latitude",
+    "city": "Barcelona",
+    "source_columns": [
+      "latitud"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve value. If downstream metadata confirms non-geographic CRS, this mapping must be revisited."
+  },
+  {
+    "concept_id": "latitude",
+    "city": "Copenhagen",
+    "source_columns": [
+      "Wgs84Latitude"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve decimal-degree latitude in WGS84."
+  },
+  {
+    "concept_id": "latitude",
+    "city": "Turin",
+    "source_columns": [
+      "latitudine"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve value. If downstream metadata confirms non-geographic CRS, this mapping must be revisited."
+  },
+  {
+    "concept_id": "longitude",
+    "city": "Barcelona",
+    "source_columns": [
+      "longitud"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve value. If downstream metadata confirms non-geographic CRS, this mapping must be revisited."
+  },
+  {
+    "concept_id": "longitude",
+    "city": "Copenhagen",
+    "source_columns": [
+      "Wgs84Longitude"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve decimal-degree longitude in WGS84."
+  },
+  {
+    "concept_id": "longitude",
+    "city": "Turin",
+    "source_columns": [
+      "longitudine"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve value. If downstream metadata confirms non-geographic CRS, this mapping must be revisited."
+  },
+  {
+    "concept_id": "municipality",
+    "city": "Barcelona",
+    "source_columns": [
+      "poblacio"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve locality string as provided."
+  },
+  {
+    "concept_id": "municipality",
+    "city": "Copenhagen",
+    "source_columns": [
+      "PostalCity"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve postal-city string; do not treat as strictly equivalent municipality."
+  },
+  {
+    "concept_id": "municipality",
+    "city": "Dublin",
+    "source_columns": [
+      "CountyName"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve county/subdivision string; not strictly municipality-equivalent."
+  },
+  {
+    "concept_id": "municipality",
+    "city": "Liège",
+    "source_columns": [
+      "city"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve raw locality field. Intended logic: split postal code from locality text where present, but no fully specified deterministic pattern/crosswalk is provided."
+  },
+  {
+    "concept_id": "municipality",
+    "city": "Lisbon",
+    "source_columns": [
+      "Concelho"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve municipality name as provided."
+  },
+  {
+    "concept_id": "municipality",
+    "city": "London",
+    "source_columns": [
+      "posttown"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve post-town string; do not treat as strictly equivalent municipality."
+  },
+  {
+    "concept_id": "municipality",
+    "city": "Madrid",
+    "source_columns": [
+      "edif_muni"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve municipality name as provided."
+  },
+  {
+    "concept_id": "municipality",
+    "city": "Paris",
+    "source_columns": [
+      "nom_commune_ban"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve commune/arrondissement string as provided."
+  },
+  {
+    "concept_id": "postal_code",
+    "city": "Amsterdam",
+    "source_columns": [
+      "Postcode"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve postal code as text, including spaces and letters."
+  },
+  {
+    "concept_id": "postal_code",
+    "city": "Barcelona",
+    "source_columns": [
+      "codi_postal"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve postal code as text, including leading zeros if any."
+  },
+  {
+    "concept_id": "postal_code",
+    "city": "Copenhagen",
+    "source_columns": [
+      "PostalCode"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve postal code as text."
+  },
+  {
+    "concept_id": "postal_code",
+    "city": "London",
+    "source_columns": [
+      "postcode"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve postcode as text, including embedded space if present."
+  },
+  {
+    "concept_id": "postal_code",
+    "city": "Madrid",
+    "source_columns": [
+      "edif_codpost"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve postal code as text."
+  },
+  {
+    "concept_id": "postal_code",
+    "city": "Paris",
+    "source_columns": [
+      "code_postal_ban"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve postal code as text."
+  },
+  {
+    "concept_id": "projected_x_coordinate",
+    "city": "Barcelona",
+    "source_columns": [
+      "utm_x"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve raw projected easting. Reprojection cannot be specified without explicit source CRS/zone."
+  },
+  {
+    "concept_id": "projected_x_coordinate",
+    "city": "Paris",
+    "source_columns": [
+      "coordonnee_cartographique_x_ban"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve raw projected easting. Reprojection cannot be specified without explicit source CRS."
+  },
+  {
+    "concept_id": "projected_y_coordinate",
+    "city": "Barcelona",
+    "source_columns": [
+      "utm_y"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve raw projected northing. Reprojection cannot be specified without explicit source CRS/zone."
+  },
+  {
+    "concept_id": "projected_y_coordinate",
+    "city": "Paris",
+    "source_columns": [
+      "coordonnee_cartographique_y_ban"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve raw projected northing. Reprojection cannot be specified without explicit source CRS."
+  },
+  {
+    "concept_id": "street_name",
+    "city": "Barcelona",
+    "source_columns": [
+      "adre_a"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve raw value. Intended logic would require parsing full address to extract street name, which is not fully specifiable from the provided metadata."
+  },
+  {
+    "concept_id": "street_name",
+    "city": "Copenhagen",
+    "source_columns": [
+      "StreetName"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve street name text as provided."
+  },
+  {
+    "concept_id": "street_name",
+    "city": "Paris",
+    "source_columns": [
+      "nom_rue_ban"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "",
+    "note": "Preserve street name text as provided."
+  },
+  {
+    "concept_id": "certificate_context",
+    "city": "Amsterdam",
+    "source_columns": [
+      "Status"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve original status values. No full recategorization mapping was provided for all observed source levels."
+  },
+  {
+    "concept_id": "certificate_context",
+    "city": "Barcelona",
+    "source_columns": [
+      "tipus_tramit"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve original categories. A machine-runnable recategorization cannot be authored without the complete observed value list and target mapping."
+  },
+  {
+    "concept_id": "certificate_context",
+    "city": "Dublin",
+    "source_columns": [
+      "TypeofRating"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve original categories because no exhaustive source-to-canonical category mapping is available."
+  },
+  {
+    "concept_id": "certificate_context",
+    "city": "London",
+    "source_columns": [
+      "transaction_type"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve original transaction/use context values. Do not normalize into certificate-state categories without a full audited crosswalk."
+  },
+  {
+    "concept_id": "certificate_context",
+    "city": "Madrid",
+    "source_columns": [
+      "edif_tiporeg"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve original values. Full value normalization cannot be specified without the complete observed category set."
+  },
+  {
+    "concept_id": "certificate_context",
+    "city": "Paris",
+    "source_columns": [
+      "methode_application_dpe"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve source values. No exhaustive recategorization to a shared certificate-context taxonomy is available."
+  },
+  {
+    "concept_id": "certification_method",
+    "city": "Amsterdam",
+    "source_columns": [
+      "Berekeningstype"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve original methodology/version strings; no cross-city normalization should be applied."
+  },
+  {
+    "concept_id": "certification_method",
+    "city": "Barcelona",
+    "source_columns": [
+      "eina_de_certificacio"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve original tool names; they are not cross-city comparable categories."
+  },
+  {
+    "concept_id": "certification_method",
+    "city": "Madrid",
+    "source_columns": [
+      "edif_proced"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve original engine/procedure values; no deterministic harmonization is available."
+  },
+  {
+    "concept_id": "certification_method",
+    "city": "Paris",
+    "source_columns": [
+      "modele_dpe"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve original model values; they should not be normalized into a shared substantive category."
+  },
+  {
+    "concept_id": "domestic_hot_water_cost_total",
+    "city": "London",
+    "source_columns": [
+      "hot_water_cost_current"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve cost values. Cross-city normalization is not specified because currency/reference-year assumptions are unknown."
+  },
+  {
+    "concept_id": "domestic_hot_water_cost_total",
+    "city": "Paris",
+    "source_columns": [
+      "cout_ecs"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve cost values. Do not convert or normalize without explicit currency and price-basis metadata."
+  },
+  {
+    "concept_id": "heating_cost_total",
+    "city": "Copenhagen",
+    "source_columns": [
+      "HeatSupplyCost"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve values pending confirmation whether this is annual space-heating cost, heat tariff/supply charge, or another cost basis."
+  },
+  {
+    "concept_id": "heating_cost_total",
+    "city": "London",
+    "source_columns": [
+      "heating_cost_current"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve cost values; cross-city normalization cannot be fully specified."
+  },
+  {
+    "concept_id": "heating_cost_total",
+    "city": "Madrid",
+    "source_columns": [
+      "edif_calef"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve raw values only. Do not normalize or aggregate as cost until the source metadata confirms unit and definition."
+  },
+  {
+    "concept_id": "heating_cost_total",
+    "city": "Paris",
+    "source_columns": [
+      "cout_chauffage"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve cost values; no safe currency/price normalization is available."
+  },
+  {
+    "concept_id": "lighting_cost_total",
+    "city": "London",
+    "source_columns": [
+      "lighting_cost_current"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve values; no fully specified cross-city cost normalization is possible."
+  },
+  {
+    "concept_id": "lighting_cost_total",
+    "city": "Paris",
+    "source_columns": [
+      "cout_eclairage"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve values; currency/reference-year harmonization is not specified."
+  },
+  {
+    "concept_id": "total_energy_cost",
+    "city": "Barcelona",
+    "source_columns": [
+      "cost_anual_aproximat_d_energia"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve total cost values. No fully specified normalization for coverage/currency is available."
+  },
+  {
+    "concept_id": "total_energy_cost",
+    "city": "Madrid",
+    "source_columns": [
+      "edif_refrig",
+      "edif_calef",
+      "edif_acs"
+    ],
+    "op": "derive",
+    "params": {
+      "operation": "sum",
+      "operands": [
+        "edif_refrig",
+        "edif_calef",
+        "edif_acs"
+      ]
+    },
+    "guard": "apply only when all three source columns are present and numeric",
+    "note": "Derived subtotal of cooling + heating + DHW only. Preserve semantic warning that lighting and any other end uses are excluded, so result is not fully comparable to complete totals."
+  },
+  {
+    "concept_id": "total_energy_cost",
+    "city": "Paris",
+    "source_columns": [
+      "cout_total_5_usages"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve total cost values. Coverage is 5 uses and may differ from other cities' totals."
+  },
+  {
+    "concept_id": "co2_class",
+    "city": "Barcelona",
+    "source_columns": [
+      "qualificacio_d_emissions"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve original class label; do not recode across cities because national/regional class thresholds and scope are not comparable."
+  },
+  {
+    "concept_id": "co2_class",
+    "city": "Madrid",
+    "source_columns": [
+      "cal_co2global"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve original Spanish EPC CO2 class; no cross-city normalization because class definitions are jurisdiction-specific."
+  },
+  {
+    "concept_id": "co2_class",
+    "city": "Paris",
+    "source_columns": [
+      "etiquette_ges"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve original French GES class; do not recategorize to a cross-city canonical scale."
+  },
+  {
+    "concept_id": "energy_class",
+    "city": "Amsterdam",
+    "source_columns": [
+      "Energieklasse"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve Dutch energy label class; no cross-city recategorization."
+  },
+  {
+    "concept_id": "energy_class",
+    "city": "Barcelona",
+    "source_columns": [
+      "qualificaci_de_consum_d"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve original label; do not normalize across cities because thresholds and underlying metrics differ."
+  },
+  {
+    "concept_id": "energy_class",
+    "city": "Copenhagen",
+    "source_columns": [
+      "CurrentEnergyLabelClassification"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve Danish energy label classification; no cross-city recoding."
+  },
+  {
+    "concept_id": "energy_class",
+    "city": "Dublin",
+    "source_columns": [
+      "EnergyRating"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve BER alphabetic class; do not map letters to a cross-country common scale."
+  },
+  {
+    "concept_id": "energy_class",
+    "city": "Liège",
+    "source_columns": [
+      "e_spec_label"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve original EPC label class; no cross-city normalization."
+  },
+  {
+    "concept_id": "energy_class",
+    "city": "London",
+    "source_columns": [
+      "current_energy_rating"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve UK EPC rating class; no cross-city recoding."
+  },
+  {
+    "concept_id": "energy_class",
+    "city": "Madrid",
+    "source_columns": [
+      "cal_norenovglobal"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve original Spanish class label; do not normalize across cities. Underlying basis is non-renewable primary energy."
+  },
+  {
+    "concept_id": "energy_class",
+    "city": "Paris",
+    "source_columns": [
+      "etiquette_dpe"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve French DPE class; do not recategorize to cross-city classes."
+  },
+  {
+    "concept_id": "energy_class",
+    "city": "Turin",
+    "source_columns": [
+      "classe_energetica_ape"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve Italian APE energy class; no cross-city normalization."
+  },
+  {
+    "concept_id": "energy_efficiency_score",
+    "city": "Amsterdam",
+    "source_columns": [
+      "EnergieIndex"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve Dutch Energie-Index score; do not rescale to other national systems."
+  },
+  {
+    "concept_id": "energy_efficiency_score",
+    "city": "Dublin",
+    "source_columns": [
+      "BerRating"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve BER numeric rating; no cross-country normalization because the BER scale is system-specific."
+  },
+  {
+    "concept_id": "energy_efficiency_score",
+    "city": "London",
+    "source_columns": [
+      "current_energy_efficiency"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve UK SAP/EPC score; do not rescale to other countries' indices."
+  },
+  {
+    "concept_id": "energy_efficiency_score",
+    "city": "Turin",
+    "source_columns": [
+      "ape_score_total"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "always",
+    "note": "Preserve original composite APE score. No normalization. If later documentation clarifies the exact score definition, reassess semantic alignment."
+  },
+  {
+    "concept_id": "cooling_system_type",
+    "city": "Madrid",
+    "source_columns": [
+      "refrig_tipo"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Intended logic is category harmonization of cooling generator/system labels to broad canonical classes, but no complete mapping of observed source levels is provided here, so a machine-runnable recategorization cannot be fully specified."
+  },
+  {
+    "concept_id": "cooling_system_type",
+    "city": "Paris",
+    "source_columns": [
+      "type_generateur_froid"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Intended logic is recategorization from detailed French cooling generator categories to broad canonical cooling system classes, but a full source-to-target mapping is not available here."
+  },
+  {
+    "concept_id": "heating_installation_scope",
+    "city": "Paris",
+    "source_columns": [
+      "type_installation_chauffage"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Source already expresses the intended installation-scope concept. If future canonical categories require exact label normalization, a full mapping of all observed French labels would be needed."
+  },
+  {
+    "concept_id": "heating_system_efficiency",
+    "city": "Dublin",
+    "source_columns": [
+      "HSMainSystemEfficiency"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Preserve raw reported efficiency/performance value. Do not normalize across cities because values may represent different bases (seasonal efficiency, generator efficiency, or COP-like performance). Registry-specific cleaning of sentinels/outliers would require thresholds or code lists not provided here."
+  },
+  {
+    "concept_id": "heating_system_efficiency",
+    "city": "Madrid",
+    "source_columns": [
+      "calefac_rendim"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Preserve raw reported heating performance value. Do not normalize across cities because the basis varies by technology and sentinel-value handling cannot be fully specified without registry-specific code definitions."
+  },
+  {
+    "concept_id": "heating_system_type",
+    "city": "Liège",
+    "source_columns": [
+      "device"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Intended logic is normalization of device labels to broad canonical heating-system classes, but a complete mapping of observed source categories is not provided."
+  },
+  {
+    "concept_id": "heating_system_type",
+    "city": "London",
+    "source_columns": [
+      "mainheat_description"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Intended logic is recategorization from free-text or descriptive system labels to broad canonical heating-system classes, but no exhaustive mapping of observed descriptions is available here."
+  },
+  {
+    "concept_id": "heating_system_type",
+    "city": "Madrid",
+    "source_columns": [
+      "calefac_tipo"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Intended logic is category normalization to broad canonical heating-system classes, but a full mapping of observed source values is not available."
+  },
+  {
+    "concept_id": "heating_system_type",
+    "city": "Paris",
+    "source_columns": [
+      "type_generateur_chauffage_principal"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Intended logic is recategorization from detailed French generator categories to broad canonical heating-system classes, but no complete source-level mapping is provided here."
+  },
+  {
+    "concept_id": "hot_water_installation_scope",
+    "city": "Paris",
+    "source_columns": [
+      "type_installation_ecs"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Source already expresses the intended concept. Exact canonical label normalization would require a complete mapping of all observed labels if needed later."
+  },
+  {
+    "concept_id": "hot_water_system_efficiency",
+    "city": "Dublin",
+    "source_columns": [
+      "WHMainSystemEff"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Preserve raw reported DHW efficiency/performance value. Do not normalize across cities because metric basis is not established as equivalent."
+  },
+  {
+    "concept_id": "hot_water_system_efficiency",
+    "city": "Madrid",
+    "source_columns": [
+      "acs_rendim"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Preserve raw reported DHW performance value. Do not normalize across cities because exact basis varies and sentinel-value treatment cannot be fully specified from the provided information."
+  },
+  {
+    "concept_id": "hot_water_system_type",
+    "city": "London",
+    "source_columns": [
+      "hotwater_description"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Intended logic is recategorization from DHW system descriptions to broad canonical DHW system classes, but no exhaustive mapping of observed source descriptions is provided."
+  },
+  {
+    "concept_id": "hot_water_system_type",
+    "city": "Madrid",
+    "source_columns": [
+      "acs_tipo"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Intended logic is normalization of source generator categories to broad canonical DHW system classes, but a complete mapping is not available here."
+  },
+  {
+    "concept_id": "hot_water_system_type",
+    "city": "Paris",
+    "source_columns": [
+      "type_generateur_chauffage_principal_ecs"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Intended logic is recategorization from detailed French DHW generator categories to broad canonical classes, but no complete source-to-target mapping is provided."
+  },
+  {
+    "concept_id": "low_energy_lighting_share",
+    "city": "Dublin",
+    "source_columns": [
+      "LowEnergyLightingPercent"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Values already represent the intended percentage share. No deterministic normalization is specified or required from the provided information."
+  },
+  {
+    "concept_id": "low_energy_lighting_share",
+    "city": "London",
+    "source_columns": [
+      "low_energy_lighting"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Values already represent the intended share. Preserve as reported."
+  },
+  {
+    "concept_id": "main_heating_fuel",
+    "city": "Copenhagen",
+    "source_columns": [
+      "HeatSupply"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Intended logic is normalization of reported heat supply labels to broad canonical main-heating-fuel/carrier classes, but the full set of observed source categories and their mapping is not provided."
+  },
+  {
+    "concept_id": "main_heating_fuel",
+    "city": "Dublin",
+    "source_columns": [
+      "MainSpaceHeatingFuel"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Preserve raw category unless a complete crosswalk to canonical broad carrier classes is supplied."
+  },
+  {
+    "concept_id": "main_heating_fuel",
+    "city": "London",
+    "source_columns": [
+      "main_fuel"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Intended logic is recategorization from raw fuel/community labels to broad canonical carrier classes, but a full mapping of observed labels is not provided."
+  },
+  {
+    "concept_id": "main_heating_fuel",
+    "city": "Madrid",
+    "source_columns": [
+      "calefac_vector"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Preserve raw category unless a complete broad-class crosswalk is provided."
+  },
+  {
+    "concept_id": "main_heating_fuel",
+    "city": "Paris",
+    "source_columns": [
+      "type_energie_principale_chauffage"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Preserve raw category unless a complete broad-class crosswalk is provided."
+  },
+  {
+    "concept_id": "main_hot_water_fuel",
+    "city": "Dublin",
+    "source_columns": [
+      "MainWaterHeatingFuel"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Preserve raw category unless a complete canonical crosswalk is available."
+  },
+  {
+    "concept_id": "main_hot_water_fuel",
+    "city": "Madrid",
+    "source_columns": [
+      "acs_vector"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Preserve raw category unless a complete canonical crosswalk is available."
+  },
+  {
+    "concept_id": "main_hot_water_fuel",
+    "city": "Paris",
+    "source_columns": [
+      "type_energie_principale_ecs"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Preserve raw category unless a complete canonical crosswalk is available."
+  },
+  {
+    "concept_id": "solar_hot_water_present",
+    "city": "Barcelona",
+    "source_columns": [
+      "solar_termica"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Likely requires boolean normalization of source labels/codes, but no complete source value set is provided here."
+  },
+  {
+    "concept_id": "solar_hot_water_present",
+    "city": "Dublin",
+    "source_columns": [
+      "SolarHotWaterHeating"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Preserve reported boolean/category. If normalization to true/false is needed, a complete mapping of observed values is required."
+  },
+  {
+    "concept_id": "solar_hot_water_present",
+    "city": "London",
+    "source_columns": [
+      "solar_water_heating_flag"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Preserve reported flag. If raw values are not already boolean, a complete mapping of observed codes is required."
+  },
+  {
+    "concept_id": "solar_hot_water_present",
+    "city": "Madrid",
+    "source_columns": [
+      "termica_nombre"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Intended logic is to set boolean true when the source indicates solar thermal presence, but because the field may include thermal renewable contribution for end uses beyond DHW and the exact code/value set is not provided, a deterministic full recategorization cannot be specified here."
+  },
+  {
+    "concept_id": "solar_hot_water_present",
+    "city": "Paris",
+    "source_columns": [
+      "type_installation_solaire_n1"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Intended logic is boolean derivation from installation type: true if the source installation type indicates solar thermal serving ECS or heating+ECS, otherwise false. A machine-runnable rule cannot be specified without the complete list of source categories and exact positive set."
+  },
+  {
+    "concept_id": "solar_pv_present",
+    "city": "Barcelona",
+    "source_columns": [
+      "solar_fotovoltaica"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Likely requires boolean normalization of source labels/codes, but no full value mapping is provided."
+  },
+  {
+    "concept_id": "solar_pv_present",
+    "city": "Dublin",
+    "source_columns": [
+      "SecondEnergyType_Description"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Intended logic is to mark PV present when the second energy type description explicitly equals a PV-related label. This cannot be fully specified without the exact observed source labels and confirmation that the slot exclusively captures PV-relevant renewable electricity production."
+  },
+  {
+    "concept_id": "solar_pv_present",
+    "city": "London",
+    "source_columns": [
+      "photo_supply"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Intended logic is boolean derivation: true if photo_supply > 0, false if photo_supply = 0. Because the allowed values, units, and treatment of blanks/sentinels are not fully specified here, emit preserve rather than an incomplete derivation."
+  },
+  {
+    "concept_id": "solar_pv_present",
+    "city": "Madrid",
+    "source_columns": [
+      "elec_nombre"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Intended logic is boolean normalization of source labels/codes, but no complete value mapping is provided."
+  },
+  {
+    "concept_id": "solar_pv_present",
+    "city": "Paris",
+    "source_columns": [
+      "presence_production_pv"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Preserve reported flag. If normalization is needed, a complete mapping of observed codes is required."
+  },
+  {
+    "concept_id": "ventilation_type",
+    "city": "Barcelona",
+    "source_columns": [
+      "ventilacio_us_residencial"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Intended logic is recategorization from numeric ventilation indicator codes to broad canonical ventilation types, but the complete codebook is not provided and semantics remain uncertain."
+  },
+  {
+    "concept_id": "ventilation_type",
+    "city": "Dublin",
+    "source_columns": [
+      "VentilationMethod"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Preserve raw ventilation category unless a complete crosswalk to broad canonical ventilation classes is supplied."
+  },
+  {
+    "concept_id": "ventilation_type",
+    "city": "London",
+    "source_columns": [
+      "mechanical_ventilation"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "If this field is boolean or limited-category, intended logic would be recategorization to broad ventilation classes (e.g., mechanical vs natural/other), but the exact value set is not provided and a complete mapping cannot be specified."
+  },
+  {
+    "concept_id": "ventilation_type",
+    "city": "Madrid",
+    "source_columns": [
+      "edif_acrist"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "No deterministic transformation should be applied because the source semantics are unclear and may not represent ventilation type at all."
+  },
+  {
+    "concept_id": "ventilation_type",
+    "city": "Paris",
+    "source_columns": [
+      "type_ventilation"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply only if source value is non-null",
+    "note": "Intended logic is recategorization from French ventilation categories to broad canonical ventilation classes, but no complete mapping of observed source levels is provided here."
+  },
+  {
+    "concept_id": "assessment_date",
+    "city": "Amsterdam",
+    "source_columns": [
+      "Opnamedatum"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when value matches 8-digit YYYYMMDD numeric pattern",
+    "note": "Normalize numeric YYYYMMDD value to ISO date YYYY-MM-DD by parsing year=value[1..4], month=value[5..6], day=value[7..8]."
+  },
+  {
+    "concept_id": "assessment_date",
+    "city": "Dublin",
+    "source_columns": [
+      "DateOfAssessment"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when value is a valid datetime or timestamp string",
+    "note": "Extract the calendar date component only and output as YYYY-MM-DD; discard time-of-day and timezone."
+  },
+  {
+    "concept_id": "assessment_date",
+    "city": "Liège",
+    "source_columns": [
+      "certificate_date"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Do not normalize to assessment_date without source-system confirmation whether this is the on-site assessment/inspection date."
+  },
+  {
+    "concept_id": "assessment_date",
+    "city": "London",
+    "source_columns": [
+      "inspection_date"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Value can be retained as-is if already a valid date; otherwise normalize to YYYY-MM-DD using source date parser."
+  },
+  {
+    "concept_id": "assessment_date",
+    "city": "Paris",
+    "source_columns": [
+      "date_visite_diagnostiqueur"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Value can be retained as-is if already a valid date; otherwise normalize to YYYY-MM-DD using source date parser."
+  },
+  {
+    "concept_id": "certificate_valid_until",
+    "city": "Amsterdam",
+    "source_columns": [
+      "GeldigTot"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when value matches 8-digit YYYYMMDD numeric pattern",
+    "note": "Normalize numeric YYYYMMDD value to ISO date YYYY-MM-DD by parsing year=value[1..4], month=value[5..6], day=value[7..8]."
+  },
+  {
+    "concept_id": "certificate_valid_until",
+    "city": "Copenhagen",
+    "source_columns": [
+      "ValidTo"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Value can be retained as-is if already a valid date; otherwise normalize to YYYY-MM-DD using source date parser."
+  },
+  {
+    "concept_id": "certificate_valid_until",
+    "city": "Paris",
+    "source_columns": [
+      "date_fin_validite_dpe"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Value can be retained as-is if already a valid date; otherwise normalize to YYYY-MM-DD using source date parser."
+  },
+  {
+    "concept_id": "certificate_valid_until",
+    "city": "Turin",
+    "source_columns": [
+      "data_decorrenza"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Do not treat as certificate_valid_until without documentation confirming that data_decorrenza stores validity end rather than commencement/effective date."
+  },
+  {
+    "concept_id": "construction_period",
+    "city": "Barcelona",
+    "source_columns": [
+      "normativa_construcci"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Preserve source categories. Do not normalize across cities without a fully enumerated harmonized crosswalk from regulatory periods to canonical bins."
+  },
+  {
+    "concept_id": "construction_period",
+    "city": "Liège",
+    "source_columns": [
+      "build_period_v2"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Preserve source categories. Cross-city normalization requires an explicit recategorization mapping covering all observed Liège levels and all target canonical bins."
+  },
+  {
+    "concept_id": "construction_period",
+    "city": "Lisbon",
+    "source_columns": [
+      "Período_Construcao_Geral"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Preserve source categories. Cross-city normalization requires an explicit recategorization mapping covering all observed Lisbon levels and all target canonical bins."
+  },
+  {
+    "concept_id": "construction_period",
+    "city": "London",
+    "source_columns": [
+      "construction_age_band"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Preserve source categories. Cross-city normalization requires an explicit recategorization mapping covering all observed London levels and all target canonical bins."
+  },
+  {
+    "concept_id": "construction_period",
+    "city": "Paris",
+    "source_columns": [
+      "periode_construction"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Preserve source categories. Cross-city normalization requires an explicit recategorization mapping covering all observed Paris levels and all target canonical bins."
+  },
+  {
+    "concept_id": "construction_year",
+    "city": "Amsterdam",
+    "source_columns": [
+      "Bouwjaar"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Retain as reported year; optional downstream validation may set non-four-digit or implausible values to missing."
+  },
+  {
+    "concept_id": "construction_year",
+    "city": "Barcelona",
+    "source_columns": [
+      "any_construccio"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Retain as reported year; optional downstream validation may set non-four-digit or implausible values to missing."
+  },
+  {
+    "concept_id": "construction_year",
+    "city": "Copenhagen",
+    "source_columns": [
+      "YearOfConstruction"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Retain as reported year; optional downstream validation may set non-four-digit or implausible values to missing."
+  },
+  {
+    "concept_id": "construction_year",
+    "city": "Dublin",
+    "source_columns": [
+      "Year_of_Construction"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Retain as reported year; optional downstream validation may set non-four-digit or implausible values to missing."
+  },
+  {
+    "concept_id": "construction_year",
+    "city": "Liège",
+    "source_columns": [
+      "build_year"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Retain as reported year; optional downstream validation may set non-four-digit or implausible values to missing."
+  },
+  {
+    "concept_id": "construction_year",
+    "city": "Madrid",
+    "source_columns": [
+      "edif_año"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Preserve source values. Intended logic: validate as four-digit year and set clear placeholders/implausible outliers to missing according to project-approved year bounds."
+  },
+  {
+    "concept_id": "construction_year",
+    "city": "Paris",
+    "source_columns": [
+      "annee_construction"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Retain as reported year; optional downstream validation may set non-four-digit or implausible values to missing."
+  },
+  {
+    "concept_id": "construction_year",
+    "city": "Turin",
+    "source_columns": [
+      "epoca_costruzione"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Do not coerce to exact year without documentation confirming that epoca_costruzione stores a numeric original construction year rather than a period category."
+  },
+  {
+    "concept_id": "registration_date",
+    "city": "Amsterdam",
+    "source_columns": [
+      "Registratiedatum"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "apply when value matches 8-digit YYYYMMDD numeric pattern",
+    "note": "Normalize numeric YYYYMMDD value to ISO date YYYY-MM-DD by parsing year=value[1..4], month=value[5..6], day=value[7..8]."
+  },
+  {
+    "concept_id": "registration_date",
+    "city": "Barcelona",
+    "source_columns": [
+      "data_entrada"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Value can be retained as-is if already a valid date; otherwise normalize to YYYY-MM-DD using source date parser."
+  },
+  {
+    "concept_id": "registration_date",
+    "city": "Copenhagen",
+    "source_columns": [
+      "ValidFrom"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Preserve as source date. Do not normalize semantic meaning beyond using it as an approximate administrative effective date distinct from explicit registration/lodgement."
+  },
+  {
+    "concept_id": "registration_date",
+    "city": "London",
+    "source_columns": [
+      "lodgement_date"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Value can be retained as-is if already a valid date; otherwise normalize to YYYY-MM-DD using source date parser."
+  },
+  {
+    "concept_id": "registration_date",
+    "city": "Madrid",
+    "source_columns": [
+      "edif_fecha"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Preserve source value pending source-system confirmation whether edif_fecha is registration/lodgement, issuance, or another certificate-related date."
+  },
+  {
+    "concept_id": "registration_date",
+    "city": "Paris",
+    "source_columns": [
+      "date_etablissement_dpe"
+    ],
+    "op": "preserve",
+    "params": {},
+    "guard": "none",
+    "note": "Preserve as source date. Treat as administrative establishment date, not as guaranteed registry lodging date."
+  }
+]
