@@ -195,3 +195,6 @@ backend/data/metadata/pois.json
 backend/data/agent_logs
 backend/app/data/geocode_cache.json
 backend/tests/results
+backend/data/epc_profiles/
+backend/data/epc_raw/
+backend/data/epc_schema/
