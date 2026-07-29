@@ -87,6 +87,8 @@ class Settings(BaseSettings):
         "gpt-oss-120b": 48,
         "gemma3-27b": 48,
         "qwen3-8b": 48,
+        "gemma4-local": 1,  # single local GPU (Ollama) — keep requests serial
+        "gemma4-31b": 8,    # institutional vLLM endpoint — shared, moderate concurrency
     }
 
     def set_llm_model(self, model_type: str):
@@ -113,6 +115,19 @@ class Settings(BaseSettings):
         elif model_type == "gpt-5.4":
             self.LLM_MODEL = "gpt-5.4"
             self.OPENAI_API_BASE = None # Base OpenAI
+        elif model_type == "gemma4-local":
+            # Local Gemma 4 (E4B) served by Ollama's OpenAI-compatible endpoint.
+            # No real API key needed; Ollama ignores it. Override the host with
+            # OLLAMA_API_BASE if the server runs somewhere other than localhost.
+            self.LLM_MODEL = "gemma4:e4b"
+            self.OPENAI_API_BASE = os.environ.get("OLLAMA_API_BASE") or "http://localhost:11434/v1"
+            self.OPENAI_API_KEY = "ollama"
+        elif model_type == "gemma4-31b":
+            # Institutional Gemma 4 31B (FP8) served by vLLM (OpenAI-compatible).
+            # Override the host with GEMMA4_31B_API_BASE if the endpoint moves.
+            self.LLM_MODEL = "RedHatAI/gemma-4-31B-it-FP8-block"
+            self.OPENAI_API_BASE = os.environ.get("GEMMA4_31B_API_BASE") or "http://130.192.163.76:8000/v1"
+            self.OPENAI_API_KEY = self.INSTITUTIONAL_LLM_API_KEY or "vllm"
 
 
     # Agent Temperature - 0.0 for fully deterministic outputs (consistency)

@@ -202,5 +202,10 @@ backend/data/epc_raw/
 # small top-level result JSONs in backend/data/epc_schema/ (vocabulary, matrix, reviews).
 backend/data/epc_profiles/
 backend/data/epc_schema/mappings/
+backend/data/epc_schema/mappings_gemma4/
 backend/data/epc_schema/normalized/
 backend/tests/results
+
+# Regenerable geolocation build outputs and cache
+backend/data/static_data/geo/*.geojson
+backend/data/static_data/geo/_cache/
