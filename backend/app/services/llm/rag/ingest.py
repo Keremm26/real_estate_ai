@@ -29,7 +29,11 @@ from app.services.llm.rag.metadata import ChunkMetadata
 def _build_chunks(spec: DocSpec, *, force_fetch: bool):
     """Fetch + chunk one document, returning (ids, texts, metadatas)."""
     text = fetch_text(spec["doc_key"], spec["fetch_url"], force=force_fetch)
-    articles = chunk_document(text)
+    if config.CHUNK_STRATEGY == "llm":
+        from app.services.llm.rag.llm_chunker import chunk_document_llm
+        articles = chunk_document_llm(text, cache_key=spec["doc_key"])
+    else:
+        articles = chunk_document(text)
     ids, texts, metas = [], [], []
     for art in articles:
         md = ChunkMetadata(

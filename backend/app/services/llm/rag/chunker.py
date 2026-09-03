@@ -34,6 +34,13 @@ _QUANT_RE = re.compile(
 
 _FALLBACK_MAX_CHARS = 2000
 
+# A numbered section header inside an annex/table that has no "Art." markers:
+# "6.1.2. Title", "5. Finalità". The number and title must be on the SAME line
+# (so a stray PDF page-number line isn't mistaken for a header), and the title
+# must start with a capital letter (so list items like "1. ad albergo" and data
+# rows like "18 mq ..." are excluded).
+_SECTION_RE = re.compile(r"(?m)^[ \t]*(\d+(?:\.\d+){0,3})[.)][ \t]+(\S.*)$")
+
 
 @dataclass
 class ArticleChunk:
@@ -52,20 +59,48 @@ def _normalise_ref(raw: str) -> str:
     return f"Art. {num}-{ordinal.lower()}" if ordinal else f"Art. {num}"
 
 
+def _looks_like_heading(title: str) -> bool:
+    """A numbered line is a section heading (not a list item or data row) when
+    its title's first letter is capitalised."""
+    for ch in title:
+        if ch.isalpha():
+            return ch.isupper()
+    return False
+
+
 def _fallback_split(text: str) -> List[ArticleChunk]:
-    """No article markers: split on blank-line paragraphs, packed to a size cap."""
+    """No 'Art.' markers. Prefer the document's own numbered-section structure
+    (e.g. a PDF annex: '6.1.2. Area Funzionale ...') so each rule becomes its own
+    chunk; fall back to size-capped line packing only when there is no such
+    structure, so nothing is dropped or collapsed into one blob."""
+    headers = [m for m in _SECTION_RE.finditer(text) if _looks_like_heading(m.group(2))]
+    if not headers:
+        return _size_pack(text)
+    chunks: List[ArticleChunk] = []
+    for i, m in enumerate(headers):
+        start = m.start()
+        end = headers[i + 1].start() if i + 1 < len(headers) else len(text)
+        body = text[start:end].strip()
+        if body:
+            chunks.append(ArticleChunk(f"§ {m.group(1)}", body, bool(_QUANT_RE.search(body))))
+    return chunks
+
+
+def _size_pack(text: str) -> List[ArticleChunk]:
+    """Last resort for text with no article and no numbered-section structure:
+    pack lines into size-capped sections so nothing is dropped or left as one blob."""
     chunks: List[ArticleChunk] = []
     buf, size, idx = [], 0, 1
-    for para in re.split(r"\n\s*\n", text):
-        para = para.strip()
-        if not para:
+    for line in text.splitlines():
+        line = line.strip()
+        if not line:
             continue
-        if size + len(para) > _FALLBACK_MAX_CHARS and buf:
+        if size + len(line) > _FALLBACK_MAX_CHARS and buf:
             body = "\n".join(buf)
             chunks.append(ArticleChunk(f"Section {idx}", body, bool(_QUANT_RE.search(body))))
             buf, size, idx = [], 0, idx + 1
-        buf.append(para)
-        size += len(para)
+        buf.append(line)
+        size += len(line) + 1
     if buf:
         body = "\n".join(buf)
         chunks.append(ArticleChunk(f"Section {idx}", body, bool(_QUANT_RE.search(body))))

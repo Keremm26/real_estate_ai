@@ -4,7 +4,7 @@
     "corpus": "Turin national slice — 3 Italian national documents currently in the manifest",
     "country": "IT",
     "use_case": "student_housing",
-    "match_on": "doc_key + article_ref against each retrieved chunk's metadata. doc_key maps to metadata.doc_name via manifest.MANIFESTS['turin']; article_ref matches the chunker's normalised form ('Art. 1', 'Art. 23-ter', ...).",
+    "match_on": "doc_key + article_ref against each retrieved chunk's metadata. doc_key maps to metadata.doc_name via manifest.MANIFESTS['turin']; article_ref matches the chunker's normalised form ('Art. 1', 'Art. 23-ter', ...). article_ref '*' means doc-level: any chunk from that document counts (used for the DM 1256 annex, whose '§ 7.1'-style sections have no citable article numbers). Each '*' label is satisfied at most once so recall stays bounded.",
     "caveats": [
       "Author-constructed, not domain-expert-validated — state this as a limitation. Kerem should sanity-check every `relevant` label before reporting numbers.",
       "Most queries have a single relevant article, so precision@k is capped at 1/k and is NOT a meaningful headline metric here — lead with recall@k / hit@k / MRR. The multi-article query q14 (habitability height + area) is included so nDCG@k has a multi-relevant case to grade.",
@@ -127,6 +127,37 @@
       "query": "What are the minimum door widths and ramp slopes for wheelchair accessibility?",
       "relevant": [{"doc_key": "dm_236_1989", "article_ref": "Art. 8"}],
       "gold_value": "Door clear width >= 0.80 m; ramp slope <= 8% (both in Art. 8 'Specifiche funzionali e dimensionali')"
+    },
+    {
+      "id": "q17",
+      "lang": "en",
+      "query": "In a university student residence, what is the minimum net floor area of a single room (posto letto)?",
+      "relevant": [{"doc_key": "dm_1256_2021_allegato_a", "article_ref": "*"}],
+      "gold_value": "Single room >= 11 m² (DM 1256 Allegato A, section 7.1 Area Funzionale Residenza)",
+      "note": "STUDENT-HOUSING framing -> should resolve to DM 1256, NOT the general DM 1975 Art. 2. Doc-level match ('*') because the annex sections have no citable article numbers."
+    },
+    {
+      "id": "q18",
+      "lang": "en",
+      "query": "What is the minimum area per resident for a double room in a student residence?",
+      "relevant": [{"doc_key": "dm_1256_2021_allegato_a", "article_ref": "*"}],
+      "gold_value": "Double room >= 9.5 m² per resident (DM 1256 Allegato A)",
+      "note": "STUDENT-HOUSING framing. The general-vs-student split: contrast with q04 (generic 'bedroom' -> DM 1975 Art. 2, 9/14 m²)."
+    },
+    {
+      "id": "q19",
+      "lang": "en",
+      "query": "What is the minimum amount of public, green and community space per inhabitant required by urban planning standards?",
+      "relevant": [{"doc_key": "dm_1444_1968", "article_ref": "*"}],
+      "gold_value": "~18 m²/inhabitant of public space (DM 1444/1968, artt. 3-4)",
+      "note": "Exercises the added planning doc; doc-level match because the standard is split across artt. 3-4."
+    },
+    {
+      "id": "q20",
+      "lang": "en",
+      "query": "How much parking space must be reserved for a new building?",
+      "relevant": [{"doc_key": "legge_122_1989", "article_ref": "Art. 2"}],
+      "gold_value": "1 m² per 10 m³ of construction (Legge 122/1989 Art. 2, amending art. 41-sexies L.1150/1942)"
     }
   ]
 }

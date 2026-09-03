@@ -1,0 +1,102 @@
+{
+  "meta": {
+    "description": "Hand-labelled gold set for the Madrid slice. Spain keeps three clean tiers (state CTE -> regional Ley 9/2001 -> municipal PGOUM), and the student room rule is MUNICIPAL: the PGOUM classifies student housing as 'residencia comunitaria'. Mixed ES/EN queries deliberately test bge-m3 cross-lingual retrieval against a Spanish corpus.",
+    "corpus": "Madrid Phase 1 — 6 documents, 591 chunks (state DB-SUA/HS/SI, regional Ley 9/2001, municipal PGOUM Compendio + FAQ)",
+    "country": "ES",
+    "use_case": "student_housing",
+    "match_on": "doc_key + article_ref against retrieved chunk metadata. article_ref '*' = doc-level (any chunk from that document counts), satisfied at most once. Doc-level is used throughout because oversized sections are sub-split into '(part N)' refs that are not stable enough to label.",
+    "caveats": [
+      "Author-constructed, not validated by a Spanish planning lawyer — state as a limitation. Every gold_value was verified verbatim against the ingested text.",
+      "Doc-level matching, like the London set — NOT directly comparable to the Italian article-level set. Report separately.",
+      "The cascade filters on country=ES, so only the 591 Spanish chunks compete."
+    ]
+  },
+  "queries": [
+    {
+      "id": "es01",
+      "lang": "en",
+      "query": "What is the minimum floor area of a bedroom in a student residence in Madrid?",
+      "relevant": [{"doc_key": "pgoum_preguntas_interes", "article_ref": "*"}],
+      "gold_value": "One bedroom of 12 m²; the remaining bedrooms of the student residence must be 7 m² (art. 7.3.4.2.c NNUU)",
+      "note": "THE Spanish student room-size rule — MUNICIPAL tier. Cross-country contrast: Italy=national, London=HMO licensing, Madrid=municipal."
+    },
+    {
+      "id": "es02",
+      "lang": "es",
+      "query": "¿Qué superficie mínima debe tener un dormitorio en una residencia de estudiantes?",
+      "relevant": [{"doc_key": "pgoum_preguntas_interes", "article_ref": "*"}],
+      "gold_value": "Un dormitorio de 12 m²; el resto de dormitorios 7 m²",
+      "note": "Same question as es01 in Spanish — same-language vs cross-language comparison."
+    },
+    {
+      "id": "es03",
+      "lang": "en",
+      "query": "How is collective student accommodation classified in the Madrid urban planning norms?",
+      "relevant": [{"doc_key": "pgoum_nnuu_compendio", "article_ref": "*"}],
+      "gold_value": "As 'residencia comunitaria' — stable accommodation for groups with religious, social or similar ties (PGOUM Título 7)"
+    },
+    {
+      "id": "es04",
+      "lang": "es",
+      "query": "¿Qué se entiende por residencia comunitaria en las Normas Urbanísticas?",
+      "relevant": [{"doc_key": "pgoum_nnuu_compendio", "article_ref": "*"}],
+      "gold_value": "Alojamiento estable de colectivos con vínculos de carácter religioso, social o similar"
+    },
+    {
+      "id": "es05",
+      "lang": "en",
+      "query": "What is the minimum clear width of a door on an accessible route?",
+      "relevant": [{"doc_key": "cte_db_sua", "article_ref": "*"}],
+      "gold_value": "Anchura libre de paso >= 0,80 m, measured in the frame and provided by no more than one leaf (DB-SUA 9)"
+    },
+    {
+      "id": "es06",
+      "lang": "es",
+      "query": "¿Cuál es la anchura libre de paso mínima exigida en las puertas de un itinerario accesible?",
+      "relevant": [{"doc_key": "cte_db_sua", "article_ref": "*"}],
+      "gold_value": ">= 0,80 m (DB-SUA 9)"
+    },
+    {
+      "id": "es07",
+      "lang": "en",
+      "query": "What minimum ventilation flow rate is required per square metre of habitable floor area?",
+      "relevant": [{"doc_key": "cte_db_hs", "article_ref": "*"}],
+      "gold_value": "At least 0,7 l/s per m² of usable floor area; 1,5 l/s per habitable room during unoccupied periods (DB-HS 3)"
+    },
+    {
+      "id": "es08",
+      "lang": "en",
+      "query": "What are the fire evacuation and occupant-density requirements for a building?",
+      "relevant": [{"doc_key": "cte_db_si", "article_ref": "*"}],
+      "gold_value": "Occupant-density tables, maximum travel distances and exit-width formulas (DB-SI 3, Evacuación de ocupantes)"
+    },
+    {
+      "id": "es09",
+      "lang": "en",
+      "query": "What minimum kitchen area is required in a communal student residence?",
+      "relevant": [{"doc_key": "pgoum_preguntas_interes", "article_ref": "*"}],
+      "gold_value": "A communal kitchen of at least 7 m²"
+    },
+    {
+      "id": "es10",
+      "lang": "en",
+      "query": "Must rooms in a student residence be exterior with natural light and ventilation?",
+      "relevant": [{"doc_key": "pgoum_preguntas_interes", "article_ref": "*"}],
+      "gold_value": "Yes — must be an exterior room with natural ventilation and lighting (art. 6.7.8 NNUU)"
+    },
+    {
+      "id": "es11",
+      "lang": "en",
+      "query": "What planning procedure governs a change of use of a building in the Community of Madrid?",
+      "relevant": [{"doc_key": "ley_9_2001_suelo_madrid", "article_ref": "*"}],
+      "gold_value": "Ley 9/2001 sets the regional planning framework, licence regime and municipal intervention rules"
+    },
+    {
+      "id": "es12",
+      "lang": "es",
+      "query": "¿Qué licencia urbanística se necesita para cambiar el uso de un edificio?",
+      "relevant": [{"doc_key": "ley_9_2001_suelo_madrid", "article_ref": "*"}],
+      "gold_value": "Licencia urbanística conforme a la Ley 9/2001 del Suelo de la Comunidad de Madrid"
+    }
+  ]
+}

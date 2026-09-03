@@ -35,6 +35,37 @@ EMBED_TIMEOUT_S = float(os.getenv("RAG_EMBED_TIMEOUT", "120"))
 EMBED_BATCH_SIZE = int(os.getenv("RAG_EMBED_BATCH", "16"))
 
 # --------------------------------------------------------------------------
+# Chunking strategy
+# --------------------------------------------------------------------------
+# "deterministic" -> regex/structure-aware splitter (chunker.py); fully offline.
+# "llm"           -> a local model detects the document's section pattern from a
+#                    sample and we slice deterministically at those offsets
+#                    (llm_chunker.py). Robust across languages/formats without a
+#                    per-country regex zoo. The model NEVER returns the legal
+#                    text — only a boundary regex — so slicing stays lossless and
+#                    reproducible. Falls back to "deterministic" if detection fails.
+# The detected regex is cached per document, so the model runs once at ingestion
+# and re-runs are reproducible regardless of the model chosen.
+CHUNK_STRATEGY = os.getenv("RAG_CHUNK_STRATEGY", "llm")
+
+# Detector backend: "openai" (hosted, most capable — the detected regex is cached
+# so this runs once per document, ever) or "ollama" (local model, e.g. for a
+# local-vs-hosted ablation). NOTE: gpt-5.4 must hit the real OpenAI endpoint, not
+# the institutional vLLM base used for the gemma models — hence a separate base.
+CHUNK_BACKEND = os.getenv("RAG_CHUNK_BACKEND", "openai")
+CHUNK_MODEL = os.getenv("RAG_CHUNK_MODEL", "gpt-5.4")
+CHUNK_OPENAI_BASE = os.getenv("RAG_CHUNK_OPENAI_BASE", "https://api.openai.com/v1")
+CHUNK_SAMPLE_CHARS = int(os.getenv("RAG_CHUNK_SAMPLE_CHARS", "6000"))
+# Hard ceiling on a single chunk. Detected sections are usually well-formed, but
+# trailing material after the last matched heading can collect into one huge
+# chunk (the London Plan produced a 96k-char one, ~24k tokens) that would swamp
+# the whole top-k budget. Oversized chunks are sub-split, keeping their semantic
+# ref and numbering the parts. Set above the largest legitimate article
+# (~7.8k chars in the Italian corpus) so real articles stay intact.
+CHUNK_MAX_CHARS = int(os.getenv("RAG_CHUNK_MAX_CHARS", "10000"))
+CHUNK_DETECT_TIMEOUT = float(os.getenv("RAG_CHUNK_TIMEOUT", "180"))
+
+# --------------------------------------------------------------------------
 # Retrieval
 # --------------------------------------------------------------------------
 DEFAULT_TOP_K = int(os.getenv("RAG_TOP_K", "8"))

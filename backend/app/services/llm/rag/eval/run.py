@@ -38,13 +38,37 @@ def _doc_key_to_name() -> Dict[str, str]:
     return out
 
 
-def _relevant_set(query: Dict[str, Any], key2name: Dict[str, str]) -> Set[Tuple[str, str]]:
-    """Gold labels as {(doc_name, article_ref)} — the store's own keys."""
-    rel: Set[Tuple[str, str]] = set()
+def _relevant(query: Dict[str, Any], key2name: Dict[str, str]) -> Tuple[Set[Tuple[str, str]], Set[str]]:
+    """Gold labels split into article-level {(doc_name, article_ref)} and
+    doc-level {doc_name}. A relevant entry with article_ref '*' is doc-level
+    ('any chunk from this document counts'), used for annex docs like the DM 1256
+    Allegato whose sections have no stable, citable article numbers."""
+    articles: Set[Tuple[str, str]] = set()
+    docs: Set[str] = set()
     for r in query["relevant"]:
         name = key2name.get(r["doc_key"], r["doc_key"])
-        rel.add((name, r["article_ref"]))
-    return rel
+        if r["article_ref"] == "*":
+            docs.add(name)
+        else:
+            articles.add((name, r["article_ref"]))
+    return articles, docs
+
+
+def _flags(hits: List[Dict[str, Any]], articles: Set[Tuple[str, str]], docs: Set[str]) -> List[bool]:
+    """Per-rank relevance. Each doc-level (wildcard) label is satisfied at most
+    once — by its first retrieved chunk — so recall never exceeds num_relevant."""
+    seen: Set[str] = set()
+    out: List[bool] = []
+    for h in hits:
+        dn, ar = h.get("doc_name"), h.get("article_ref")
+        if (dn, ar) in articles:
+            out.append(True)
+        elif dn in docs and dn not in seen:
+            seen.add(dn)
+            out.append(True)
+        else:
+            out.append(False)
+    return out
 
 
 def _approx_tokens(text: str) -> int:
@@ -56,8 +80,47 @@ def _mean(xs: List[float]) -> float:
     return sum(xs) / len(xs) if xs else 0.0
 
 
-def run(k_values: List[int], json_out: str | None) -> int:
-    gold = json.loads(GOLD_PATH.read_text(encoding="utf-8"))
+def _summary_md(agg: Dict[str, Any], k_values: List[int], country: str,
+                use_case: str, n_queries: int, n_chunks: int) -> str:
+    """Compact, human-readable overall summary (good for the write-up / slides)."""
+    ks = " | ".join(f"@{k}" for k in k_values)
+
+    def row(name: str, field: str) -> str:
+        return "| " + name + " | " + " | ".join(f"{agg[field][k]:.3f}" for k in k_values) + " |"
+
+    return "\n".join([
+        "# Retrieval evaluation — normative RAG",
+        "",
+        f"**Scope:** {country} / {use_case} · embed `{config.EMBED_MODEL}` · "
+        f"{n_queries} gold queries · {n_chunks} chunks in scope",
+        "",
+        "## Overall retrieval quality (mean over queries)",
+        "",
+        f"| metric | {ks} |",
+        "|" + "---|" * (len(k_values) + 1),
+        row("recall", "recall"),
+        row("hit@k", "hit"),
+        row("nDCG", "ndcg"),
+        row("precision*", "precision"),
+        "",
+        f"**MRR = {agg['mrr']:.3f}**",
+        "",
+        "\\* precision is capped at 1/k for single-relevant queries — reported, not headline.",
+        "",
+        "## Efficiency (context sent to the LLM)",
+        "",
+        "| mode | ~tokens/query |",
+        "|---|---|",
+        f"| dump (all {n_chunks} in-scope chunks) | {agg['dump_tokens']:,} |",
+        f"| rag (top-{config.DEFAULT_TOP_K}) | {agg['rag_avg_tokens']:,.0f} |",
+        "",
+        f"**{agg['reduction_pct']:.1f}% smaller context with RAG.**",
+        "",
+    ])
+
+
+def run(k_values: List[int], json_out: str | None, gold_path: Path = GOLD_PATH) -> int:
+    gold = json.loads(Path(gold_path).read_text(encoding="utf-8"))
     meta = gold["meta"]
     queries = gold["queries"]
     country = meta.get("country", config.DEFAULT_COUNTRY)
@@ -67,7 +130,7 @@ def run(k_values: List[int], json_out: str | None) -> int:
 
     print(f"Corpus scope : country={country} use_case={use_case}")
     print(f"Embed model  : {config.EMBED_MODEL}   |   retrieval depth={depth}")
-    print(f"Gold queries : {len(queries)}   ({GOLD_PATH.name})\n")
+    print(f"Gold queries : {len(queries)}   ({Path(gold_path).name})\n")
 
     # dump baseline is query-independent — compute its cost once
     dump_hits = search("", country=country, use_case=use_case, mode="dump")
@@ -82,10 +145,10 @@ def run(k_values: List[int], json_out: str | None) -> int:
     rag_token_list: List[int] = []
 
     for q in queries:
-        rel = _relevant_set(q, key2name)
+        articles, docs = _relevant(q, key2name)
         hits = search(q["query"], country=country, use_case=use_case, top_k=depth, mode="rag")
-        flags = [(h.get("doc_name"), h.get("article_ref")) in rel for h in hits]
-        num_rel = len(rel)
+        flags = _flags(hits, articles, docs)
+        num_rel = len(articles) + len(docs)
 
         rag_ctx, _ = _format(hits[: config.DEFAULT_TOP_K])
         rag_tokens = _approx_tokens(rag_ctx)
@@ -130,21 +193,30 @@ def run(k_values: List[int], json_out: str | None) -> int:
     print(f"  dump (all in-scope) : {len(dump_hits)} chunks, ~{dump_tokens} tokens")
     print(f"  rag  (top-{config.DEFAULT_TOP_K})        : ~{rag_avg:.0f} tokens/query  ->  {reduction:.1f}% smaller")
 
+    aggregate = {
+        "recall": {k: _mean([r["recall"][k] for r in per_query]) for k in k_values},
+        "hit": {k: _mean([r["hit"][k] for r in per_query]) for k in k_values},
+        "ndcg": {k: _mean([r["ndcg"][k] for r in per_query]) for k in k_values},
+        "precision": {k: _mean([r["precision"][k] for r in per_query]) for k in k_values},
+        "mrr": mrr,
+        "dump_tokens": dump_tokens, "rag_avg_tokens": rag_avg, "reduction_pct": reduction,
+    }
+
     if json_out:
-        Path(json_out).write_text(json.dumps({
+        out = Path(json_out)
+        out.write_text(json.dumps({
             "meta": {"country": country, "use_case": use_case, "embed_model": config.EMBED_MODEL,
-                     "k_values": k_values, "n_queries": len(queries)},
-            "aggregate": {
-                "recall": {k: _mean([r["recall"][k] for r in per_query]) for k in k_values},
-                "hit": {k: _mean([r["hit"][k] for r in per_query]) for k in k_values},
-                "ndcg": {k: _mean([r["ndcg"][k] for r in per_query]) for k in k_values},
-                "precision": {k: _mean([r["precision"][k] for r in per_query]) for k in k_values},
-                "mrr": mrr,
-                "dump_tokens": dump_tokens, "rag_avg_tokens": rag_avg, "reduction_pct": reduction,
-            },
+                     "k_values": k_values, "n_queries": len(queries),
+                     "n_chunks_in_scope": len(dump_hits)},
+            "aggregate": aggregate,
             "per_query": per_query,
         }, indent=2, ensure_ascii=False), encoding="utf-8")
-        print(f"\nWrote {json_out}")
+        summary = out.with_name(out.stem + "_summary.md")
+        summary.write_text(
+            _summary_md(aggregate, k_values, country, use_case, len(queries), len(dump_hits)),
+            encoding="utf-8",
+        )
+        print(f"\nWrote {out}\nWrote {summary}")
 
     return 0
 
@@ -153,9 +225,11 @@ def main(argv=None) -> int:
     p = argparse.ArgumentParser(description="Evaluate normative retrieval against the gold set.")
     p.add_argument("--k", default="1,3,5,8", help="comma-separated k values (default 1,3,5,8)")
     p.add_argument("--json", default=None, help="also write full results to this JSON path")
+    p.add_argument("--gold", default=str(GOLD_PATH),
+                   help="gold-set JSON to evaluate against (default: the Italian set)")
     args = p.parse_args(argv)
     k_values = sorted({int(x) for x in args.k.split(",") if x.strip()})
-    return run(k_values, args.json)
+    return run(k_values, args.json, Path(args.gold))
 
 
 if __name__ == "__main__":

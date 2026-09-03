@@ -1,0 +1,102 @@
+{
+  "meta": {
+    "description": "Hand-labelled gold set for the London / Tower Hamlets slice. Mirrors the Italian set but tests a corpus where the three English regimes (planning / building regs / HMO licensing) are legally separate — and where the student room-size rule lives at the HMO-LICENSING tier, not in planning.",
+    "corpus": "London Phase 1 — 6 documents, national -> regional (London Plan) -> municipal (Tower Hamlets)",
+    "country": "UK",
+    "use_case": "student_housing",
+    "match_on": "doc_key + article_ref against each retrieved chunk's metadata. article_ref '*' = doc-level (any chunk from that document counts), satisfied at most once. Doc-level is used for most London queries because oversized sections are sub-split into '(part N)' refs, which are not stable enough to label; the GPDO is labelled at article level because its 'Class MA' / 'Class L' refs are clean and stable.",
+    "caveats": [
+      "Author-constructed, not validated by an English planning lawyer — state as a limitation. Every gold_value below was verified verbatim against the ingested text.",
+      "Doc-level matching makes this an easier task than the Italian article-level set; the two are NOT directly comparable. Report them separately.",
+      "The cascade filters on country=UK, so Italian chunks are out of scope here and the competition is among 212 UK chunks across 6 documents."
+    ]
+  },
+  "queries": [
+    {
+      "id": "uk01",
+      "lang": "en",
+      "query": "What is the minimum floor area of a room used as sleeping accommodation by one person in a licensed HMO?",
+      "relevant": [{"doc_key": "hmo_mandatory_conditions_2018", "article_ref": "*"}],
+      "gold_value": "Not less than 6.51 square metres (one person aged over 10)",
+      "note": "THE English student room-size rule — lives in HOUSING/HMO licensing, not planning. Cross-country contrast: Italy=national habitability, Madrid=municipal PGOU, London=HMO licensing."
+    },
+    {
+      "id": "uk02",
+      "lang": "en",
+      "query": "What is the minimum sleeping room area for two persons sharing in an HMO?",
+      "relevant": [{"doc_key": "hmo_mandatory_conditions_2018", "article_ref": "*"}],
+      "gold_value": "Not less than 10.22 square metres (two persons aged over 10)"
+    },
+    {
+      "id": "uk03",
+      "lang": "en",
+      "query": "Which permitted development right allows commercial premises to be converted to residential use?",
+      "relevant": [{"doc_key": "gpdo_2015_part3", "article_ref": "Class MA"}],
+      "gold_value": "Class MA — commercial, business and service uses to dwellinghouses"
+    },
+    {
+      "id": "uk04",
+      "lang": "en",
+      "query": "Which permitted development class covers change of use between a dwellinghouse and a small house in multiple occupation?",
+      "relevant": [{"doc_key": "gpdo_2015_part3", "article_ref": "Class L"}],
+      "gold_value": "Class L — small HMOs to dwellinghouses and vice versa (C3 <-> C4)"
+    },
+    {
+      "id": "uk05",
+      "lang": "en",
+      "query": "What proportion of student accommodation must be affordable to follow the Fast Track Route?",
+      "relevant": [{"doc_key": "london_plan_2021", "article_ref": "*"}],
+      "gold_value": "At least 35 per cent affordable student accommodation (50 per cent where required by Part B of Policy H5) — London Plan Policy H15"
+    },
+    {
+      "id": "uk06",
+      "lang": "en",
+      "query": "Must purpose-built student accommodation be secured through a nomination agreement with a higher education provider?",
+      "relevant": [{"doc_key": "london_plan_2021", "article_ref": "*"}],
+      "gold_value": "Yes — bedrooms secured through a nomination agreement with one or more higher education providers (Policy H15)"
+    },
+    {
+      "id": "uk07",
+      "lang": "en",
+      "query": "What percentage of student rooms must be wheelchair accessible in Tower Hamlets?",
+      "relevant": [{"doc_key": "th_local_plan_2031", "article_ref": "*"}],
+      "gold_value": "5% of student rooms wheelchair accessible, including a wheelchair-accessible shower room for independent use"
+    },
+    {
+      "id": "uk08",
+      "lang": "en",
+      "query": "Has Tower Hamlets removed the Class MA permitted development right for converting commercial buildings?",
+      "relevant": [{"doc_key": "th_article4_class_e", "article_ref": "*"}],
+      "gold_value": "Yes — an Article 4 Direction removes Class MA in the mapped area, so a full planning application is required",
+      "note": "JURISDICTION CASCADE demo: a municipal direction switches off a national permitted-development right. Contrast with uk03, which finds the national right."
+    },
+    {
+      "id": "uk09",
+      "lang": "en",
+      "query": "What is the definition of Class C4, a small house in multiple occupation?",
+      "relevant": [{"doc_key": "use_classes_1987", "article_ref": "*"}],
+      "gold_value": "Class C4 — occupation by between 3 and 6 residents as their only or main residence, sharing a basic amenity"
+    },
+    {
+      "id": "uk10",
+      "lang": "en",
+      "query": "Which use class covers a dwellinghouse occupied by a single household?",
+      "relevant": [{"doc_key": "use_classes_1987", "article_ref": "*"}],
+      "gold_value": "Class C3 — dwellinghouses used as a single household (other than a use within Class C4)"
+    },
+    {
+      "id": "uk11",
+      "lang": "en",
+      "query": "What are the planning requirements for purpose-built student accommodation in Tower Hamlets?",
+      "relevant": [{"doc_key": "th_local_plan_2031", "article_ref": "*"}],
+      "gold_value": "Policy on student housing: affordable student accommodation or nominations, respect residential amenity, 5% wheelchair-accessible rooms"
+    },
+    {
+      "id": "uk12",
+      "lang": "en",
+      "query": "What is the maximum level of rent or affordability benchmark for student accommodation in London?",
+      "relevant": [{"doc_key": "london_plan_2021", "article_ref": "*"}],
+      "gold_value": "Policy H15 sets the maximum level of rent for affordable student accommodation"
+    }
+  ]
+}
