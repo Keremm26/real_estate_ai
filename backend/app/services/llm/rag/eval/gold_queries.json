@@ -1,0 +1,132 @@
+{
+  "meta": {
+    "description": "Hand-labelled gold set for retrieval evaluation of the normative RAG pipeline (recall@k, hit@k, MRR, nDCG). Each query is tagged with the article(s) that actually contain the answer, so a retrieved chunk counts as relevant when its (doc, article_ref) is in `relevant`.",
+    "corpus": "Turin national slice — 3 Italian national documents currently in the manifest",
+    "country": "IT",
+    "use_case": "student_housing",
+    "match_on": "doc_key + article_ref against each retrieved chunk's metadata. doc_key maps to metadata.doc_name via manifest.MANIFESTS['turin']; article_ref matches the chunker's normalised form ('Art. 1', 'Art. 23-ter', ...).",
+    "caveats": [
+      "Author-constructed, not domain-expert-validated — state this as a limitation. Kerem should sanity-check every `relevant` label before reporting numbers.",
+      "Most queries have a single relevant article, so precision@k is capped at 1/k and is NOT a meaningful headline metric here — lead with recall@k / hit@k / MRR. The multi-article query q14 (habitability height + area) is included so nDCG@k has a multi-relevant case to grade.",
+      "Queries are written in English on purpose, to test bge-m3's cross-lingual retrieval (EN query -> IT source). Two Italian queries (q08, q15) are included to compare same-language vs cross-language. Add more IT variants trivially by copying a row and changing `lang` + `query`.",
+      "Ground-truth values (`gold_value`) are for the qualitative showcase / manual spot-checks, not used by the metric computation."
+    ]
+  },
+  "queries": [
+    {
+      "id": "q01",
+      "lang": "en",
+      "query": "What is the minimum internal ceiling height for habitable rooms in a dwelling?",
+      "relevant": [{"doc_key": "dm_sanita_1975", "article_ref": "Art. 1"}],
+      "gold_value": "2.70 m; reducible to 2.40 m for corridors, bathrooms and storage rooms"
+    },
+    {
+      "id": "q02",
+      "lang": "en",
+      "query": "Is a reduced ceiling height allowed in mountain municipalities above 1000 metres of altitude?",
+      "relevant": [{"doc_key": "dm_sanita_1975", "article_ref": "Art. 1"}],
+      "gold_value": "Yes — down to 2.55 m above 1000 m a.s.l."
+    },
+    {
+      "id": "q03",
+      "lang": "en",
+      "query": "What is the minimum habitable floor area required per occupant?",
+      "relevant": [{"doc_key": "dm_sanita_1975", "article_ref": "Art. 2"}],
+      "gold_value": "14 m² per person for the first 4 occupants, 10 m² for each additional occupant"
+    },
+    {
+      "id": "q04",
+      "lang": "en",
+      "query": "What is the minimum area of a single bedroom and of a double bedroom?",
+      "relevant": [{"doc_key": "dm_sanita_1975", "article_ref": "Art. 2"}],
+      "gold_value": "9 m² single, 14 m² double"
+    },
+    {
+      "id": "q05",
+      "lang": "en",
+      "query": "What is the minimum size of the living room in a dwelling?",
+      "relevant": [{"doc_key": "dm_sanita_1975", "article_ref": "Art. 2"}],
+      "gold_value": "At least 14 m²"
+    },
+    {
+      "id": "q06",
+      "lang": "en",
+      "query": "What is the minimum floor area of a studio apartment for one person and for two people?",
+      "relevant": [{"doc_key": "dm_sanita_1975", "article_ref": "Art. 3"}],
+      "gold_value": "28 m² for one person (services included), 38 m² for two"
+    },
+    {
+      "id": "q07",
+      "lang": "en",
+      "query": "What indoor air temperature must the heating system be designed to maintain?",
+      "relevant": [{"doc_key": "dm_sanita_1975", "article_ref": "Art. 4"}],
+      "gold_value": "Between 18 °C and 20 °C"
+    },
+    {
+      "id": "q08",
+      "lang": "it",
+      "query": "Qual è il rapporto minimo tra superficie finestrata e superficie del pavimento per l'illuminazione naturale?",
+      "relevant": [{"doc_key": "dm_sanita_1975", "article_ref": "Art. 5"}],
+      "gold_value": "Superficie finestrata apribile >= 1/8 della superficie del pavimento; fattore di luce diurna medio >= 2%"
+    },
+    {
+      "id": "q09",
+      "lang": "en",
+      "query": "What ventilation and sanitary fixtures are required for a bathroom?",
+      "relevant": [{"doc_key": "dm_sanita_1975", "article_ref": "Art. 7"}],
+      "gold_value": "External opening or mechanical extraction; at least one bathroom with toilet, bidet, bath/shower, washbasin"
+    },
+    {
+      "id": "q10",
+      "lang": "en",
+      "query": "What are the acoustic / noise-protection requirements for building materials in dwellings?",
+      "relevant": [{"doc_key": "dm_sanita_1975", "article_ref": "Art. 8"}],
+      "gold_value": "Adequate protection against footstep, traffic, plant and airborne noise from adjacent units"
+    },
+    {
+      "id": "q11",
+      "lang": "en",
+      "query": "Does converting a building to a different use (change of use) require authorisation, and when is it urbanistically relevant?",
+      "relevant": [{"doc_key": "dpr_380_2001", "article_ref": "Art. 23-ter"}],
+      "gold_value": "Change of use between different functional categories is urbanistically relevant (Art. 23-ter TUE)"
+    },
+    {
+      "id": "q12",
+      "lang": "en",
+      "query": "Which building interventions require a building permit (permesso di costruire)?",
+      "relevant": [{"doc_key": "dpr_380_2001", "article_ref": "Art. 10"}],
+      "gold_value": "New construction, urban restructuring, and major changes as listed in Art. 10 TUE"
+    },
+    {
+      "id": "q13",
+      "lang": "en",
+      "query": "Which minor works qualify as free building activity that needs no permit?",
+      "relevant": [{"doc_key": "dpr_380_2001", "article_ref": "Art. 6"}],
+      "gold_value": "Ordinary maintenance and the works listed under 'attività edilizia libera' (Art. 6 TUE)"
+    },
+    {
+      "id": "q14",
+      "lang": "en",
+      "query": "What are the overall minimum habitability requirements (height and floor area) for a residential unit?",
+      "relevant": [
+        {"doc_key": "dm_sanita_1975", "article_ref": "Art. 1"},
+        {"doc_key": "dm_sanita_1975", "article_ref": "Art. 2"}
+      ],
+      "gold_value": "Height 2.70 m (Art. 1) + 14 m²/person, bedrooms 9/14 m² (Art. 2)"
+    },
+    {
+      "id": "q15",
+      "lang": "it",
+      "query": "Quando è obbligatoria l'installazione dell'ascensore in un edificio residenziale?",
+      "relevant": [{"doc_key": "dm_236_1989", "article_ref": "Art. 3"}],
+      "gold_value": "Quando l'accesso alla più alta unità immobiliare è posto oltre una certa quota (criteri generali di accessibilità)"
+    },
+    {
+      "id": "q16",
+      "lang": "en",
+      "query": "What are the minimum door widths and ramp slopes for wheelchair accessibility?",
+      "relevant": [{"doc_key": "dm_236_1989", "article_ref": "Art. 8"}],
+      "gold_value": "Door clear width >= 0.80 m; ramp slope <= 8% (both in Art. 8 'Specifiche funzionali e dimensionali')"
+    }
+  ]
+}
