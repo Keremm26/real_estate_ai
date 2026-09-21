@@ -1,0 +1,106 @@
+{
+  "meta": {
+    "description": "Production-shaped queries for the DOWNSTREAM evaluation of the regulatory agent (three arms: none / dump / rag). Unlike the gold retrieval sets, these are property-search queries as the pipeline receives them, not legal questions. Each query carries an expectation derived from the ingested Italian corpus so the extracted requirement can be checked for correctness, not just presence.",
+    "country": "IT",
+    "use_case": "student_housing",
+    "value_basis": "DM MUR 1256/2021 Allegato A: §6.1.1 residential 12.5 m²/p.a. (single, incl. bathroom) or 9.5 m²/p.a. (double); §6.2.1 services >= 5.0 m²/p.a. (3.0 for 'nuclei integrati'). A total threshold derived from these lies in [9.5, 17.5] m² per bed depending on the reading; the accepted range is value_min = 9.5*N, value_max = 17.5*N (with N = beds). 'complete' reading = residential + services = [14.5*N, 17.5*N].",
+    "dimensioning_refs": [
+      {"doc_key": "dm_1256_2021_allegato_a", "article_ref": "6. C", "why": "§6 'Criteri relativi al dimensionamento' — the per-bed standards the extractor multiplies by capacity"},
+      {"doc_key": "dm_1256_2021_allegato_a", "article_ref": "7. R", "why": "§7 'Requisiti delle unità ambientali' — room-level minimums (fallback when no capacity is given)"}
+    ],
+    "expect_fields": {
+      "activate": "true = a grounded requirement is expected; false = negative control, the agent must return found=false; \"either\" = out-of-corpus use case, activation is acceptable ONLY if grounded in a document actually in context",
+      "target_column": "expected target column of the main requirement",
+      "operator": "expected operator",
+      "value_min / value_max": "accepted range for the main numeric value (inclusive)",
+      "capacity": "beds/people stated in the query (None when absent)"
+    },
+    "caveats": [
+      "Author-constructed; the accepted ranges encode a reading of DM 1256 All. A, not a legal opinion.",
+      "The corpus has no use-case-specific document for co-housing or elderly care: those queries measure behaviour on out-of-corpus use cases (grounding discipline), not correctness."
+    ]
+  },
+  "queries": [
+    {
+      "id": "dq01",
+      "query": "Cerca un immobile vicino a Porta Susa, finalizzato a residenza per studenti con 60 posti letto",
+      "capacity": 60,
+      "expect": {"activate": true, "target_column": "surface_area", "operator": ">=", "value_min": 570, "value_max": 1050}
+    },
+    {
+      "id": "dq02",
+      "query": "Cerco un edificio a Torino da trasformare in uno studentato per 120 studenti",
+      "capacity": 120,
+      "expect": {"activate": true, "target_column": "surface_area", "operator": ">=", "value_min": 1140, "value_max": 2100}
+    },
+    {
+      "id": "dq03",
+      "query": "Looking for a building near Politecnico di Torino to convert into student housing for 30 students",
+      "capacity": 30,
+      "expect": {"activate": true, "target_column": "surface_area", "operator": ">=", "value_min": 285, "value_max": 525},
+      "note": "English query against the Italian corpus — cross-lingual retrieval in the production path."
+    },
+    {
+      "id": "dq04",
+      "query": "Cerca un immobile vicino a Palazzo Nuovo con superficie sopra i 1000 mq, finalizzato a residenza universitaria con 80 posti letto in camere doppie",
+      "capacity": 80,
+      "expect": {"activate": true, "target_column": "surface_area", "operator": ">=", "value_min": 760, "value_max": 1400},
+      "note": "Double rooms stated: complete reading 9.5+5.0 = 14.5 m²/p.a. -> 1160 m²."
+    },
+    {
+      "id": "dq05",
+      "query": "Cerca un'abitazione in classe C o più efficiente, finalizzata ad alloggi per studenti con 40 camere singole",
+      "capacity": 40,
+      "expect": {"activate": true, "target_column": "surface_area", "operator": ">=", "value_min": 380, "value_max": 700},
+      "note": "Single rooms stated: complete reading 12.5+5.0 = 17.5 m²/p.a. -> 700 m²."
+    },
+    {
+      "id": "dq06",
+      "query": "Vorrei convertire un ex albergo vicino a Porta Nuova in una residenza per 100 studenti universitari",
+      "capacity": 100,
+      "expect": {"activate": true, "target_column": "surface_area", "operator": ">=", "value_min": 950, "value_max": 1750}
+    },
+    {
+      "id": "dq07",
+      "query": "Cerca un immobile vicino a Porta Susa, finalizzato a residenza per studenti",
+      "capacity": null,
+      "expect": {"activate": true, "target_column": "surface_area", "operator": ">=", "value_min": null, "value_max": null},
+      "note": "No capacity given (this is the shape produced by tests/query_parameters.json). Activation with a per-bed standard or a room-size threshold is acceptable; no total can be checked."
+    },
+    {
+      "id": "dq08",
+      "query": "Cerca un immobile con superficie tra 50 e 80 mq vicino a Porta Susa, finalizzato a residenza per studenti con 4 posti letto",
+      "capacity": 4,
+      "expect": {"activate": true, "target_column": "surface_area", "operator": ">=", "value_min": 38, "value_max": 70},
+      "note": "Small capacity: tests that the agent scales the standard rather than reusing a memorised large threshold."
+    },
+    {
+      "id": "dq09",
+      "query": "Cerca un immobile vicino a Palazzo Nuovo, finalizzato a co-housing e situato vicino a mezzi di trasporto",
+      "capacity": null,
+      "expect": {"activate": "either", "target_column": "surface_area", "operator": ">=", "value_min": null, "value_max": null},
+      "note": "Benchmark use case with no specific document in the corpus. Only the general habitability decree (DM Sanità 1975) could apply; anything extracted must be grounded."
+    },
+    {
+      "id": "dq10",
+      "query": "Cerca un'abitazione vicino a Porta Susa in classe F o G, finalizzata a centro per anziani",
+      "capacity": null,
+      "expect": {"activate": "either", "target_column": "surface_area", "operator": ">=", "value_min": null, "value_max": null},
+      "note": "Benchmark use case with no specific document in the corpus."
+    },
+    {
+      "id": "dq11",
+      "query": "Cerca un ufficio di circa 200 mq in zona centro vicino a Porta Susa",
+      "capacity": null,
+      "expect": {"activate": false},
+      "note": "NEGATIVE CONTROL: office use, no residential standard applies. Activation here is a false positive."
+    },
+    {
+      "id": "dq12",
+      "query": "Cerca un locale commerciale per aprire un negozio di abbigliamento vicino a Palazzo Nuovo",
+      "capacity": null,
+      "expect": {"activate": false},
+      "note": "NEGATIVE CONTROL: retail use."
+    }
+  ]
+}

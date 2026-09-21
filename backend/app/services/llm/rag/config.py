@@ -70,10 +70,40 @@ CHUNK_DETECT_TIMEOUT = float(os.getenv("RAG_CHUNK_TIMEOUT", "180"))
 # --------------------------------------------------------------------------
 DEFAULT_TOP_K = int(os.getenv("RAG_TOP_K", "8"))
 
-# Feature flag for the before/after evaluation (see rag eval runner):
-#   "rag"  -> router + cascade + semantic retrieval (the new path)
-#   "dump" -> concatenate the whole in-scope corpus (reproduces the old baseline)
+# Feature flag for the three-arm downstream evaluation (see eval/downstream.py).
+# Read by RegulatoryAgent and by the baseline planner in graph_agent:
+#   "none" -> legacy loader (docs/knowledge/normativa/ folder, now empty). This
+#             is the production state BEFORE this work: the regulatory agent
+#             runs with no documents and its ranking dimension is inert.
+#   "dump" -> every in-scope chunk, unranked (the old "dump everything" strategy
+#             applied to the new corpus — isolates the semantic-retrieval delta).
+#   "rag"  -> router + jurisdiction cascade + semantic top-k (the new path).
 RETRIEVAL_MODE = os.getenv("RAG_RETRIEVAL_MODE", "rag")
+RETRIEVAL_MODES = ("none", "dump", "rag")
+
+# Extraction-oriented retrieval — applied on the REGULATORY-AGENT path only
+# (the gold-set evaluation embeds the raw queries). The agent's input is a
+# property search ("immobile per residenza studenti, 60 posti letto"), not a
+# legal question, so the raw embedding lands on descriptive sections rather
+# than the dimensioning ones. Two cheap, ablatable fixes:
+#   QUERY_FRAMING -> append a fixed English "regulatory framing" suffix before
+#                    embedding. bge-m3 is cross-lingual, so one suffix serves
+#                    every country (no per-language phrase list).
+#   QUANT_ONLY    -> restrict the cascade scope to chunks flagged
+#                    has_quantitative (the extractor only emits numeric
+#                    requirements, so non-numeric chunks cannot help it).
+# Measured with `eval.downstream --ablate` on 8 production-shaped queries (rank
+# of the first DM 1256 dimensioning chunk, top-8):
+#   raw 88% hit / MRR .370 · framing 62% / .124 · quant 100% / .688 · both 100% / .312
+# Framing is net NEGATIVE — it matches the decrees' heading meta-language
+# ("standard minimi dimensionali", Art. 2) instead of the numeric content — so
+# it ships off; quantitative routing ships on. Both stay ablatable.
+QUERY_FRAMING = os.getenv("RAG_QUERY_FRAMING", "0") == "1"
+QUERY_FRAMING_TEXT = (
+    "Regulatory requirements: minimum dimensional standards, minimum floor area "
+    "per bed or occupant, sizing parameters and numeric thresholds."
+)
+QUANT_ONLY = os.getenv("RAG_QUANT_ONLY", "1") == "1"
 
 # --------------------------------------------------------------------------
 # Turin vertical-slice defaults (single-city dataset; threaded from graph

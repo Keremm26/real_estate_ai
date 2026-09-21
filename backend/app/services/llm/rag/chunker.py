@@ -24,11 +24,18 @@ _ARTICLE_RE = re.compile(
 
 # a number with a unit (either order — IT writes both "2,70 m" and "metri 2,70"),
 # or a fraction like "1/8" -> signals a quantitative rule
+# "Does this chunk carry a numeric threshold?" — drives the has_quantitative
+# metadata flag that the regulatory extractor routes on. Unit spellings cover
+# IT / EN / ES (m², mq, sqm, square metres, metros cuadrados, ...). The fraction
+# alternative catches ratios like the DM Sanità 1/8 aero-illumination rule but
+# excludes year-shaped denominators, otherwise every "Ley 9/2001" / "RD 314/2006"
+# citation would be flagged.
+_UNITS = r"m²|m2|mq|sqm|sq\.?\s*m\b|square\s+met(?:re|er)s?|metros?\s+cuadrados?|metri(?:\s+quadr[io])?|cm"
 _QUANT_RE = re.compile(
-    r"\d+(?:[.,]\d+)?\s*(?:m²|mq|m\.?\b|cm|metri(?:\s+quadri)?|%)"   # number then unit
-    r"|(?:m²|mq|metri(?:\s+quadri)?|cm)\s*\d+(?:[.,]\d+)?"          # worded unit then number
-    r"|\bm\.?\s*\d+(?:[.,]\d+)?"                                     # bare 'm 2,70' / 'm2'
-    r"|(?<!\d)\d+\s*/\s*\d+",                                        # fraction (e.g. 1/8)
+    rf"\d+(?:[.,]\d+)?\)?\s*(?:{_UNITS}|m\.?\b|%|per\s*cent[o]?\b)"  # number then unit ("(15) per cento")
+    rf"|(?:{_UNITS})\s*\d+(?:[.,]\d+)?"                        # worded unit then number
+    r"|\bm\.?\s*\d+(?:[.,]\d+)?"                               # bare 'm 2,70' / 'm2'
+    r"|(?<!\d)\d{1,2}\s*/\s*\d{1,3}(?!\d)",                    # ratio (1/8), not 9/2001
     re.IGNORECASE,
 )
 
@@ -113,27 +120,24 @@ def chunk_document(text: str) -> List[ArticleChunk]:
     if not matches:
         return _fallback_split(text)
 
-    chunks: List[ArticleChunk] = []
+    # A ref recurs when a table of contents repeats the heading before the body,
+    # when a PDF running header repeats it on every page, or when numbering
+    # restarts per Titolo. Two chunks with the same article_ref would collide on
+    # chunk_id at upsert time, so merge every piece per ref in document order —
+    # lossless, unlike keeping only the longest piece (which drops the rest).
+    merged: dict[str, List[str]] = {}
     for i, m in enumerate(matches):
         start = m.start()
         end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
         body = text[start:end].strip()
-        if not body:
-            continue
-        chunks.append(
-            ArticleChunk(
-                article_ref=_normalise_ref(m.group(1)),
-                text=body,
-                has_quantitative=bool(_QUANT_RE.search(body)),
-            )
+        if body:
+            merged.setdefault(_normalise_ref(m.group(1)), []).append(body)
+    return [
+        ArticleChunk(
+            article_ref=ref,
+            text=body,
+            has_quantitative=bool(_QUANT_RE.search(body)),
         )
-
-    # Mirror pages often repeat every article in a table-of-contents (title only)
-    # before the real body, producing two chunks per article that collide on the
-    # same chunk_id at upsert time. Collapse to the longest chunk per article_ref
-    # so the substantive body always wins, independent of document order.
-    best: dict[str, ArticleChunk] = {}
-    for c in chunks:
-        if c.article_ref not in best or len(c.text) > len(best[c.article_ref].text):
-            best[c.article_ref] = c
-    return list(best.values())
+        for ref, pieces in merged.items()
+        for body in ("\n".join(pieces),)
+    ]

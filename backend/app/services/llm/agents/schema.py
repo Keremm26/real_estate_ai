@@ -108,8 +108,12 @@ class BuildingAgentResult(AgentResult): pass
 class EnergyAgentResult(AgentResult): 
     has_filters: bool = False
 
-class RegulatoryAgentResult(AgentResult): 
+class RegulatoryAgentResult(AgentResult):
     has_requirements: bool = False
+    # Trace of the regulatory context that was actually placed in the prompt
+    # (retrieval mode, in-scope chunks, context size). Used by the downstream
+    # RAG evaluation and shown in the UI; None when the agent errored out.
+    retrieval: Optional[Dict[str, Any]] = None
 
 class ProximityAgentResult(AgentResult): 
     has_proximity: bool = False

@@ -495,9 +495,12 @@ class GraphOrchestratorAgent(BaseAgent):
                 db_metadata=state.get("db_metadata")
             )
 
-        # 1.5 Load regulatory references
-        from app.services.llm.agents.regulatory_agent import load_regulatory_documents
-        regulatory_text, _, _ = load_regulatory_documents()
+        # 1.5 Load regulatory references — same retrieval path (and same
+        # RETRIEVAL_MODE flag) as the regulatory agent, so baseline vs
+        # multi-agent comparisons see identical regulatory context.
+        from app.services.llm.agents.regulatory_agent import load_regulatory_context
+        regulatory_text, _, _, regulatory_trace = load_regulatory_context(query)
+        state.setdefault("gemini_responses", {})["regulatory_retrieval"] = regulatory_trace
 
         # 2. LLM Invocation (Unified Architect pass)
         prompt_text = (
@@ -1316,7 +1319,8 @@ class GraphOrchestratorAgent(BaseAgent):
                 "response": regulatory_result.raw_text,
                 "regulatory_info": regulatory_result.raw_text,
                 "sources": regulatory_result.sources,
-                "found": reg_data.found if reg_data else False
+                "found": reg_data.found if reg_data else False,
+                "retrieval": regulatory_result.retrieval,
             }
         else:
             state["gemini_responses"]["regulatory_analysis"] = {

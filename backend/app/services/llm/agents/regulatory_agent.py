@@ -1,8 +1,9 @@
 import base64
 import json
+import logging
 import os
 from pathlib import Path
-from typing import Any, List, Dict, Union
+from typing import Any, List, Dict, Optional, Tuple, Union
 import pandas as pd
 import numpy as np
 
@@ -16,13 +17,66 @@ from app.services.llm.agents.schema import RegulatoryAgentResult, PromptRecord, 
 from app.core.constants import REGULATORY_AGENT_COLUMNS
 from app.services.llm.langchain_client import get_llm, invoke_with_langfuse
 from app.services.llm.prompt_loader import get_system_prompt, get_user_template
+from app.services.llm.rag import config as rag_config
+from app.services.llm.rag.retriever import retrieve_with_trace
 from app.utils.decorators import handle_agent_error, log_llm_usage
 from app.utils.json_parser import safe_extract_json
 from app.utils.scoring import calculate_continuous_score, calculate_discrete_score
 
+logger = logging.getLogger(__name__)
+
+
+def load_regulatory_context(
+    query: str,
+    *,
+    retrieval_mode: Optional[str] = None,
+    country: Optional[str] = None,
+    use_case: Optional[str] = None,
+) -> Tuple[str, List[str], List[Dict[str, Any]], Dict[str, Any]]:
+    """Single entry point for the regulatory context that goes into a prompt.
+
+    Dispatches on the retrieval mode (``rag_config.RETRIEVAL_MODE`` unless
+    overridden — the override is what lets the downstream evaluation run the
+    three arms in one process):
+
+      none -> legacy folder loader ``load_regulatory_documents()`` (the
+              pre-RAG production path; the folder is empty today)
+      dump -> every in-scope chunk from the normative store, unranked
+      rag  -> jurisdiction cascade + semantic top-k over the normative store
+
+    Returns ``(documents_text, sources, images, trace)``. Retrieval failures
+    (store missing, embedding backend down) degrade to "no documents" with the
+    error recorded in the trace, rather than taking the whole agent down.
+    """
+    mode = (retrieval_mode or rag_config.RETRIEVAL_MODE).lower()
+    country = country or rag_config.DEFAULT_COUNTRY
+    use_case = use_case or rag_config.DEFAULT_USE_CASE
+
+    if mode == "none":
+        docs, sources, images = load_regulatory_documents()
+        trace = {"mode": "none", "country": country, "use_case": use_case, "top_k": None,
+                 "n_chunks": 0, "context_chars": len(docs) if sources else 0, "hits": []}
+        return docs, sources, images, trace
+
+    try:
+        docs, sources, trace = retrieve_with_trace(
+            query, country=country, use_case=use_case, mode=mode,
+            # extraction-oriented knobs (rag mode only; see rag config)
+            frame=rag_config.QUERY_FRAMING, quantitative_only=rag_config.QUANT_ONLY,
+        )
+    except Exception as e:  # store/embedder unavailable — degrade, don't crash the agent
+        logger.warning(f"Regulatory retrieval failed (mode={mode}): {e}")
+        docs, sources = "No regulatory documents available.", []
+        trace = {"mode": mode, "country": country, "use_case": use_case, "top_k": None,
+                 "n_chunks": 0, "context_chars": 0, "hits": [], "error": str(e)}
+    return docs, sources, [], trace
+
+
 def load_regulatory_documents() -> tuple[str, list[str], List[Dict[str, Any]]]:
     """
-    Load all regulatory documents from the docs/knowledge/normativa/ folder.
+    Legacy loader (retrieval mode ``none``): read every file under
+    docs/knowledge/normativa/ and concatenate it. Kept as the "before" arm of
+    the RAG evaluation; prefer ``load_regulatory_context()``.
     Returns a tuple: (concatenated_text, file_paths_list, base64_images_list)
     """
     backend_dir = Path(__file__).parent.parent.parent.parent.parent
@@ -107,9 +161,12 @@ class RegulatoryAgent(BaseAgent):
         """
         if mode == "filtering":
             return self._run_filtering(
-                query=query, 
+                query=query,
                 available_columns=kwargs.get("available_columns"),
-                statistics=kwargs.get("statistics")
+                statistics=kwargs.get("statistics"),
+                retrieval_mode=kwargs.get("retrieval_mode"),
+                country=kwargs.get("country"),
+                use_case=kwargs.get("use_case"),
             )
         elif mode == "ranking":
             return self._run_ranking(
@@ -121,9 +178,21 @@ class RegulatoryAgent(BaseAgent):
         else:
             raise ValueError(f"Mode '{mode}' not supported by RegulatoryAgent.")
 
-    def _run_filtering(self, query: str, available_columns: List[str] = None, statistics: dict = None) -> RegulatoryAgentResult:
-        regulatory_docs, sources, images = load_regulatory_documents()
-        
+    def _run_filtering(
+        self,
+        query: str,
+        available_columns: List[str] = None,
+        statistics: dict = None,
+        retrieval_mode: Optional[str] = None,
+        country: Optional[str] = None,
+        use_case: Optional[str] = None,
+    ) -> RegulatoryAgentResult:
+        # Regulatory context: RAG (default), full dump, or legacy folder — see
+        # load_regulatory_context(). The user query is the retrieval query.
+        regulatory_docs, sources, images, retrieval_trace = load_regulatory_context(
+            query, retrieval_mode=retrieval_mode, country=country, use_case=use_case
+        )
+
         # Insert available columns into the prompt
         # Priority to specifically passed available_columns, fallback to constants
         cols_list = available_columns or REGULATORY_AGENT_COLUMNS
@@ -134,10 +203,13 @@ class RegulatoryAgent(BaseAgent):
         if statistics:
             stats_str = json.dumps(statistics, indent=2, ensure_ascii=False)
 
-        # Prepare inputs for templates
+        # Prepare inputs for templates. The user template in prompt_config.md
+        # uses {normative_documents}; older revisions used {regulatory_documents}.
+        # Fill both so the documents are never left as a literal placeholder.
         prompt_inputs = {
-            "query": query, 
+            "query": query,
             "regulatory_documents": regulatory_docs,
+            "normative_documents": regulatory_docs,
             "statistics": stats_str,
             "reference_columns": columns_str
         }
@@ -171,6 +243,7 @@ class RegulatoryAgent(BaseAgent):
             raw_text=raw,
             sources=sources,
             has_requirements=has_requirements,
+            retrieval=retrieval_trace,
             prompt=PromptRecord(
                 system=system_text,
                 user=user_text,

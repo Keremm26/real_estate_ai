@@ -35,4 +35,7 @@ dependencies = [
     "sqlalchemy>=2.0.49",
     "uvicorn>=0.44.0",
     "json-repair>=0.59.4",
+    # normative RAG (backend/app/services/llm/rag): local vector store + PDF sources
+    "chromadb>=1.5",
+    "pypdf>=6.0",
 ]

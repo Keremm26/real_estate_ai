@@ -174,12 +174,20 @@ def _normalise_llm_ref(raw: str, index: int) -> str:
 
 
 def _slice(text: str, rx) -> List[ArticleChunk]:
-    """Slice the full text at header offsets; dedupe by keeping the longest body
-    per ref (handles table-of-contents duplication / restarted numbering)."""
+    """Slice the full text at header offsets, merging every piece that carries
+    the same ref (in document order) into one chunk.
+
+    A ref legitimately recurs in three ways: a table of contents repeats the
+    heading before the body; a PDF running header repeats it on every page of a
+    long article (NUEA Torino 'Art. 8' x41); and some regulations restart the
+    numbering per Titolo (Regolamento d'Igiene). Keeping only the longest piece
+    — the previous behaviour — silently dropped the rest (47% of CTE DB-SUA,
+    44% of the NUEA). Merging is lossless; ``_cap`` then sub-splits anything
+    oversized into '(part N)' as it already does for long single articles."""
     matches = list(rx.finditer(text))
     if len(matches) < 2:
         return []
-    chunks: List[ArticleChunk] = []
+    merged: dict[str, List[str]] = {}
     for i, m in enumerate(matches):
         start = m.start()
         end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
@@ -187,12 +195,12 @@ def _slice(text: str, rx) -> List[ArticleChunk]:
         if not body:
             continue
         ref = _normalise_llm_ref(m.group(1) if m.groups() else m.group(0), i + 1)
-        chunks.append(ArticleChunk(ref, body, bool(_QUANT_RE.search(body))))
-    best = {}
-    for c in chunks:
-        if c.article_ref not in best or len(c.text) > len(best[c.article_ref].text):
-            best[c.article_ref] = c
-    return list(best.values())
+        merged.setdefault(ref, []).append(body)
+    return [
+        ArticleChunk(ref, body, bool(_QUANT_RE.search(body)))
+        for ref, pieces in merged.items()
+        for body in ("\n".join(pieces),)
+    ]
 
 
 def _pack_lines(text: str, max_chars: int) -> List[str]:

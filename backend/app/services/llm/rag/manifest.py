@@ -2,17 +2,27 @@
 Ingestion manifest — which documents to ingest per city slice.
 
 Values are taken verbatim from the corpus "National Inventory" / "Ingest First"
-sheets (``backend/docs/knowledge/corpus/*.xlsx``). The Turin slice starts with
-the 3 national documents on the "Ingest First" shortlist; Piemonte/Torino
-regional + municipal tiers are added here later (Phase D) to activate the
-cascade — no code change, just new manifest rows.
+sheets (``backend/docs/knowledge/corpus/*.xlsx``). Each city slice carries the
+full national -> regional -> municipal cascade; adding a tier is a manifest row,
+never a code change.
 """
 
 from __future__ import annotations
 
-from typing import List, TypedDict
+from typing import List, NotRequired, TypedDict
 
 from app.services.llm.rag.metadata import DocType, JurisdictionLevel, UseCase
+
+
+class DocSpan(TypedDict):
+    """Restrict ingestion to one part of a source — the heading that opens it
+    and the heading that follows it, as multiline regexes each matching the
+    cleaned text exactly once. Used when a regulation bundles the relevant
+    title with hundreds of unrelated articles (food hygiene, mortuary police)
+    that would only dilute the retrieval pool. The raw cache keeps the whole
+    document; the span is applied at chunk time."""
+    start: str
+    end: str
 
 
 class DocSpec(TypedDict):
@@ -26,9 +36,20 @@ class DocSpec(TypedDict):
     use_case: UseCase
     lang: str
     effective_date: str
+    span: NotRequired[DocSpan]  # ingest only this part of the source
 
 
-# Ingest First (national shortlist) — Italy / Turin slice
+# --------------------------------------------------------------------------
+# Turin slice — national -> Piemonte -> Città di Torino. Italy's student
+# room-size rule sits at the NATIONAL tier (DM Sanità 1975 / DM 1256/2021) but
+# the operative use category ("residenze collettive per studenti") is MUNICIPAL
+# (NUEA Art. 3), so the cascade must reach the city tier to classify a project.
+# NOT INCLUDED (corpus rows 16, 18): L.R. 56/1977 (350k chars of plan-procedure
+# law with few queryable thresholds — same distractor profile as Madrid's
+# Ley 9/2001) and the RET Piemonte (definitions only). Both fetch cleanly from
+# arianna.cr.piemonte.it if wanted. Rows 20-24, 29-30 (energy, noise, seismic,
+# landscape, healthcare) are procedural/map-based and out of the student use case.
+# --------------------------------------------------------------------------
 TURIN: List[DocSpec] = [
     {
         "doc_key": "dpr_380_2001",
@@ -121,6 +142,83 @@ TURIN: List[DocSpec] = [
         "use_case": UseCase.STUDENT_HOUSING,
         "lang": "it",
         "effective_date": "2022-02-16",
+    },
+    # --- Piemonte regional tier. arianna.cr.piemonte.it serves the official
+    #     coordinated text server-side (no JS), so url == fetch_url.
+    {
+        "doc_key": "lr_piemonte_19_1999",
+        "doc_name": "L.R. Piemonte 8 luglio 1999, n. 19 — Norme in materia edilizia e modifiche alla L.R. 56/1977",
+        "url": "https://arianna.cr.piemonte.it/iterlegcoordweb/dettaglioLegge.do?urnLegge=urn%3Anir%3Aregione.piemonte%3Alegge%3A1999%3B19",
+        "fetch_url": "https://arianna.cr.piemonte.it/iterlegcoordweb/dettaglioLegge.do?urnLegge=urn%3Anir%3Aregione.piemonte%3Alegge%3A1999%3B19",
+        "country": "IT",
+        "jurisdiction_level": JurisdictionLevel.REGIONAL,
+        "doc_type": DocType.BUILDING,
+        "use_case": UseCase.GENERAL,
+        "lang": "it",
+        "effective_date": "1999-07-14",
+    },
+    {
+        "doc_key": "lr_piemonte_16_2018",
+        "doc_name": "L.R. Piemonte 4 ottobre 2018, n. 16 — Misure per il riuso, la riqualificazione dell'edificato e la rigenerazione urbana",
+        "url": "https://arianna.cr.piemonte.it/iterlegcoordweb/dettaglioLegge.do?urnLegge=urn%3Anir%3Aregione.piemonte%3Alegge%3A2018%3B16",
+        "fetch_url": "https://arianna.cr.piemonte.it/iterlegcoordweb/dettaglioLegge.do?urnLegge=urn%3Anir%3Aregione.piemonte%3Alegge%3A2018%3B16",
+        "country": "IT",
+        "jurisdiction_level": JurisdictionLevel.REGIONAL,
+        "doc_type": DocType.BUILDING,
+        "use_case": UseCase.GENERAL,
+        "lang": "it",
+        "effective_date": "2018-10-11",
+    },
+    # --- Città di Torino municipal tier. The PRG is under a safeguard regime
+    #     (preliminary revision adopted 16 Mar 2026, definitive technical proposal
+    #     1 Sep 2026; art. 58 L.R. 56/1977, max 36 months) — the 1995 NUEA
+    #     remain the text in force. comune.torino.it serves the regulation PDFs
+    #     from extensionless /media/NNNN attachment links.
+    {
+        "doc_key": "to_prg_nuea_vol1",
+        "doc_name": "PRG Torino 1995 — Norme Urbanistico Edilizie di Attuazione, Volume I (testo coordinato al 31 dicembre 2025)",
+        "url": "https://www.comune.torino.it/schede-informative/piano-regolatore-generale-prg",
+        "fetch_url": "http://geoportale.comune.torino.it/web/sites/default/files/mediafiles/volume_i_15.pdf",
+        "country": "IT",
+        "jurisdiction_level": JurisdictionLevel.MUNICIPAL,
+        "doc_type": DocType.PLANNING,
+        "use_case": UseCase.GENERAL,
+        "lang": "it",
+        "effective_date": "2025-12-31",
+    },
+    {
+        "doc_key": "to_reg_381_edilizio",
+        "doc_name": "Regolamento comunale n. 381 — Regolamento Edilizio della Città di Torino",
+        "url": "https://www.comune.torino.it/amministrazione/documenti-dati/documenti/n-381-regolamento-edilizio",
+        "fetch_url": "https://www.comune.torino.it/media/8251",
+        "country": "IT",
+        "jurisdiction_level": JurisdictionLevel.MUNICIPAL,
+        "doc_type": DocType.BUILDING,
+        "use_case": UseCase.GENERAL,
+        "lang": "it",
+        "effective_date": "2023-10-16",
+    },
+    # Hygiene regulation, Titolo III only: dwelling habitability plus the
+    # lodging-house/dormitory provisions (30 m³ air per person, WC ratios) that
+    # are the closest Italian analogue to England's HMO conditions — tagged
+    # BUILDING as the text is habitability, not licensing. The other six titles
+    # (food, infectious disease, mortuary police, heating plants, school medical
+    # service — ~480 articles) are out of scope and would swamp the IT pool.
+    {
+        "doc_key": "to_reg_30_igiene",
+        "doc_name": "Regolamento comunale n. 30 — Regolamento d'Igiene della Città di Torino, Titolo III (Igiene del suolo e dell'abitato)",
+        "url": "https://www.comune.torino.it/amministrazione/documenti-dati/documenti/n-30-regolamento-digiene",
+        "fetch_url": "https://www.comune.torino.it/media/2896",
+        "span": {
+            "start": r"^TITOLO III - IGIENE DEL SUOLO E DELL'ABITATO$",
+            "end": r"^TITOLO IV - IGIENE DEGLI ALIMENTI, DELLE BEVANDE, DEGLI$",
+        },
+        "country": "IT",
+        "jurisdiction_level": JurisdictionLevel.MUNICIPAL,
+        "doc_type": DocType.BUILDING,
+        "use_case": UseCase.GENERAL,
+        "lang": "it",
+        "effective_date": "2018-02-12",
     },
 ]
 

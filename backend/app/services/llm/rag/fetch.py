@@ -46,14 +46,24 @@ def _slug(doc_key: str) -> str:
     return re.sub(r"[^a-z0-9]+", "_", doc_key.lower()).strip("_")
 
 
-def _clean_html(raw: bytes) -> str:
-    """Extract readable text from an HTML page, dropping chrome/boilerplate.
+def _decode_for_lxml(raw: bytes) -> "bytes | str":
+    """Bytes for lxml to decode via the page's declared charset — many Italian
+    legal mirrors are Windows-1252/Latin-1, and decoding them as UTF-8 mangles
+    the accented characters. Some portals do the opposite (arianna.cr.piemonte.it
+    declares ISO-8859-15 but serves UTF-8), so when the bytes are non-ASCII and
+    decode *strictly* as UTF-8 — which Latin-1 accented text essentially never
+    does — hand lxml the decoded str instead so the wrong declaration is ignored."""
+    if raw.isascii():
+        return raw
+    try:
+        return raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return raw
 
-    Parses raw *bytes* so lxml can honour the page's declared charset — many
-    Italian legal mirrors are Windows-1252/Latin-1, and decoding them as UTF-8
-    mangles the accented characters.
-    """
-    tree = lxml_html.fromstring(raw)
+
+def _clean_html(raw: bytes) -> str:
+    """Extract readable text from an HTML page, dropping chrome/boilerplate."""
+    tree = lxml_html.fromstring(_decode_for_lxml(raw))
     for el in tree.iter(*_STRIP_TAGS):
         el.drop_tree()
 
@@ -114,13 +124,12 @@ def fetch_text(
     if txt_path.exists() and not force:
         return txt_path.read_text(encoding="utf-8")
 
-    # raw cache extension follows the source (.pdf vs .html); cleaning is decided
-    # by content sniffing below, so a mislabelled URL still parses correctly.
-    is_pdf_url = url.split("?")[0].lower().endswith(".pdf")
-    raw_path = cache_dir / f"{slug}.{'pdf' if is_pdf_url else 'html'}"
-
-    if raw_path.exists() and not force:
-        raw = raw_path.read_bytes()
+    # Raw cache extension follows the *content* (.pdf vs .html), not the URL —
+    # municipal portals serve PDFs from extensionless attachment links
+    # (comune.torino.it/media/NNNN). Either cached form is accepted on read.
+    cached = [p for p in (cache_dir / f"{slug}.pdf", cache_dir / f"{slug}.html") if p.exists()]
+    if cached and not force:
+        raw = cached[0].read_bytes()
     else:
         resp = httpx.get(
             url,
@@ -130,6 +139,7 @@ def fetch_text(
         )
         resp.raise_for_status()
         raw = resp.content  # bytes — let lxml/pypdf detect the charset/format
+        raw_path = cache_dir / f"{slug}.{'pdf' if raw[:5] == b'%PDF-' else 'html'}"
         raw_path.write_bytes(raw)
 
     cleaned = _clean_pdf(raw) if raw[:5] == b"%PDF-" else _clean_html(raw)
