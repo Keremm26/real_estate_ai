@@ -17,12 +17,12 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Set, Tuple
 
 from app.services.llm.rag import config
+from app.services.llm.rag.chunker import top_level_ref
 from app.services.llm.rag.manifest import MANIFESTS
 from app.services.llm.rag.retriever import _format, search
 from app.services.llm.rag.eval import metrics
@@ -55,19 +55,16 @@ def _relevant(query: Dict[str, Any], key2name: Dict[str, str]) -> Tuple[Set[Tupl
     return articles, docs
 
 
-_PART_RE = re.compile(r"\s*\(part \d+\)$")
-
-
 def _flags(hits: List[Dict[str, Any]], articles: Set[Tuple[str, str]], docs: Set[str]) -> List[bool]:
     """Per-rank relevance. Each doc-level (wildcard) label is satisfied at most
     once — by its first retrieved chunk — so recall never exceeds num_relevant.
-    Oversized articles are stored as 'Art. N (part k)'; any part counts as Art. N,
-    but an article-level label is likewise satisfied at most once."""
+    Sub-units ('Art. N > 2') and oversized parts ('Art. N (part k)') both count
+    as Art. N, but an article-level label is likewise satisfied at most once."""
     seen: Set[str] = set()
     seen_articles: Set[Tuple[str, str]] = set()
     out: List[bool] = []
     for h in hits:
-        dn, ar = h.get("doc_name"), _PART_RE.sub("", h.get("article_ref") or "")
+        dn, ar = h.get("doc_name"), top_level_ref(h.get("article_ref") or "")
         if (dn, ar) in articles and (dn, ar) not in seen_articles:
             seen_articles.add((dn, ar))
             out.append(True)

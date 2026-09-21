@@ -64,6 +64,18 @@ CHUNK_SAMPLE_CHARS = int(os.getenv("RAG_CHUNK_SAMPLE_CHARS", "6000"))
 # (~7.8k chars in the Italian corpus) so real articles stay intact.
 CHUNK_MAX_CHARS = int(os.getenv("RAG_CHUNK_MAX_CHARS", "10000"))
 CHUNK_DETECT_TIMEOUT = float(os.getenv("RAG_CHUNK_TIMEOUT", "180"))
+# Hierarchical descent (llm strategy only). A detected top-level unit that is
+# still longer than CHUNK_TARGET_CHARS is split again at the document's NEXT
+# structural level (comma / lettera, policy clause, numbered subsection ...),
+# recursively, up to CHUNK_MAX_DEPTH levels. The sub-level regex is detected
+# lazily (only when some unit is oversized) from the longest oversized unit,
+# and cached alongside the top-level one. Units already under target stay whole,
+# so a 445-char article is never fragmented; only the multi-page ones (London
+# Plan policies, CTE sections, DM 1256 Allegato §7) are refined. The blind
+# line-packing cap above remains the last resort once levels are exhausted.
+# 0 disables descent and reproduces the single-level behaviour exactly.
+CHUNK_TARGET_CHARS = int(os.getenv("RAG_CHUNK_TARGET_CHARS", "2000"))
+CHUNK_MAX_DEPTH = int(os.getenv("RAG_CHUNK_MAX_DEPTH", "3"))
 
 # --------------------------------------------------------------------------
 # Retrieval

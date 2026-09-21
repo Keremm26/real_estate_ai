@@ -50,6 +50,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from app.services.llm.rag import config
+from app.services.llm.rag.chunker import top_level_ref
 from app.services.llm.rag.eval.run import _doc_key_to_name
 from app.services.llm.rag.retriever import search
 
@@ -309,7 +310,8 @@ def ablate(queries: List[Dict[str, Any]], meta: Dict[str, Any], top_k: int) -> D
         for name, fr, qo in configs:
             hits = search(q["query"], country=meta["country"], use_case=meta["use_case"], top_k=top_k,
                           mode="rag", frame=fr, quantitative_only=qo)
-            rank = next((i + 1 for i, h in enumerate(hits) if (h.get("doc_name"), h.get("article_ref")) in targets), None)
+            rank = next((i + 1 for i, h in enumerate(hits)
+                         if (h.get("doc_name"), top_level_ref(h.get("article_ref") or "")) in targets), None)
             ranks[name].append(rank)
             line += f"{(str(rank) if rank else 'miss'):>15}"
         print(line)

@@ -49,11 +49,25 @@ _FALLBACK_MAX_CHARS = 2000
 _SECTION_RE = re.compile(r"(?m)^[ \t]*(\d+(?:\.\d+){0,3})[.)][ \t]+(\S.*)$")
 
 
+# Separator between hierarchy levels in a ref: "Art. 7 > 7.1 > a)". The part
+# before the first separator is the citable top-level unit the gold sets label.
+REF_SEP = " > "
+
+
 @dataclass
 class ArticleChunk:
-    article_ref: str          # normalised, e.g. "Art. 24"
-    text: str                 # header + body of the article
+    article_ref: str          # normalised, e.g. "Art. 24" or "Art. 24 > 2"
+    text: str                 # header + body of the unit
     has_quantitative: bool
+    # Ancestor headings for a sub-unit ("Art. 7 — Standard minimi ..."); empty
+    # for a top-level unit. Prepended to ``text`` at the end of chunking so the
+    # embedding keeps the parent's subject without the recursion seeing it.
+    context: str = ""
+
+
+def top_level_ref(ref: str) -> str:
+    """'Art. 7 > 7.1 (part 2)' -> 'Art. 7': the unit a gold label names."""
+    return re.sub(r"\s*\(part \d+\)$", "", (ref or "").split(REF_SEP, 1)[0]).strip()
 
 
 def _normalise_ref(raw: str) -> str:
