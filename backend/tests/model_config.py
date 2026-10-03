@@ -7,7 +7,7 @@ def apply_model_config(settings, model_type: str):
         settings.set_llm_model(model_type)
     else:
         # Fallback if set_llm_model is missing for some reason
-        settings.LLM_MODEL = model_type
+        settings.AGENT_LLM_MODEL = model_type
 
 MODEL_OPTIONS = {
     "gpt-5.4": {

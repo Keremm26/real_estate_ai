@@ -1,102 +1,752 @@
 {
   "meta": {
-    "description": "Hand-labelled gold set for the Madrid slice. Spain keeps three clean tiers (state CTE -> regional Ley 9/2001 -> municipal PGOUM), and the student room rule is MUNICIPAL: the PGOUM classifies student housing as 'residencia comunitaria'. Mixed ES/EN queries deliberately test bge-m3 cross-lingual retrieval against a Spanish corpus.",
-    "corpus": "Madrid Phase 1 — 6 documents, 591 chunks (state DB-SUA/HS/SI, regional Ley 9/2001, municipal PGOUM Compendio + FAQ)",
+    "description": "Hand-labelled gold set for the Madrid slice. Spain keeps three clean tiers (state CTE -> regional Ley 9/2001 -> municipal PGOUM) and the student rule is MUNICIPAL: the PGOUM classifies student housing as 'residencia comunitaria'. Each item is one information need asked in English and in Spanish, so cross-lingual retrieval is compared on identical needs.",
+    "corpus": "Madrid Phase 1 — 6 documents, 2,020 chunks: state (CTE DB-SUA, DB-HS, DB-SI), regional (Ley 9/2001 del Suelo), municipal (PGOUM Compendio de las NNUU + the Ayuntamiento's FAQ on the MPG NNUU)",
     "country": "ES",
     "use_case": "student_housing",
-    "match_on": "doc_key + article_ref against retrieved chunk metadata. article_ref '*' = doc-level (any chunk from that document counts), satisfied at most once. Doc-level is used throughout because oversized sections are sub-split into '(part N)' refs that are not stable enough to label.",
+    "match_on": "Three label kinds. Unit: doc_key + article_ref matched as a PATH PREFIX against the chunk's reference, so the PGOUM is labelled at article level ('TÍTULO 7 > 7.3 > 7.3.4' — its top level is a título holding up to 218 chunks) and Ley 9/2001 / the FAQ at their top level ('Artículo 152', '20'). Anchor: article_ref '*' + `anchor` = any chunk of the document containing the phrase, used for the three CTE documents whose detected units are unstable (DB-SI is one 55-chunk 'Artículo 11'; DB-HS repeats refs like '2.1' across sections). Each label is satisfied at most once.",
     "caveats": [
-      "Author-constructed, not validated by a Spanish planning lawyer — state as a limitation. Every gold_value was verified verbatim against the ingested text.",
-      "Doc-level matching, like the London set — NOT directly comparable to the Italian article-level set. Report separately.",
-      "The cascade filters on country=ES, so only the 591 Spanish chunks compete."
+      "Author-constructed, not validated by a Spanish planning lawyer — state as a limitation. Every gold_value was verified verbatim against the ingested text (2026-09-22).",
+      "The FAQ document (Preguntas de interés) is an official municipal interpretation, not a norm: where it is the winner of a precedence pair, the claim is 'the reading that governs practice', not 'the higher rule'.",
+      "Anchor labels on the CTE documents are lenient by construction (a phrase can occur in a neighbouring chunk); they are used only where the detected units are not stable enough to name.",
+      "Spain has no temporal stratum in this corpus: every ingested document is current consolidated text. Instrucción 2/2014 (ceased 21 Mar 2024) was considered and deliberately not ingested."
+    ],
+    "schema": "Schema v2: each item is one information need with one label set and one query string per language (`queries: {lang: text}`), so same-language vs cross-language retrieval is compared on identical needs. `type` in {factual, multi_article, lex_specialis, conflict, temporal}; `tier` is the jurisdiction level of the prevailing answer; `precedence: {winner, loser, rule}` on conflict/temporal items feeds the pair_recall / winner_first metrics (rule in {hierarchy, stricter_minimum, delegated_derogation, lex_specialis, lex_posterior}).",
+    "changelog": [
+      "2026-09-22 rework: the four ES/EN duplicate pairs (es02, es04, es06 and the es01/es05/es07 twins) merged into bilingual items; labels moved from doc-level to article-path/anchor level; es05 reworded (the 0,80 m door width of DB-SUA 9 is not in the ingested slice — the 0,80 m in the text is the restricted-use stair width) and es09 corrected (7 m² is the general kitchen minimum, not a communal-kitchen rule); es13-es40 added for the residence regime, the Ley 9/2001 licence regime and the three CTE documents."
     ]
   },
   "queries": [
     {
       "id": "es01",
-      "lang": "en",
-      "query": "What is the minimum floor area of a bedroom in a student residence in Madrid?",
-      "relevant": [{"doc_key": "pgoum_preguntas_interes", "article_ref": "*"}],
-      "gold_value": "One bedroom of 12 m²; the remaining bedrooms of the student residence must be 7 m² (art. 7.3.4.2.c NNUU)",
-      "note": "THE Spanish student room-size rule — MUNICIPAL tier. Cross-country contrast: Italy=national, London=HMO licensing, Madrid=municipal."
-    },
-    {
-      "id": "es02",
-      "lang": "es",
-      "query": "¿Qué superficie mínima debe tener un dormitorio en una residencia de estudiantes?",
-      "relevant": [{"doc_key": "pgoum_preguntas_interes", "article_ref": "*"}],
-      "gold_value": "Un dormitorio de 12 m²; el resto de dormitorios 7 m²",
-      "note": "Same question as es01 in Spanish — same-language vs cross-language comparison."
+      "type": "multi_article",
+      "tier": "municipal",
+      "queries": {
+        "en": "What is the minimum floor area of a bedroom in a student residence in Madrid?",
+        "es": "¿Cuál es la superficie mínima de un dormitorio en una residencia de estudiantes en Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "gold_value": "One bedroom of 12 m² and the remaining bedrooms 7 m² (PGOUM art. 7.3.4.2.c, applied to student residences through art. 7.3.11.2; confirmed by the municipal FAQ, section 20 'Residencias').",
+      "note": "THE Spanish student room-size rule — MUNICIPAL tier. Cross-country contrast: Italy=national, London=HMO licensing, Madrid=municipal. Both the FAQ answer and the NNUU article count."
     },
     {
       "id": "es03",
-      "lang": "en",
-      "query": "How is collective student accommodation classified in the Madrid urban planning norms?",
-      "relevant": [{"doc_key": "pgoum_nnuu_compendio", "article_ref": "*"}],
-      "gold_value": "As 'residencia comunitaria' — stable accommodation for groups with religious, social or similar ties (PGOUM Título 7)"
-    },
-    {
-      "id": "es04",
-      "lang": "es",
-      "query": "¿Qué se entiende por residencia comunitaria en las Normas Urbanísticas?",
-      "relevant": [{"doc_key": "pgoum_nnuu_compendio", "article_ref": "*"}],
-      "gold_value": "Alojamiento estable de colectivos con vínculos de carácter religioso, social o similar"
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "How is collective student accommodation classified in the Madrid urban planning norms?",
+        "es": "¿Qué se entiende por residencia comunitaria en las Normas Urbanísticas?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.1"
+        }
+      ],
+      "gold_value": "As 'residencia comunitaria': stable accommodation for groups with religious, social or similar ties, expressly including student residences (art. 7.3.1, clase residencia, categoría i)."
     },
     {
       "id": "es05",
-      "lang": "en",
-      "query": "What is the minimum clear width of a door on an accessible route?",
-      "relevant": [{"doc_key": "cte_db_sua", "article_ref": "*"}],
-      "gold_value": "Anchura libre de paso >= 0,80 m, measured in the frame and provided by no more than one leaf (DB-SUA 9)"
-    },
-    {
-      "id": "es06",
-      "lang": "es",
-      "query": "¿Cuál es la anchura libre de paso mínima exigida en las puertas de un itinerario accesible?",
-      "relevant": [{"doc_key": "cte_db_sua", "article_ref": "*"}],
-      "gold_value": ">= 0,80 m (DB-SUA 9)"
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What is the minimum clear width of a stair flight of restricted use?",
+        "es": "¿Cuál es la anchura mínima de un tramo de escalera de uso restringido?"
+      },
+      "relevant": [
+        {
+          "doc_key": "cte_db_sua",
+          "article_ref": "*",
+          "anchor": "escaleras de uso restringido"
+        }
+      ],
+      "gold_value": "0,80 m minimum flight width; riser at most 20 cm and tread at least 22 cm (DB-SUA 1, 4.1).",
+      "note": "Reworded in the 2026-09 rework: the pre-rework pair asked for the 0,80 m accessible-route door width, a value that is in DB-SUA 9 but not in the ingested slice; the 0,80 m that IS in the text is the restricted-use stair width."
     },
     {
       "id": "es07",
-      "lang": "en",
-      "query": "What minimum ventilation flow rate is required per square metre of habitable floor area?",
-      "relevant": [{"doc_key": "cte_db_hs", "article_ref": "*"}],
-      "gold_value": "At least 0,7 l/s per m² of usable floor area; 1,5 l/s per habitable room during unoccupied periods (DB-HS 3)"
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What minimum ventilation flow rate must a main bedroom and a living room have in a dwelling?",
+        "es": "¿Qué caudal mínimo de ventilación deben tener el dormitorio principal y la sala de estar de una vivienda?"
+      },
+      "relevant": [
+        {
+          "doc_key": "cte_db_hs",
+          "article_ref": "*",
+          "anchor": "Tabla 2.1 Caudales"
+        }
+      ],
+      "gold_value": "8 l/s for the main bedroom, 4 l/s for the other bedrooms, 6-10 l/s for living/dining rooms depending on the number of bedrooms, with a minimum total of 12/24/33 l/s (DB-HS 3, table 2.1); plus 1,5 l/s per habitable room during unoccupied periods."
     },
     {
       "id": "es08",
-      "lang": "en",
-      "query": "What are the fire evacuation and occupant-density requirements for a building?",
-      "relevant": [{"doc_key": "cte_db_si", "article_ref": "*"}],
-      "gold_value": "Occupant-density tables, maximum travel distances and exit-width formulas (DB-SI 3, Evacuación de ocupantes)"
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "How is the occupancy of a building calculated for fire evacuation purposes?",
+        "es": "¿Cómo se calcula la ocupación de un edificio a efectos de evacuación en caso de incendio?"
+      },
+      "relevant": [
+        {
+          "doc_key": "cte_db_si",
+          "article_ref": "*",
+          "anchor": "densidad de ocupación"
+        }
+      ],
+      "gold_value": "From the occupancy densities of table 2.1 'Densidades de ocupación' of Section SI 3, applied to the useful floor area of each zone (DB-SI 3)."
     },
     {
       "id": "es09",
-      "lang": "en",
-      "query": "What minimum kitchen area is required in a communal student residence?",
-      "relevant": [{"doc_key": "pgoum_preguntas_interes", "article_ref": "*"}],
-      "gold_value": "A communal kitchen of at least 7 m²"
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "What minimum kitchen area is required in a dwelling in Madrid?",
+        "es": "¿Qué superficie mínima debe tener la cocina de una vivienda en Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "gold_value": "7 m² of useful area, shaped to inscribe a circle of 160 cm diameter; it may be integrated into the living-dining room keeping the sum of both areas (art. 7.3.4.2.a-b).",
+      "note": "Corrected in the 2026-09 rework: the pre-rework gold value said 'a communal kitchen of at least 7 m²' for student residences; the 7 m² is the general kitchen minimum of art. 7.3.4, which residences must meet for the establishment as a whole (art. 7.3.11.2)."
     },
     {
       "id": "es10",
-      "lang": "en",
-      "query": "Must rooms in a student residence be exterior with natural light and ventilation?",
-      "relevant": [{"doc_key": "pgoum_preguntas_interes", "article_ref": "*"}],
-      "gold_value": "Yes — must be an exterior room with natural ventilation and lighting (art. 6.7.8 NNUU)"
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "What makes a dwelling count as 'exterior' in Madrid, and which room must face the street?",
+        "es": "¿Qué condiciones debe cumplir una vivienda para considerarse exterior en Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.3"
+        }
+      ],
+      "gold_value": "It must occupy more than 3 m of façade with an opening of a habitable room of more than 12 m² in which a circle of 270 cm can be inscribed, tangent to the wall with the opening, facing a public street/open space or a qualifying private space (art. 7.3.3)."
     },
     {
       "id": "es11",
-      "lang": "en",
-      "query": "What planning procedure governs a change of use of a building in the Community of Madrid?",
-      "relevant": [{"doc_key": "ley_9_2001_suelo_madrid", "article_ref": "*"}],
-      "gold_value": "Ley 9/2001 sets the regional planning framework, licence regime and municipal intervention rules"
+      "type": "factual",
+      "tier": "regional",
+      "queries": {
+        "en": "Which acts of land use and building require a municipal planning licence in the Community of Madrid?",
+        "es": "¿Qué actos de uso del suelo y edificación están sujetos a licencia urbanística municipal en la Comunidad de Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "ley_9_2001_suelo_madrid",
+          "article_ref": "Artículo 152"
+        }
+      ],
+      "gold_value": "Only those listed in art. 152: earthworks outside an authorised project, building acts requiring a project (except art. 155.e), total interventions on catalogued or protected buildings, demolitions of protected buildings, and the other listed acts."
     },
     {
       "id": "es12",
-      "lang": "es",
-      "query": "¿Qué licencia urbanística se necesita para cambiar el uso de un edificio?",
-      "relevant": [{"doc_key": "ley_9_2001_suelo_madrid", "article_ref": "*"}],
-      "gold_value": "Licencia urbanística conforme a la Ley 9/2001 del Suelo de la Comunidad de Madrid"
+      "type": "factual",
+      "tier": "regional",
+      "queries": {
+        "en": "Which planning title is needed for works that do not appear in the list of acts subject to a licence?",
+        "es": "¿Qué título habilitante se necesita para las obras no incluidas en la lista de actos sujetos a licencia?"
+      },
+      "relevant": [
+        {
+          "doc_key": "ley_9_2001_suelo_madrid",
+          "article_ref": "Artículo 155"
+        }
+      ],
+      "gold_value": "A declaración responsable urbanística — the general regime for every act of transformation, construction or use not expressly listed in arts. 152 and 160 (art. 155).",
+      "note": "Reworded: the pre-rework pair asked generically about a change of use; arts. 151/152/155 split the regime by act, not by use change."
+    },
+    {
+      "id": "es13",
+      "type": "lex_specialis",
+      "tier": "municipal",
+      "queries": {
+        "en": "Which dwelling conditions must a student residence comply with, and does each room have to meet them individually?",
+        "es": "¿Qué condiciones de vivienda deben cumplir las residencias de estudiantes y se aplican a cada unidad de alojamiento por separado?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        },
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        }
+      ],
+      "gold_value": "Residencias comunitarias must meet arts. 7.3.3 (exterior dwelling), 7.3.4 (programme) and 7.3.5 (clear height) for the establishment AS A WHOLE, not for each accommodation unit (art. 7.3.11.2; FAQ section 20.b).",
+      "note": "LEX SPECIALIS: the residence article redirects to the general dwelling articles but changes their unit of application."
+    },
+    {
+      "id": "es14",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "What are the minimum size requirements for a private accommodation unit in a residencia compartida in Madrid?",
+        "es": "¿Qué superficie mínima debe tener una unidad de alojamiento privativa en una residencia compartida en Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        }
+      ],
+      "gold_value": "Bedroom plus bathroom, at least 15 m² and never below 10 m² per person; common areas (living-dining, kitchen, laundry) at least 25 m² for one unit plus 5 m² per additional unit (art. 7.3.11.3).",
+      "note": "The other residence category — contrasts with the residencia comunitaria of es01/es13."
+    },
+    {
+      "id": "es15",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "Can accommodation units of a residence in Madrid be located below ground level or on a basement floor?",
+        "es": "¿Pueden situarse las unidades de alojamiento de una residencia por debajo de la rasante o en plantas inferiores a la baja?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        }
+      ],
+      "gold_value": "No — in both residencia comunitaria and compartida the accommodation units may not be on floors below the ground floor nor have their floor below the surrounding terrain (art. 7.3.11.4)."
+    },
+    {
+      "id": "es16",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "Can a residencia compartida be set up in part of an existing residential building in Madrid?",
+        "es": "¿Puede implantarse una residencia compartida en parte de un edificio residencial existente en Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        }
+      ],
+      "gold_value": "No — art. 7.3.11.5 allows residencias compartidas only in an exclusive building, so the use of the whole building would have to change (FAQ section 20.a)."
+    },
+    {
+      "id": "es17",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "What is the minimum useful area and the minimum programme of a dwelling in Madrid?",
+        "es": "¿Cuál es la superficie útil mínima y el programa mínimo de una vivienda en Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "gold_value": "40 m² of useful area with living-dining room, kitchen, bedroom and bathroom; terraces, balconies, bay windows, drying areas and spaces under 220 cm clear height are excluded from the count (art. 7.3.4.1).",
+      "note": "The general rule the residence articles redirect to — compare es13."
+    },
+    {
+      "id": "es18",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "What is the minimum area of a living-dining room and of a bathroom in a dwelling in Madrid?",
+        "es": "¿Qué superficie mínima deben tener la estancia-comedor y el baño de una vivienda en Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "gold_value": "Living-dining room 14 m² with a 300 cm circle inscribed tangent to the main opening; bathroom at least 3 m² with bath/shower, washbasin and WC, not accessible from the kitchen or from a bedroom (art. 7.3.4.2.b, d).",
+      "note": "Same article as es17 but a different information need (room minima vs dwelling minimum)."
+    },
+    {
+      "id": "es19",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "What is the minimum clear floor-to-ceiling height of habitable rooms in Madrid, and of kitchens?",
+        "es": "¿Cuál es la altura libre mínima de piso de las piezas habitables en Madrid y la de la cocina?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.5"
+        }
+      ],
+      "gold_value": "250 cm for habitable rooms (reducible to 220 cm for isolated structural or service drops); 220 cm for kitchens and non-habitable rooms (art. 7.3.5)."
+    },
+    {
+      "id": "es20",
+      "type": "multi_article",
+      "tier": "municipal",
+      "queries": {
+        "en": "What minimum area must a dwelling created by converting a commercial premises have in Madrid?",
+        "es": "¿Qué superficie mínima debe tener una vivienda resultante de la transformación de un local comercial en Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "21"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "gold_value": "The same minimum dwelling: 40 m² useful with living-dining room, kitchen, bedroom and bathroom, each at its own minimum (art. 7.3.14 referring to art. 7.3.4; FAQ section 21.a)."
+    },
+    {
+      "id": "es21",
+      "type": "multi_article",
+      "tier": "municipal",
+      "queries": {
+        "en": "What minimum area must a dwelling used for tourist accommodation have in Madrid?",
+        "es": "¿Qué superficie mínima debe tener una vivienda de uso turístico en Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "25"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "gold_value": "40 m² of useful area with the full minimum programme — art. 7.6.3.2 subjects tourist dwellings to the Section One conditions of Chapter 7.3, including art. 7.3.4 (FAQ section 25.a)."
+    },
+    {
+      "id": "es22",
+      "type": "conflict",
+      "tier": "municipal",
+      "queries": {
+        "en": "How many car parking spaces must a student residence provide in Madrid?",
+        "es": "¿Cuál es la dotación de plazas de aparcamiento de vehículos exigible a una residencia de estudiantes en Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "24"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.5 > 7.5.35"
+        }
+      ],
+      "precedence": {
+        "winner": {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "24"
+        },
+        "loser": {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.5 > 7.5.35"
+        },
+        "rule": "lex_specialis"
+      },
+      "gold_value": "1 space per 100 m² of built area: a residence has accommodation units, not dwellings, so the residential row of table 1 of art. 7.5.35 ('1/100 m² y 1/vivienda') applies without the per-dwelling term (FAQ section 24.a).",
+      "note": "The official interpretation resolves how the general table applies to a use that has no 'viviendas' — the reading, not the table alone, is the answer."
+    },
+    {
+      "id": "es23",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "What are the car parking standards for residential use inside and outside the M-30 in Madrid?",
+        "es": "¿Cuáles son los estándares de dotación de aparcamiento para uso residencial dentro y fuera de la Calle 30 en Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.5 > 7.5.35"
+        }
+      ],
+      "gold_value": "Residential: 1/100 m² and 1 per dwelling in the historic centre and inside the Calle 30; 1,5/100 m² and 1,5 per dwelling outside the Calle 30 (art. 7.5.35, table 1)."
+    },
+    {
+      "id": "es24",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "How much floor area for bicycle storage is excluded from the buildability count in Madrid?",
+        "es": "¿Qué superficie destinada a la guarda de bicicletas se excluye del cómputo de edificabilidad en Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 6 > 6.5 > 6.5.3"
+        }
+      ],
+      "gold_value": "Premises on the ground floor or below for bicycles and personal mobility vehicles, up to 130 dm² per bicycle required as provision (art. 6.5.3.s)."
+    },
+    {
+      "id": "es25",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "When is compliance with the green factor required for works on an existing building in Madrid?",
+        "es": "¿Cuándo es exigible el cumplimiento del factor verde en obras sobre edificios existentes en Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 5 > 5.3 > 5.3.7"
+        }
+      ],
+      "gold_value": "In extensions and in general restructuring and refurbishment works, as set by art. 6.10.21; building a penthouse as an extension must meet the target green factor (art. 5.3.7.2)."
+    },
+    {
+      "id": "es26",
+      "type": "factual",
+      "tier": "regional",
+      "queries": {
+        "en": "What planning titles exist in the Community of Madrid for acts of building and land use?",
+        "es": "¿Qué títulos habilitantes de naturaleza urbanística existen en la Comunidad de Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "ley_9_2001_suelo_madrid",
+          "article_ref": "Artículo 151"
+        }
+      ],
+      "gold_value": "Licencia urbanística, orden de ejecución and declaración responsable urbanística — a licence being prior municipal control and a declaración responsable posterior control (art. 151)."
+    },
+    {
+      "id": "es27",
+      "type": "factual",
+      "tier": "regional",
+      "queries": {
+        "en": "Which acts need no planning title at all in the Community of Madrid?",
+        "es": "¿Qué actos no requieren ningún título habilitante urbanístico en la Comunidad de Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "ley_9_2001_suelo_madrid",
+          "article_ref": "Artículo 160"
+        }
+      ],
+      "gold_value": "Public works exempted by sectoral law, urbanisation works under approved projects, divisions included in approved reparcelling projects, acts covered by municipal execution orders, and municipal works in the municipality itself (art. 160).",
+      "note": "The negative control of the licence regime: contrast with es11 (licence) and es12 (declaración responsable)."
+    },
+    {
+      "id": "es28",
+      "type": "factual",
+      "tier": "regional",
+      "queries": {
+        "en": "From when does a declaración responsable urbanística allow the works to start in Madrid?",
+        "es": "¿Desde cuándo habilita una declaración responsable urbanística para iniciar la actuación en Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "ley_9_2001_suelo_madrid",
+          "article_ref": "Artículo 157"
+        }
+      ],
+      "gold_value": "From the day it is filed in the municipal register, without prejudice to the municipality's powers of checking, control and inspection (art. 157.1, referring to art. 69 of Ley 39/2015)."
+    },
+    {
+      "id": "es29",
+      "type": "factual",
+      "tier": "regional",
+      "queries": {
+        "en": "Which planning rules apply to a licence application decided after the legal deadline in Madrid?",
+        "es": "¿Qué normativa se aplica a una licencia urbanística resuelta fuera del plazo legal en Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "ley_9_2001_suelo_madrid",
+          "article_ref": "Artículo 153"
+        }
+      ],
+      "gold_value": "The rules in force at the moment it should have been decided, not those in force when it is actually decided (art. 153.1)."
+    },
+    {
+      "id": "es30",
+      "type": "factual",
+      "tier": "regional",
+      "queries": {
+        "en": "Does splitting or grouping plots require a planning licence in the Community of Madrid?",
+        "es": "¿La parcelación o segregación de fincas requiere licencia urbanística en la Comunidad de Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "ley_9_2001_suelo_madrid",
+          "article_ref": "Artículo 143"
+        }
+      ],
+      "gold_value": "Yes — every act of parcelación needs a prior planning licence, and no public deed documenting one may be authorised or registered without it (art. 143.2)."
+    },
+    {
+      "id": "es31",
+      "type": "factual",
+      "tier": "regional",
+      "queries": {
+        "en": "What land must be handed over when a non-residential building is converted to residential use without increasing buildability in Madrid?",
+        "es": "¿Qué suelo debe entregarse en una actuación de dotación que cambia el uso de no residencial a residencial sin incrementar la edificabilidad en Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "ley_9_2001_suelo_madrid",
+          "article_ref": "Artículo 19 bis"
+        }
+      ],
+      "gold_value": "Land for local public networks at least equal to the increase in dwellings multiplied by the area's dwelling standard; where the homogeneous area has no dwellings, 15 m² of local public network per dwelling (art. 19 bis.4).",
+      "note": "The regional counterpart of a change of use to residential — the closest Madrid analogue of Turin q11."
+    },
+    {
+      "id": "es32",
+      "type": "factual",
+      "tier": "regional",
+      "queries": {
+        "en": "Who regulates the procedure for granting planning licences in the Community of Madrid?",
+        "es": "¿Dónde se regula el procedimiento de otorgamiento de las licencias urbanísticas en la Comunidad de Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "ley_9_2001_suelo_madrid",
+          "article_ref": "Artículo 154"
+        }
+      ],
+      "gold_value": "Municipal ordinances — art. 154.1 leaves the licence procedure to them.",
+      "note": "Competence-allocation item: the regional law defers to the municipal tier, the reverse direction of the cascade."
+    },
+    {
+      "id": "es33",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What minimum useful width must a general-use stair have according to its number of users?",
+        "es": "¿Qué anchura útil mínima debe tener una escalera de uso general según el número de personas?"
+      },
+      "relevant": [
+        {
+          "doc_key": "cte_db_sua",
+          "article_ref": "*",
+          "anchor": "Tabla 4.1"
+        }
+      ],
+      "gold_value": "The width is set by the evacuation requirements of DB-SI 3 section 4 and, as a minimum, by table 4.1 of DB-SUA 1, which grades it by building use and by number of people (≤25, ≤50, ≤100, >100)."
+    },
+    {
+      "id": "es34",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What height differences may be resolved with a slope rather than a step, and what slope is allowed?",
+        "es": "¿Qué desniveles pueden resolverse con una pendiente en lugar de un escalón y qué pendiente se admite?"
+      },
+      "relevant": [
+        {
+          "doc_key": "cte_db_sua",
+          "article_ref": "*",
+          "anchor": "no excedan de 5 cm"
+        }
+      ],
+      "gold_value": "Height differences not exceeding 5 cm, with a slope of at most 25% (DB-SUA 1, 2)."
+    },
+    {
+      "id": "es35",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "Do kitchens need a ventilation system in addition to the general one?",
+        "es": "¿Necesitan las cocinas un sistema de ventilación adicional al general?"
+      },
+      "relevant": [
+        {
+          "doc_key": "cte_db_hs",
+          "article_ref": "*",
+          "anchor": "sistema adicional específico de ventilación"
+        }
+      ],
+      "gold_value": "Yes — kitchens need an additional specific system with mechanical extraction for cooking vapours and pollutants (DB-HS 3, 3 Diseño)."
+    },
+    {
+      "id": "es36",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "Which rooms of a dwelling must have a complementary natural ventilation system?",
+        "es": "¿Qué locales de la vivienda deben disponer de un sistema complementario de ventilación natural?"
+      },
+      "relevant": [
+        {
+          "doc_key": "cte_db_hs",
+          "article_ref": "*",
+          "anchor": "sistema complementario de ventilación natural"
+        }
+      ],
+      "gold_value": "Kitchens, dining rooms, bedrooms and living rooms, by means of an openable external window or an external door (DB-HS 3)."
+    },
+    {
+      "id": "es37",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What does the basic fire requirement SI 3 on evacuation of occupants require of a building?",
+        "es": "¿Qué exige la exigencia básica SI 3 de evacuación de ocupantes a un edificio?"
+      },
+      "relevant": [
+        {
+          "doc_key": "cte_db_si",
+          "article_ref": "*",
+          "anchor": "Exigencia básica SI 3"
+        }
+      ],
+      "gold_value": "That the building has evacuation means allowing occupants to leave it or reach a safe place inside it under safety conditions (art. 11.3 CTE)."
+    },
+    {
+      "id": "es38",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What ventilation flow must be provided for an air cavity ventilated to a habitable room?",
+        "es": "¿Qué caudal de ventilación debe garantizarse al ventilar una cámara de aire a un local habitable?"
+      },
+      "relevant": [
+        {
+          "doc_key": "cte_db_hs",
+          "article_ref": "*",
+          "anchor": "0,7 l/s"
+        }
+      ],
+      "gold_value": "At least 0,7 l/s per m² of the useful floor area of the room the cavity openings discharge into (DB-HS 1)."
+    },
+    {
+      "id": "es39",
+      "type": "multi_article",
+      "tier": "national",
+      "queries": {
+        "en": "Which fire safety and accessibility rules must residences in Madrid comply with?",
+        "es": "¿Qué normativa de incendios y de accesibilidad deben cumplir las residencias en Madrid?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        },
+        {
+          "doc_key": "cte_db_si",
+          "article_ref": "*",
+          "anchor": "Exigencia básica SI 3"
+        },
+        {
+          "doc_key": "cte_db_sua",
+          "article_ref": "*",
+          "anchor": "Sección SUA 9"
+        }
+      ],
+      "gold_value": "Art. 7.3.11.6 sends residences to the basic documents on fire safety (DB-SI) and on safety in use and accessibility (DB-SUA).",
+      "note": "The municipal article that hands off to the national code — three labels across two tiers."
+    },
+    {
+      "id": "es40",
+      "type": "conflict",
+      "tier": "municipal",
+      "queries": {
+        "en": "In Madrid, is the general 12 m² bedroom minimum applied to every room of a student residence?",
+        "es": "En Madrid, ¿se aplica el mínimo general de 12 m² por dormitorio a todas las habitaciones de una residencia de estudiantes?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "precedence": {
+        "winner": {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        },
+        "loser": {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        },
+        "rule": "lex_specialis"
+      },
+      "gold_value": "No — only one bedroom of 12 m² is required; the rest are 7 m², because art. 7.3.4 applies to the establishment as a whole under art. 7.3.11.2, not to each accommodation unit (FAQ section 20.b).",
+      "note": "Negative-framing twin of es01: the general article is the tempting wrong answer, the official reading is the right one."
+    },
+    {
+      "id": "es41",
+      "type": "multi_article",
+      "tier": "municipal",
+      "queries": {
+        "en": "How many lifts must a residential building in Madrid install, and from how many served floors are two required?",
+        "es": "¿Cuántos ascensores debe instalar un edificio residencial en Madrid y a partir de cuántas plantas servidas se exigen dos?"
+      },
+      "relevant": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 6 > 6.8 > 6.8.13"
+        },
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "16"
+        }
+      ],
+      "gold_value": "An accessible lift as required by the CTE DB-SUA; the number follows the expected users and the served floors, and from eight (8) served floors at least two lifts (art. 6.8.13.1 and .3; the FAQ section 16 adds that storage floors are not 'served floors' since they are private use).",
+      "note": "Municipal article that defers to the national code for the standard but sets its own quantity rule."
+    },
+    {
+      "id": "es42",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What are the five basic fire safety requirements of the Spanish Technical Building Code?",
+        "es": "¿Cuáles son las exigencias básicas de seguridad en caso de incendio del Código Técnico de la Edificación?"
+      },
+      "relevant": [
+        {
+          "doc_key": "cte_db_si",
+          "article_ref": "*",
+          "anchor": "Exigencia básica SI 1"
+        }
+      ],
+      "gold_value": "SI 1 internal fire spread, SI 2 external fire spread, SI 3 evacuation of occupants, SI 4 fire protection installations, SI 5 fire-service intervention and SI 6 structural fire resistance (art. 11 CTE).",
+      "note": "Overview item: the section headings live in one chunk, so it is the easy twin of es37."
+    },
+    {
+      "id": "es43",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What minimum stair width applies where a stair connects to an accessible zone?",
+        "es": "¿Qué anchura mínima debe tener una escalera que comunica con una zona accesible?"
+      },
+      "relevant": [
+        {
+          "doc_key": "cte_db_sua",
+          "article_ref": "*",
+          "anchor": "zona accesible, cuyo ancho"
+        }
+      ],
+      "gold_value": "1,00 m as a minimum; the width must be free of obstacles and is measured between walls or protective barriers, ignoring handrails that project no more than 12 cm (DB-SUA 1, 4.2, note 2 to table 4.1)."
     }
   ]
 }

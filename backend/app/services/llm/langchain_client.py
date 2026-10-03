@@ -19,23 +19,12 @@ def _get_llm_internal(
     openai_api_base: Optional[str],
     openai_api_key: Optional[str] = None
 ):
-    """Internal cached model factory to ensure unified instances."""
-    
-    # Select the correct API key based on override or active endpoint.
-    if openai_api_key:
-        api_key = openai_api_key
-    else:
-        # If the base URL points to the institutional instance, prefer INSTITUTIONAL_LLM_API_KEY.
-        is_institutional = openai_api_base and "institutional-endpoint.edu" in openai_api_base
-        if is_institutional:
-            api_key = (
-                settings.INSTITUTIONAL_LLM_API_KEY
-                or os.getenv("INSTITUTIONAL_LLM_API_KEY")
-                or settings.OPENAI_API_KEY
-                or os.getenv("OPENAI_API_KEY")
-            )
-        else:
-            api_key = settings.OPENAI_API_KEY or os.getenv("OPENAI_API_KEY")
+    """Internal cached model factory to ensure unified instances.
+
+    ``openai_api_base`` / ``openai_api_key`` arrive already resolved for the
+    model by ``settings.endpoint_for`` (or an explicit caller override), so no
+    guessing from the URL happens here."""
+    api_key = openai_api_key or settings.OPENAI_API_KEY or os.getenv("OPENAI_API_KEY")
 
     if not api_key and not openai_api_base:
         raise RuntimeError(
@@ -63,14 +52,10 @@ def _get_llm_internal(
         base_url=openai_api_base,
     )
 
-    safe_bases = ["localhost", "127.0.0.1", "institutional"]
-    include_chat_template = False
-    if openai_api_base:
-        lower_base = openai_api_base.lower()
-        for token in safe_bases:
-            if token in lower_base:
-                include_chat_template = True
-                break
+    include_chat_template = bool(openai_api_base) and (
+        openai_api_base == settings.INSTITUTIONAL_LLM_API_BASE
+        or any(tok in openai_api_base.lower() for tok in ("localhost", "127.0.0.1"))
+    )
 
     if include_chat_template:
         client_kwargs["extra_body"] = {"chat_template_kwargs": {"enable_thinking": False}}
@@ -94,11 +79,14 @@ def get_llm(
         api_base: override dell'URL base dell'API (es. per vLLM).
         api_key: override della chiave API.
     """
-    # Determina il modello di default dinamicamente dalle impostazioni globali
+    # Default = the agents' active model (settings.AGENT_LLM_MODEL, i.e. the
+    # institutional Gemma unless set_llm_model selected another for this run).
     if not model_name:
-        model_name = settings.LLM_MODEL
+        model_name = settings.AGENT_LLM_MODEL
 
     resolved_model = model_name or os.getenv("LLM_MODEL_DEFAULT")
+    # Endpoint follows the model name; explicit overrides win.
+    default_base, default_key = settings.endpoint_for(resolved_model)
 
     # Risoluzione della temperatura: 
     # Priorità: argomento esplicito > colonna env > settings.AGENT_TEMPERATURE (default 0.0)
@@ -118,8 +106,8 @@ def get_llm(
     return _get_llm_internal(
         model_name=resolved_model,
         temperature=resolved_temperature,
-        openai_api_base=api_base or settings.OPENAI_API_BASE,
-        openai_api_key=api_key
+        openai_api_base=api_base or default_base,
+        openai_api_key=api_key or default_key,
     )
 
 
@@ -132,7 +120,7 @@ def is_oss_model(model_name: Optional[str] = None) -> bool:
 
     Args:
         model_name: Override the model name to check. If None, the current
-            settings.LLM_MODEL is used.
+            settings.AGENT_LLM_MODEL is used.
 
     Returns:
         True if the model should use plain text output instead of
@@ -140,7 +128,7 @@ def is_oss_model(model_name: Optional[str] = None) -> bool:
     """
     try:
         from tests.model_config import MODEL_OPTIONS
-        resolved = model_name or settings.LLM_MODEL
+        resolved = model_name or settings.AGENT_LLM_MODEL
         for cfg in MODEL_OPTIONS.values():
             if cfg["model"] == resolved:
                 return not cfg["supports_structured_output"]
@@ -148,8 +136,8 @@ def is_oss_model(model_name: Optional[str] = None) -> bool:
         pass
 
     # Fallback: heuristic based on model name and endpoint URL.
-    resolved = (model_name or settings.LLM_MODEL or "").lower()
-    api_base = (settings.OPENAI_API_BASE or "").lower()
+    resolved = (model_name or settings.AGENT_LLM_MODEL or "").lower()
+    api_base = (settings.endpoint_for(resolved)[0] or "").lower()
     return (
         "oss" in resolved
         or "llama" in resolved

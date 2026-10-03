@@ -1,0 +1,1821 @@
+{
+  "meta": {
+    "country": "UK",
+    "use_case": "student_housing",
+    "embed_model": "bge-m3",
+    "k_values": [
+      1,
+      3,
+      5,
+      8
+    ],
+    "n_items": 40,
+    "n_runs": 40,
+    "n_chunks_in_scope": 1039,
+    "gold": "gold_queries_london.json",
+    "include_superseded": true
+  },
+  "aggregate": {
+    "recall": {
+      "1": 0.5875,
+      "3": 0.75,
+      "5": 0.85,
+      "8": 0.9125
+    },
+    "hit": {
+      "1": 0.65,
+      "3": 0.775,
+      "5": 0.875,
+      "8": 0.925
+    },
+    "ndcg": {
+      "1": 0.65,
+      "3": 0.7106414310657005,
+      "5": 0.7526134931020685,
+      "8": 0.7749615660528145
+    },
+    "precision": {
+      "1": 0.65,
+      "3": 0.3,
+      "5": 0.2,
+      "8": 0.134375
+    },
+    "mrr": 0.7439880952380953,
+    "n": 40,
+    "precedence": {
+      "n": 5,
+      "pair_recall": 0.6,
+      "winner_first": 0.6
+    },
+    "dump_tokens": 485654,
+    "rag_avg_tokens": 5139.775,
+    "reduction_pct": 98.94167967318297
+  },
+  "breakdown": {
+    "lang": {
+      "en": {
+        "recall": {
+          "1": 0.5875,
+          "3": 0.75,
+          "5": 0.85,
+          "8": 0.9125
+        },
+        "hit": {
+          "1": 0.65,
+          "3": 0.775,
+          "5": 0.875,
+          "8": 0.925
+        },
+        "ndcg": {
+          "1": 0.65,
+          "3": 0.7106414310657005,
+          "5": 0.7526134931020685,
+          "8": 0.7749615660528145
+        },
+        "precision": {
+          "1": 0.65,
+          "3": 0.3,
+          "5": 0.2,
+          "8": 0.134375
+        },
+        "mrr": 0.7439880952380953,
+        "n": 40,
+        "precedence": {
+          "n": 5,
+          "pair_recall": 0.6,
+          "winner_first": 0.6
+        }
+      }
+    },
+    "type": {
+      "conflict": {
+        "recall": {
+          "1": 0.5,
+          "3": 1.0,
+          "5": 1.0,
+          "8": 1.0
+        },
+        "hit": {
+          "1": 1.0,
+          "3": 1.0,
+          "5": 1.0,
+          "8": 1.0
+        },
+        "ndcg": {
+          "1": 1.0,
+          "3": 0.9598603945740938,
+          "5": 0.9598603945740938,
+          "8": 0.9598603945740938
+        },
+        "precision": {
+          "1": 1.0,
+          "3": 0.6666666666666666,
+          "5": 0.4,
+          "8": 0.25
+        },
+        "mrr": 1.0,
+        "n": 2,
+        "precedence": {
+          "n": 2,
+          "pair_recall": 1.0,
+          "winner_first": 0.5
+        }
+      },
+      "factual": {
+        "recall": {
+          "1": 0.6451612903225806,
+          "3": 0.7419354838709677,
+          "5": 0.8709677419354839,
+          "8": 0.9354838709677419
+        },
+        "hit": {
+          "1": 0.6451612903225806,
+          "3": 0.7419354838709677,
+          "5": 0.8709677419354839,
+          "8": 0.9354838709677419
+        },
+        "ndcg": {
+          "1": 0.6451612903225806,
+          "3": 0.7062190084101411,
+          "5": 0.7603765078119062,
+          "8": 0.7826197504067887
+        },
+        "precision": {
+          "1": 0.6451612903225806,
+          "3": 0.24731182795698922,
+          "5": 0.17419354838709677,
+          "8": 0.11693548387096774
+        },
+        "mrr": 0.7341781874039939,
+        "n": 31
+      },
+      "lex_specialis": {
+        "recall": {
+          "1": 0.5,
+          "3": 0.5,
+          "5": 0.5,
+          "8": 0.5
+        },
+        "hit": {
+          "1": 1.0,
+          "3": 1.0,
+          "5": 1.0,
+          "8": 1.0
+        },
+        "ndcg": {
+          "1": 1.0,
+          "3": 0.6131471927654584,
+          "5": 0.6131471927654584,
+          "8": 0.6131471927654584
+        },
+        "precision": {
+          "1": 1.0,
+          "3": 0.3333333333333333,
+          "5": 0.2,
+          "8": 0.125
+        },
+        "mrr": 1.0,
+        "n": 1,
+        "precedence": {
+          "n": 1,
+          "pair_recall": 0.0,
+          "winner_first": 1.0
+        }
+      },
+      "multi_article": {
+        "recall": {
+          "1": 0.25,
+          "3": 0.875,
+          "5": 0.875,
+          "8": 1.0
+        },
+        "hit": {
+          "1": 0.5,
+          "3": 1.0,
+          "5": 1.0,
+          "8": 1.0
+        },
+        "ndcg": {
+          "1": 0.5,
+          "3": 0.75,
+          "5": 0.75,
+          "8": 0.8010955993971215
+        },
+        "precision": {
+          "1": 0.5,
+          "3": 0.5833333333333333,
+          "5": 0.35000000000000003,
+          "8": 0.25
+        },
+        "mrr": 0.75,
+        "n": 4
+      },
+      "temporal": {
+        "recall": {
+          "1": 0.5,
+          "3": 0.5,
+          "5": 0.5,
+          "8": 0.5
+        },
+        "hit": {
+          "1": 0.5,
+          "3": 0.5,
+          "5": 0.5,
+          "8": 0.5
+        },
+        "ndcg": {
+          "1": 0.5,
+          "3": 0.5,
+          "5": 0.5,
+          "8": 0.5
+        },
+        "precision": {
+          "1": 0.5,
+          "3": 0.16666666666666666,
+          "5": 0.1,
+          "8": 0.0625
+        },
+        "mrr": 0.5,
+        "n": 2,
+        "precedence": {
+          "n": 2,
+          "pair_recall": 0.5,
+          "winner_first": 0.5
+        }
+      }
+    },
+    "tier": {
+      "municipal": {
+        "recall": {
+          "1": 0.625,
+          "3": 0.7916666666666666,
+          "5": 0.9583333333333334,
+          "8": 0.9583333333333334
+        },
+        "hit": {
+          "1": 0.75,
+          "3": 0.8333333333333334,
+          "5": 1.0,
+          "8": 1.0
+        },
+        "ndcg": {
+          "1": 0.75,
+          "3": 0.7636498112904252,
+          "5": 0.8317772583994198,
+          "8": 0.8317772583994198
+        },
+        "precision": {
+          "1": 0.75,
+          "3": 0.3333333333333333,
+          "5": 0.23333333333333336,
+          "8": 0.14583333333333334
+        },
+        "mrr": 0.8291666666666666,
+        "n": 12,
+        "precedence": {
+          "n": 3,
+          "pair_recall": 0.6666666666666666,
+          "winner_first": 0.6666666666666666
+        }
+      },
+      "national": {
+        "recall": {
+          "1": 0.6,
+          "3": 0.65,
+          "5": 0.75,
+          "8": 0.85
+        },
+        "hit": {
+          "1": 0.6,
+          "3": 0.65,
+          "5": 0.75,
+          "8": 0.85
+        },
+        "ndcg": {
+          "1": 0.6,
+          "3": 0.6315464876785729,
+          "5": 0.6746141434859122,
+          "8": 0.7090911695079799
+        },
+        "precision": {
+          "1": 0.6,
+          "3": 0.21666666666666665,
+          "5": 0.15,
+          "8": 0.10625
+        },
+        "mrr": 0.6654761904761906,
+        "n": 20,
+        "precedence": {
+          "n": 2,
+          "pair_recall": 0.5,
+          "winner_first": 0.5
+        }
+      },
+      "regional": {
+        "recall": {
+          "1": 0.5,
+          "3": 0.9375,
+          "5": 0.9375,
+          "8": 1.0
+        },
+        "hit": {
+          "1": 0.625,
+          "3": 1.0,
+          "5": 1.0,
+          "8": 1.0
+        },
+        "ndcg": {
+          "1": 0.625,
+          "3": 0.8288662191964322,
+          "5": 0.8288662191964322,
+          "8": 0.8544140188949929
+        },
+        "precision": {
+          "1": 0.625,
+          "3": 0.4583333333333333,
+          "5": 0.275,
+          "8": 0.1875
+        },
+        "mrr": 0.8125,
+        "n": 8
+      }
+    }
+  },
+  "per_run": [
+    {
+      "id": "uk01",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What is the minimum floor area of a room used as sleeping accommodation by one person in a licensed HMO?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Licensing of HMOs (Man 1A > 2",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3803
+    },
+    {
+      "id": "uk02",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What is the minimum sleeping room area for two persons sharing in an HMO?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Licensing of HMOs (Man 1A > 2",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3713
+    },
+    {
+      "id": "uk03",
+      "lang": "en",
+      "type": "temporal",
+      "tier": "national",
+      "query": "Which permitted development right allows commercial premises to be converted to residential use?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "T&CP (General Permitte MA",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2224,
+      "precedence": {
+        "rule": "lex_posterior",
+        "winner_rank": 1,
+        "loser_rank": 6,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "uk04",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "Which permitted development class covers change of use between a dwellinghouse and a small house in multiple occupation?",
+      "num_relevant": 1,
+      "first_hit_rank": null,
+      "top1": "T&CP (General Permitte Class L",
+      "rr": 0.0,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "rag_tokens": 2759
+    },
+    {
+      "id": "uk05",
+      "lang": "en",
+      "type": "factual",
+      "tier": "regional",
+      "query": "What proportion of student accommodation must be affordable to follow the Fast Track Route?",
+      "num_relevant": 1,
+      "first_hit_rank": 2,
+      "top1": "Tower Hamlets Local Pl 9.65",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.6309297535714575,
+        "5": 0.6309297535714575,
+        "8": 0.6309297535714575
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 6644
+    },
+    {
+      "id": "uk06",
+      "lang": "en",
+      "type": "factual",
+      "tier": "regional",
+      "query": "Must purpose-built student accommodation be secured through a nomination agreement with a higher education provider?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "The London Plan 2021 — Policy SD10 > F (part 11)",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 6848
+    },
+    {
+      "id": "uk07",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "What percentage of student rooms must be wheelchair accessible in Tower Hamlets?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Tower Hamlets Local Pl 9.64",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3154
+    },
+    {
+      "id": "uk08",
+      "lang": "en",
+      "type": "conflict",
+      "tier": "municipal",
+      "query": "Has Tower Hamlets removed the Class MA permitted development right for converting commercial buildings?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Tower Hamlets Article  1",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 4028,
+      "precedence": {
+        "rule": "delegated_derogation",
+        "winner_rank": 1,
+        "loser_rank": 2,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "uk09",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What is the definition of Class C4, a small house in multiple occupation?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "The Town and Country P 5 (part 2)",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4943
+    },
+    {
+      "id": "uk10",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "Which use class covers a dwellinghouse occupied by a single household?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "The Town and Country P 5 (part 3)",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4760
+    },
+    {
+      "id": "uk11",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "What are the planning requirements for purpose-built student accommodation in Tower Hamlets?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Tower Hamlets Local Pl 9.60",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 5007
+    },
+    {
+      "id": "uk12",
+      "lang": "en",
+      "type": "multi_article",
+      "tier": "regional",
+      "query": "How is affordable student accommodation defined in terms of rent in London?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "The London Plan 2021 — Policy SD10 > F (part 11)",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 13593
+    },
+    {
+      "id": "uk13",
+      "lang": "en",
+      "type": "conflict",
+      "tier": "municipal",
+      "query": "In Tower Hamlets, what is the minimum floor area of a room for one person in an HMO where the kitchen is in a separate room?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Licensing of HMOs (Man 1A > 2",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.9197207891481876,
+        "5": 0.9197207891481876,
+        "8": 0.9197207891481876
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 4010,
+      "precedence": {
+        "rule": "stricter_minimum",
+        "winner_rank": 3,
+        "loser_rank": 1,
+        "pair_retrieved": true,
+        "winner_first": false
+      }
+    },
+    {
+      "id": "uk14",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "What is the minimum room size for two people sharing a bedsit in Tower Hamlets?",
+      "num_relevant": 1,
+      "first_hit_rank": 2,
+      "top1": "Tower Hamlets Local Pl 9.41 > 5",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.6309297535714575,
+        "5": 0.6309297535714575,
+        "8": 0.6309297535714575
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 6504
+    },
+    {
+      "id": "uk15",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "How large must a shared kitchen be in a Tower Hamlets HMO, and how many occupiers may share one set of cooking facilities?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Tower Hamlets — Privat Space Standard (part 1)",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 5042
+    },
+    {
+      "id": "uk16",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "What minimum ceiling height applies to a sleeping room in a Tower Hamlets HMO, and which floor area is disregarded?",
+      "num_relevant": 1,
+      "first_hit_rank": 5,
+      "top1": "Licensing of HMOs (Man 1A > 9",
+      "rr": 0.2,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.38685280723454163,
+        "8": 0.38685280723454163
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4110
+    },
+    {
+      "id": "uk17",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "Can a room smaller than 4.64 square metres be used as sleeping accommodation in a licensed HMO?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Licensing of HMOs (Man 1A > 2",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3692
+    },
+    {
+      "id": "uk18",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "If an HMO does not meet the room-size conditions when the licence is granted, how long can the authority give the licence holder to comply?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Licensing of HMOs (Man 1A > 2",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 1931
+    },
+    {
+      "id": "uk19",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What condition about household waste must a Part 2 HMO licence in England include?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Licensing of HMOs (Man 1B > 5",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 1854
+    },
+    {
+      "id": "uk20",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "If part of a dwellinghouse is used as a separate dwelling, is that treated as development under the Use Classes Order?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "The Town and Country P 4",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2378
+    },
+    {
+      "id": "uk21",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "Which use class covers a residential college, a boarding school or a nursing home?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "The Town and Country P 5 (part 3)",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 8233
+    },
+    {
+      "id": "uk22",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What conditions must be met to convert a commercial building to dwellings under Class MA?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "T&CP (General Permitte MA > MA.2 > f",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 1635
+    },
+    {
+      "id": "uk23",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "How many dwellings, and how much floor space, can be created from agricultural buildings under Class Q?",
+      "num_relevant": 1,
+      "first_hit_rank": 4,
+      "top1": "T&CP (General Permitte Class Q > Q.1",
+      "rr": 0.25,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.43067655807339306,
+        "8": 0.43067655807339306
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4020
+    },
+    {
+      "id": "uk24",
+      "lang": "en",
+      "type": "temporal",
+      "tier": "national",
+      "query": "Can an office building be converted into flats without a full planning application, and under which permitted development class?",
+      "num_relevant": 1,
+      "first_hit_rank": null,
+      "top1": "T&CP (General Permitte AA (part 2)",
+      "rr": 0.0,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "rag_tokens": 2678,
+      "precedence": {
+        "rule": "lex_posterior",
+        "winner_rank": null,
+        "loser_rank": 8,
+        "pair_retrieved": false,
+        "winner_first": false
+      }
+    },
+    {
+      "id": "uk25",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What floor-space limit applies when a betting office, launderette or takeaway is converted to a dwellinghouse under Class M?",
+      "num_relevant": 1,
+      "first_hit_rank": null,
+      "top1": "T&CP (General Permitte Class C > C.1",
+      "rr": 0.0,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "rag_tokens": 3090
+    },
+    {
+      "id": "uk26",
+      "lang": "en",
+      "type": "multi_article",
+      "tier": "regional",
+      "query": "What proportion of new dwellings in London must be wheelchair user dwellings, and what standard must the rest meet?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Tower Hamlets Local Pl 9.44",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.9197207891481876,
+        "5": 0.9197207891481876,
+        "8": 0.9197207891481876
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 11285
+    },
+    {
+      "id": "uk27",
+      "lang": "en",
+      "type": "factual",
+      "tier": "regional",
+      "query": "What minimum tenancy length and management arrangements does the London Plan require for large-scale purpose-built shared living?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "The London Plan 2021 — Policy SD10 > F (part 12)",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 18295
+    },
+    {
+      "id": "uk28",
+      "lang": "en",
+      "type": "factual",
+      "tier": "regional",
+      "query": "For the purposes of the London Plan's student accommodation policy, who counts as a student and what is a higher education provider?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "The London Plan 2021 — Policy SD10 > F (part 11)",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 9281
+    },
+    {
+      "id": "uk29",
+      "lang": "en",
+      "type": "lex_specialis",
+      "tier": "municipal",
+      "query": "What share of rooms in a purpose-built student accommodation scheme in Tower Hamlets must be wheelchair accessible?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Tower Hamlets Local Pl 9.64",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.6131471927654584,
+        "8": 0.6131471927654584
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 5570,
+      "precedence": {
+        "rule": "lex_specialis",
+        "winner_rank": 1,
+        "loser_rank": null,
+        "pair_retrieved": false,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "uk30",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "When will Tower Hamlets support a new house in multiple occupation?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Tower Hamlets Local Pl 9.67",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 1731
+    },
+    {
+      "id": "uk31",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "Under what conditions does Tower Hamlets accept the loss of existing student accommodation?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Tower Hamlets Local Pl 9.67",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 5001
+    },
+    {
+      "id": "uk32",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "Where in Tower Hamlets does the Article 4 direction removing Class MA apply, and when was it made?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Tower Hamlets Article  1",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4045
+    },
+    {
+      "id": "uk33",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What is the minimum clear opening width of the principal communal entrance door of a building containing visitable dwellings?",
+      "num_relevant": 1,
+      "first_hit_rank": 2,
+      "top1": "Building Regulations 2 2.14 > d",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.6309297535714575,
+        "5": 0.6309297535714575,
+        "8": 0.6309297535714575
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 1502
+    },
+    {
+      "id": "uk34",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What door width and external landing does an accessible and adaptable dwelling (M4(2)) need at its principal private entrance?",
+      "num_relevant": 1,
+      "first_hit_rank": 4,
+      "top1": "Building Regulations 2 1.18 > b",
+      "rr": 0.25,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.43067655807339306,
+        "8": 0.43067655807339306
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 5293
+    },
+    {
+      "id": "uk35",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "On which storey must a visitable dwelling provide a WC?",
+      "num_relevant": 1,
+      "first_hit_rank": 6,
+      "top1": "Building Regulations 2 0.15 > d",
+      "rr": 0.16666666666666666,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.3562071871080222
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.125
+      },
+      "rag_tokens": 1844
+    },
+    {
+      "id": "uk36",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What clear width and turning spaces must the approach route to a wheelchair user dwelling provide?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Building Regulations 2 3.9",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4244
+    },
+    {
+      "id": "uk37",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What clear turning circle must the WC/shower room of an accessible and adaptable dwelling provide?",
+      "num_relevant": 1,
+      "first_hit_rank": 7,
+      "top1": "Building Regulations 2 3.43 > e",
+      "rr": 0.14285714285714285,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.3333333333333333
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.125
+      },
+      "rag_tokens": 2803
+    },
+    {
+      "id": "uk38",
+      "lang": "en",
+      "type": "multi_article",
+      "tier": "regional",
+      "query": "Which Building Regulations accessibility categories do new London dwellings have to meet, and what are the three categories?",
+      "num_relevant": 2,
+      "first_hit_rank": 2,
+      "top1": "Tower Hamlets Local Pl 9.41 > 1",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.38685280723454163,
+        "5": 0.38685280723454163,
+        "8": 0.5912352048230277
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.25
+      },
+      "rag_tokens": 15615
+    },
+    {
+      "id": "uk39",
+      "lang": "en",
+      "type": "multi_article",
+      "tier": "regional",
+      "query": "How much of a new student housing scheme in Tower Hamlets must be affordable student accommodation?",
+      "num_relevant": 2,
+      "first_hit_rank": 2,
+      "top1": "Tower Hamlets Local Pl 9.30",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.6934264036172708,
+        "5": 0.6934264036172708,
+        "8": 0.6934264036172708
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 4352
+    },
+    {
+      "id": "uk40",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "How many people may share one room for sleeping in a Tower Hamlets HMO?",
+      "num_relevant": 1,
+      "first_hit_rank": 4,
+      "top1": "Licensing of HMOs (Man 1A > 3",
+      "rr": 0.25,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.43067655807339306,
+        "8": 0.43067655807339306
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4077
+    }
+  ]
+}

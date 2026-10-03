@@ -72,15 +72,29 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str = ""
     HF_TOKEN: str = ""
 
-    # API key for the institutional LLM endpoint (anonymized for review)
-    INSTITUTIONAL_LLM_API_KEY: str = ""  
+    # Two chat endpoints, both OpenAI-compatible. Which one a request goes to is
+    # decided by the MODEL NAME (see ``endpoint_for``), never by flipping a
+    # shared base URL, so the hosted and the institutional model can coexist
+    # in one process (agents on one, LLM-as-judge on the other).
+    #
+    # Institutional vLLM: serves "gemma-4" = RedHatAI/gemma-4-31B-it-FP8-block.
+    # Open endpoint — no key required; the key is kept for when one is.
+    INSTITUTIONAL_LLM_API_BASE: str = "http://130.192.163.76:8000/v1"
+    INSTITUTIONAL_LLM_MODEL: str = "gemma-4"
+    INSTITUTIONAL_LLM_API_KEY: str = ""
 
     # LLM Provider: "openai" or "gemini" - controls which provider to use by default
     DEFAULT_LLM_PROVIDER: str = "openai"
 
-    # LLM Models
-    LLM_MODEL: str = "gpt-oss-120b"
+    # Hosted OpenAI model (.env LLM_MODEL / OPENAI_API_BASE / OPENAI_API_KEY):
+    # the baseline and the LLM-as-judge in tests/test_suite.py.
+    LLM_MODEL: str = "gpt-5.4"
     OPENAI_API_BASE: Optional[str] = None
+
+    # The model every MURENA agent runs on unless ``set_llm_model`` selects
+    # another for the run. Defaults to the institutional Gemma so the whole
+    # pipeline runs on the open model and the hosted one is reserved for judging.
+    AGENT_LLM_MODEL: str = "gemma-4"
 
     LLMODEL_CONCURRENCY_LIMITS: Dict[str, int] = {
         "gpt-5.4": 2,
@@ -89,30 +103,32 @@ class Settings(BaseSettings):
         "qwen3-8b": 48,
     }
 
+    # Run-selector aliases accepted by set_llm_model (server --model, API
+    # model_type, test_suite --model) -> concrete model name.
+    MODEL_ALIASES: Dict[str, str] = {
+        "gpt-5.4": "gpt-5.4",
+        "gemma-4": "gemma-4",
+        "gpt-oss-120b": "gemma-4",
+        "gemma3-27b": "gemma-4",
+        "qwen3-8b": "gemma-4",
+    }
+
     def set_llm_model(self, model_type: str):
-        """Sets the LLM model configuration.
-        
+        """Select the model the agents run on for this process/run.
+
         Args:
-            model_type: The identifier for the LLM flavor to use.
+            model_type: an alias from ``MODEL_ALIASES`` or a concrete model name.
         """
-        # Ensure latest env vars are loaded (avoids issues with subprocesses/caching)
-        base_url = os.environ.get("OPENAI_API_BASE")
-        
-        if model_type == "gpt-oss-120b":
-            self.LLM_MODEL = "gemma-4"
-            self.OPENAI_API_BASE = base_url
-            self.OPENAI_API_KEY = self.INSTITUTIONAL_LLM_API_KEY or "vllm"
-        elif model_type == "gemma3-27b":
-            self.LLM_MODEL = "gemma-4"
-            self.OPENAI_API_BASE = base_url
-            self.OPENAI_API_KEY = "vllm"
-        elif model_type == "qwen3-8b":
-            self.LLM_MODEL = "gemma-4"
-            self.OPENAI_API_BASE = base_url
-            self.OPENAI_API_KEY = "vllm"
-        elif model_type == "gpt-5.4":
-            self.LLM_MODEL = "gpt-5.4"
-            self.OPENAI_API_BASE = None # Base OpenAI
+        self.AGENT_LLM_MODEL = self.MODEL_ALIASES.get(model_type, model_type)
+
+    def endpoint_for(self, model: str) -> tuple:
+        """(base_url, api_key) for a model name. The institutional model goes to
+        the institutional endpoint with its own key (or a dummy — vLLM does not
+        check it); everything else goes to OpenAI with the OpenAI key. The
+        OpenAI secret is therefore never sent to another host."""
+        if model == self.INSTITUTIONAL_LLM_MODEL:
+            return self.INSTITUTIONAL_LLM_API_BASE, (self.INSTITUTIONAL_LLM_API_KEY or "vllm")
+        return self.OPENAI_API_BASE, self.OPENAI_API_KEY
 
 
     # Agent Temperature - 0.0 for fully deterministic outputs (consistency)
@@ -202,7 +218,7 @@ class Settings(BaseSettings):
     def agent_models(self) -> Dict[str, str]:
         """Return agent-specific model configuration."""
         return {
-            "default": self.LLM_MODEL,
+            "default": self.AGENT_LLM_MODEL,
         }
 
 

@@ -75,7 +75,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=f"Start the {settings.APP_NAME} server")
     parser.add_argument(
         "--model", 
-        choices=["gpt-oss-120b", "deepseek-r1-8b", "vllm-gemma3-27b", "vllm-qwen", "gpt-5-nano"], 
+        choices=sorted(settings.MODEL_ALIASES),
         help="Choose the LLM model to use"
     )
     
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     # Apply model configuration if specified
     if args.model:
         settings.set_llm_model(args.model)
-        logger.info(f"LLM model set to: {args.model} ({settings.OPENAI_MODEL_FAST})")
+        logger.info(f"LLM model set to: {args.model} -> {settings.AGENT_LLM_MODEL} @ {settings.endpoint_for(settings.AGENT_LLM_MODEL)[0] or 'OpenAI'}")
 
     uvicorn.run(
         "app.main:app",

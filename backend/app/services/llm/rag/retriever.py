@@ -12,6 +12,10 @@ three-arm downstream evaluation):
          isolates the semantic-retrieval delta.
   rag  : router -> jurisdiction cascade (metadata ``where``) -> semantic top-k
 
+The cascade also enforces temporal validity: only ``status == "in_force"``
+chunks are in scope. Superseded documents stay in the store for evaluation
+and are reachable only with ``include_superseded=True``.
+
 Returns ``(docs_str, sources)`` in the same block shape the extraction prompt
 already expects, so the downstream prompt and ``_run_ranking`` are unchanged.
 """
@@ -27,17 +31,22 @@ _EMPTY = ("No regulatory documents available.", [])
 
 # Metadata keys surfaced in the per-hit trace (kept small: the trace is stored
 # in the run's gemini_responses / agent_trace, not the chunk text itself).
-_TRACE_KEYS = ("doc_name", "article_ref", "jurisdiction_level", "use_case", "doc_type", "source_url")
+_TRACE_KEYS = ("doc_name", "article_ref", "jurisdiction_level", "use_case", "doc_type", "source_url",
+               "status", "effective_date")
 
 
-def _cascade_where(country: str, use_case: str, *, quantitative_only: bool = False) -> Dict[str, Any]:
-    """Jurisdiction cascade filter: this country, plus general baselines.
+def _cascade_where(country: str, use_case: str, *, quantitative_only: bool = False,
+                   include_superseded: bool = False) -> Dict[str, Any]:
+    """Jurisdiction cascade filter: this country, plus general baselines, and
+    (unless ``include_superseded``) only rules currently in force.
     ``quantitative_only`` narrows to chunks carrying a numeric threshold."""
     use_cases = list(dict.fromkeys([use_case, "general"]))  # dedupe, keep order
     clauses: List[Dict[str, Any]] = [
         {"country": country},
         {"use_case": {"$in": use_cases}},
     ]
+    if not include_superseded:
+        clauses.append({"status": "in_force"})
     if quantitative_only:
         clauses.append({"has_quantitative": True})
     return {"$and": clauses}
@@ -52,6 +61,7 @@ def search(
     mode: Optional[str] = None,
     frame: bool = False,
     quantitative_only: bool = False,
+    include_superseded: bool = False,
 ) -> List[Dict[str, Any]]:
     """Structured retrieval: return ranked hits (metadata + text), not formatted text.
 
@@ -62,7 +72,8 @@ def search(
 
     ``frame`` / ``quantitative_only`` are the extraction-oriented knobs (see
     config.QUERY_FRAMING / QUANT_ONLY); they only affect ``rag`` mode — ``dump``
-    stays the pure "everything in scope" baseline.
+    stays the pure "everything in scope" baseline. ``include_superseded`` lets
+    repealed documents compete (evaluation only; never set in production).
     """
     mode = (mode or config.RETRIEVAL_MODE).lower()
     if mode not in config.RETRIEVAL_MODES:
@@ -76,13 +87,14 @@ def search(
 
     if mode == "dump":
         # baseline: every in-scope chunk, no ranking
-        res = col.get(where=_cascade_where(country, use_case))
+        res = col.get(where=_cascade_where(country, use_case, include_superseded=include_superseded))
         docs = res.get("documents") or []
         metas = res.get("metadatas") or []
         return [{**md, "text": doc, "distance": None} for doc, md in zip(docs, metas)]
 
     # rag: semantic top-k within the cascade scope
-    where = _cascade_where(country, use_case, quantitative_only=quantitative_only)
+    where = _cascade_where(country, use_case, quantitative_only=quantitative_only,
+                           include_superseded=include_superseded)
     embed_text = f"{query}\n{config.QUERY_FRAMING_TEXT}" if frame else query
     qvec = embed_query(embed_text)
     res = col.query(query_embeddings=[qvec], n_results=top_k, where=where)
@@ -92,14 +104,24 @@ def search(
     return [{**md, "text": doc, "distance": dist} for doc, md, dist in zip(docs, metas, dists)]
 
 
+def _validity(hit: Dict[str, Any]) -> str:
+    """'in force from 2015-04-15' / 'SUPERSEDED on 2021-08-01 by <doc_key>' —
+    the temporal fact the model needs when two versions of a rule are in
+    context; empty when the chunk carries no date."""
+    if hit.get("status") == "superseded":
+        by = f" by {hit['superseded_by']}" if hit.get("superseded_by") else ""
+        return f"SUPERSEDED on {hit.get('repealed_date', '?')}{by}"
+    return f"in force from {hit['effective_date']}" if hit.get("effective_date") else ""
+
+
 def _format(hits: List[Dict[str, Any]]) -> Tuple[str, List[str]]:
     blocks: List[str] = []
     sources: List[str] = []
     for hit in hits:
         doc = hit.get("doc_name", "?")
         art = hit.get("article_ref", "")
-        tier = hit.get("jurisdiction_level", "")
-        blocks.append(f"--- {doc} {art} ({tier}) ---\n{hit.get('text', '')}\n")
+        tags = "; ".join(t for t in (hit.get("jurisdiction_level", ""), _validity(hit)) if t)
+        blocks.append(f"--- {doc} {art} ({tags}) ---\n{hit.get('text', '')}\n")
         sources.append(f"{doc} {art} ({hit.get('source_url', '')})")
     return "\n".join(blocks), sources
 

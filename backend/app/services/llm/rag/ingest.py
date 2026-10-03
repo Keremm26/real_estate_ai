@@ -2,10 +2,12 @@
 Ingestion (offline) — build the normative vector store for a city slice.
 
     python -m app.services.llm.rag.ingest --city turin [--rebuild] [--force-fetch]
+    python -m app.services.llm.rag.ingest --city turin --refresh-metadata
 
 Pipeline per document: fetch (cached) -> article-level chunk -> metadata tag ->
 embed -> upsert into Chroma. Run once per corpus change; retrieval is entirely
-local afterwards.
+local afterwards. ``--refresh-metadata`` re-tags what is already stored from
+the manifest without fetching or embedding (for manifest-only changes).
 
 Requires the embedding model to be available in Ollama
 (``ollama pull <RAG_EMBED_MODEL>``). Everything before the embed step runs
@@ -42,6 +44,26 @@ def _apply_span(text: str, span: DocSpan, doc_key: str) -> str:
     return text[bounds[0]:bounds[1]]
 
 
+def _metadata(spec: DocSpec, article_ref: str, has_quantitative: bool) -> ChunkMetadata:
+    """The metadata one chunk of ``spec`` carries — the single place where a
+    manifest row is mapped onto the store, so a manifest field change is a
+    metadata refresh, not a re-embed."""
+    return ChunkMetadata(
+        country=spec["country"],
+        jurisdiction_level=spec["jurisdiction_level"],
+        use_case=spec["use_case"],
+        doc_type=spec["doc_type"],
+        doc_name=spec["doc_name"],
+        article_ref=article_ref,
+        source_url=spec["url"],
+        lang=spec["lang"],
+        effective_date=spec["effective_date"],
+        repealed_date=spec.get("repealed_date"),
+        superseded_by=spec.get("superseded_by"),
+        has_quantitative=has_quantitative,
+    )
+
+
 def _build_chunks(spec: DocSpec, *, force_fetch: bool):
     """Fetch + chunk one document, returning (ids, texts, metadatas)."""
     text = fetch_text(spec["doc_key"], spec["fetch_url"], force=force_fetch)
@@ -54,22 +76,34 @@ def _build_chunks(spec: DocSpec, *, force_fetch: bool):
         articles = chunk_document(text)
     ids, texts, metas = [], [], []
     for art in articles:
-        md = ChunkMetadata(
-            country=spec["country"],
-            jurisdiction_level=spec["jurisdiction_level"],
-            use_case=spec["use_case"],
-            doc_type=spec["doc_type"],
-            doc_name=spec["doc_name"],
-            article_ref=art.article_ref,
-            source_url=spec["url"],
-            lang=spec["lang"],
-            effective_date=spec["effective_date"],
-            has_quantitative=art.has_quantitative,
-        )
+        md = _metadata(spec, art.article_ref, art.has_quantitative)
         ids.append(md.chunk_id())
         texts.append(art.text)
         metas.append(md.to_chroma())
     return ids, texts, metas
+
+
+def refresh_metadata(city: str) -> None:
+    """Rewrite the metadata of every stored chunk of ``city`` from the current
+    manifest, keeping text and embeddings. Needed when a manifest field is
+    added or changed (e.g. ``status`` / ``repealed_date``) — chunks ingested
+    before the field existed would otherwise be invisible to a filter on it."""
+    specs: List[DocSpec] = MANIFESTS.get(city)
+    if not specs:
+        raise SystemExit(f"Unknown city '{city}'. Known: {list(MANIFESTS)}")
+    col = store.get_collection()
+    total = 0
+    for spec in specs:
+        old = col.get(where={"$and": [{"country": spec["country"]}, {"doc_name": spec["doc_name"]}]})
+        if not old["ids"]:
+            print(f"  · {spec['doc_key']}: not in store, skipped")
+            continue
+        metas = [_metadata(spec, m["article_ref"], bool(m.get("has_quantitative"))).to_chroma()
+                 for m in old["metadatas"]]
+        col.update(ids=old["ids"], metadatas=metas)
+        total += len(old["ids"])
+        print(f"  · {spec['doc_key']}: {len(old['ids'])} chunk(s) -> status={metas[0]['status']}")
+    print(f"Refreshed metadata on {total} chunks of '{city}'.")
 
 
 def ingest_city(city: str, *, rebuild: bool, force_fetch: bool, dry_run: bool,
@@ -131,9 +165,16 @@ def main(argv=None) -> None:
     p.add_argument("--rebuild", action="store_true", help="drop the WHOLE collection first (all cities)")
     p.add_argument("--force-fetch", action="store_true", help="re-fetch sources, ignore cache")
     p.add_argument("--dry-run", action="store_true", help="fetch + chunk only, no embed/store")
+    p.add_argument("--refresh-metadata", action="store_true",
+                   help="rewrite stored chunk metadata from the manifest (no fetch, no embed)")
     args = p.parse_args(argv)
     if args.rebuild and args.doc:
         p.error("--rebuild drops every city; it cannot be combined with --doc")
+    if args.refresh_metadata:
+        if args.rebuild or args.doc or args.force_fetch or args.dry_run:
+            p.error("--refresh-metadata takes only --city")
+        refresh_metadata(args.city)
+        return
     ingest_city(args.city, rebuild=args.rebuild, force_fetch=args.force_fetch, dry_run=args.dry_run,
                 only_docs=args.doc)
 

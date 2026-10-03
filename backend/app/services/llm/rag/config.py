@@ -10,8 +10,16 @@ dimension the model emits — no code change needed.
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 # backend/app/services/llm/rag/config.py -> parents[4] == backend/
 BACKEND_DIR = Path(__file__).resolve().parents[4]
+
+# The RAG_* knobs below are read from the environment at import time. The CLI
+# entry points (ingest, eval) import this module before app.core.config, so
+# load backend/.env here too — same file, and real exports still win
+# (load_dotenv never overrides an existing variable).
+load_dotenv(BACKEND_DIR / ".env")
 
 # --------------------------------------------------------------------------
 # Local store + corpus locations (all gitignored under backend/data/rag/)

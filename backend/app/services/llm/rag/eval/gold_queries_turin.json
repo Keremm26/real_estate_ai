@@ -1,0 +1,920 @@
+{
+  "meta": {
+    "description": "Hand-labelled gold set for retrieval evaluation of the normative RAG pipeline (recall@k, hit@k, MRR, nDCG, precedence). Each item is one information need asked in English and in Italian; a retrieved chunk counts as relevant when its (doc, top-level article) is in `relevant`. Conflict / temporal items label BOTH the prevailing and the overridden rule (the agent needs both to explain the cascade) and name the winner in `precedence`.",
+    "corpus": "Turin full cascade — 12 documents: 7 national (DPR 380, DM Sanità 1975, DM 236/1989, DM 1444/1968, L. 122/1989, DM 1256/2021 + Allegato A), 2 regional (LR Piemonte 19/1999, 16/2018), 3 municipal (PRG NUEA vol. I, Reg. Edilizio 381, Reg. d'Igiene 30 Tit. III)",
+    "country": "IT",
+    "use_case": "student_housing",
+    "match_on": "doc_key + article_ref against each retrieved chunk's metadata. doc_key maps to metadata.doc_name via manifest.MANIFESTS['turin']; article_ref matches the chunker's normalised form ('Art. 1', 'Art. 23-ter', ...). article_ref '*' means doc-level: any chunk from that document counts (used for the DM 1256 annex, whose '§ 7.1'-style sections have no citable article numbers). Each '*' label is satisfied at most once so recall stays bounded.",
+    "caveats": [
+      "Author-constructed, not domain-expert-validated — state this as a limitation. Kerem should sanity-check every `relevant` label and `gold_value` (all were verified verbatim against the ingested text on 2026-09-22).",
+      "Most factual items have a single relevant article, so precision@k is capped at 1/k and is NOT a meaningful headline metric — lead with recall@k / MRR; nDCG is informative on the multi-relevant items (multi_article, conflict, temporal).",
+      "Article-level labels on long articles (PRG Art. 2 / Art. 8, Reg. 381 Art. 77) are satisfied by any chunk of that article, which is more lenient than for one-chunk articles; report per-doc results with that in mind.",
+      "Conflict items include the overridden rule in `relevant`: a retriever that returns only the prevailing rule scores recall 0.5 on them by design.",
+      "Ground-truth values (`gold_value`) are for the qualitative showcase / manual spot-checks, not used by the metric computation."
+    ],
+    "schema": "Schema v2: each item is one information need with one label set and one query string per language (`queries: {lang: text}`), so same-language vs cross-language retrieval is compared on identical needs. `type` in {factual, multi_article, lex_specialis, conflict, temporal}; `tier` is the jurisdiction level of the prevailing answer; `precedence: {winner, loser, rule}` on conflict/temporal items feeds the pair_recall / winner_first metrics (rule in {hierarchy, stricter_minimum, delegated_derogation, lex_specialis, lex_posterior}).",
+    "changelog": [
+      "2026-09-22 rework: every item bilingual (en + it); q01/q03/q04/q05/q06 gained Reg. 381 Art. 77 as a concordant municipal label (type multi_article); q11 relabelled as a regional>national conflict (LR 19/1999 Art. 8 replaces DPR 380 Art. 23-ter in Piedmont); q19 tightened from doc-level to DM 1444 Art. 3 + Art. 4; q21-q42 added to cover the regional and municipal tiers, with conflict (delegated_derogation / hierarchy / stricter_minimum) and temporal (lex_posterior) strata."
+    ]
+  },
+  "queries": [
+    {
+      "id": "q01",
+      "type": "multi_article",
+      "tier": "national",
+      "queries": {
+        "en": "What is the minimum internal ceiling height for habitable rooms in a dwelling?",
+        "it": "Qual è l'altezza minima interna dei locali abitabili di un alloggio?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 1"
+        },
+        {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 77"
+        }
+      ],
+      "gold_value": "2.70 m; reducible to 2.40 m for corridors, bathrooms and storage rooms",
+      "note": "Reg. 381 Art. 77 (77.1/77.2) restates the same minimums at municipal level — a concordant second tier, labelled since the 2026-09 rework."
+    },
+    {
+      "id": "q02",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "Is a reduced ceiling height allowed in mountain municipalities above 1000 metres of altitude?",
+        "it": "È ammessa un'altezza minima ridotta nei comuni montani sopra i 1000 metri di altitudine?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 1"
+        }
+      ],
+      "gold_value": "Yes — down to 2.55 m above 1000 m a.s.l."
+    },
+    {
+      "id": "q03",
+      "type": "multi_article",
+      "tier": "national",
+      "queries": {
+        "en": "What is the minimum habitable floor area required per occupant?",
+        "it": "Qual è la superficie abitabile minima richiesta per ogni abitante?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 2"
+        },
+        {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 77"
+        }
+      ],
+      "gold_value": "14 m² per person for the first 4 occupants, 10 m² for each additional occupant",
+      "note": "Reg. 381 Art. 77 (77.1/77.2) restates the same minimums at municipal level — a concordant second tier, labelled since the 2026-09 rework."
+    },
+    {
+      "id": "q04",
+      "type": "multi_article",
+      "tier": "national",
+      "queries": {
+        "en": "What is the minimum area of a single bedroom and of a double bedroom?",
+        "it": "Qual è la superficie minima di una camera da letto singola e di una camera doppia?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 2"
+        },
+        {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 77"
+        }
+      ],
+      "gold_value": "9 m² single, 14 m² double",
+      "note": "Reg. 381 Art. 77 (77.1/77.2) restates the same minimums at municipal level — a concordant second tier, labelled since the 2026-09 rework."
+    },
+    {
+      "id": "q05",
+      "type": "multi_article",
+      "tier": "national",
+      "queries": {
+        "en": "What is the minimum size of the living room in a dwelling?",
+        "it": "Qual è la superficie minima della stanza di soggiorno in un alloggio?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 2"
+        },
+        {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 77"
+        }
+      ],
+      "gold_value": "At least 14 m²",
+      "note": "Reg. 381 Art. 77 (77.1/77.2) restates the same minimums at municipal level — a concordant second tier, labelled since the 2026-09 rework."
+    },
+    {
+      "id": "q06",
+      "type": "multi_article",
+      "tier": "national",
+      "queries": {
+        "en": "What is the minimum floor area of a studio apartment for one person and for two people?",
+        "it": "Qual è la superficie minima di un alloggio monostanza per una persona e per due persone?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 3"
+        },
+        {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 77"
+        }
+      ],
+      "gold_value": "28 m² for one person (services included), 38 m² for two",
+      "note": "Reg. 381 Art. 77 (77.1/77.2) restates the same minimums at municipal level — a concordant second tier, labelled since the 2026-09 rework."
+    },
+    {
+      "id": "q07",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What indoor air temperature must the heating system be designed to maintain?",
+        "it": "Quale temperatura dell'aria interna deve garantire l'impianto di riscaldamento?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 4"
+        }
+      ],
+      "gold_value": "Between 18 °C and 20 °C"
+    },
+    {
+      "id": "q08",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What is the minimum ratio between window area and floor area for natural lighting?",
+        "it": "Qual è il rapporto minimo tra superficie finestrata e superficie del pavimento per l'illuminazione naturale?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 5"
+        }
+      ],
+      "gold_value": "Superficie finestrata apribile >= 1/8 della superficie del pavimento; fattore di luce diurna medio >= 2%"
+    },
+    {
+      "id": "q09",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What ventilation and sanitary fixtures are required for a bathroom?",
+        "it": "Quali requisiti di ventilazione e quali apparecchi sanitari sono richiesti per la stanza da bagno?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 7"
+        }
+      ],
+      "gold_value": "External opening or mechanical extraction; at least one bathroom with toilet, bidet, bath/shower, washbasin"
+    },
+    {
+      "id": "q10",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What are the acoustic / noise-protection requirements for building materials in dwellings?",
+        "it": "Quali requisiti di isolamento acustico devono avere i materiali degli edifici di abitazione?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 8"
+        }
+      ],
+      "gold_value": "Adequate protection against footstep, traffic, plant and airborne noise from adjacent units"
+    },
+    {
+      "id": "q11",
+      "type": "conflict",
+      "tier": "regional",
+      "queries": {
+        "en": "Does converting a building to a different use (change of use) require authorisation, and when is it urbanistically relevant?",
+        "it": "Il cambio di destinazione d'uso di un immobile richiede un titolo abilitativo, e quando è urbanisticamente rilevante?"
+      },
+      "relevant": [
+        {
+          "doc_key": "lr_piemonte_19_1999",
+          "article_ref": "Art. 8"
+        },
+        {
+          "doc_key": "dpr_380_2001",
+          "article_ref": "Art. 23-ter"
+        }
+      ],
+      "gold_value": "In Piedmont the relevant change of use is the passage between the six categories of LR 19/1999 Art. 8 (residential; productive/industrial/logistics/artisanal; commercial; tourist-accommodation; office; agricultural), subject to permesso di costruire or SCIA even without works. DPR 380 Art. 23-ter (five categories) expressly yields to regional law ('salva diversa previsione da parte delle leggi regionali').",
+      "precedence": {
+        "winner": {
+          "doc_key": "lr_piemonte_19_1999",
+          "article_ref": "Art. 8"
+        },
+        "loser": {
+          "doc_key": "dpr_380_2001",
+          "article_ref": "Art. 23-ter"
+        },
+        "rule": "delegated_derogation"
+      },
+      "note": "CONFLICT regional > national by express delegation: Art. 23-ter states it does not apply in regions with their own rules. Pre-rework the label was DPR 380 Art. 23-ter only."
+    },
+    {
+      "id": "q12",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "Which building interventions require a building permit (permesso di costruire)?",
+        "it": "Quali interventi edilizi sono subordinati a permesso di costruire?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dpr_380_2001",
+          "article_ref": "Art. 10"
+        }
+      ],
+      "gold_value": "New construction, urban restructuring, and major changes as listed in Art. 10 TUE"
+    },
+    {
+      "id": "q13",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "Which minor works qualify as free building activity that needs no permit?",
+        "it": "Quali opere minori rientrano nell'attività edilizia libera e non richiedono titolo abilitativo?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dpr_380_2001",
+          "article_ref": "Art. 6"
+        }
+      ],
+      "gold_value": "Ordinary maintenance and the works listed under 'attività edilizia libera' (Art. 6 TUE)"
+    },
+    {
+      "id": "q14",
+      "type": "multi_article",
+      "tier": "national",
+      "queries": {
+        "en": "What are the overall minimum habitability requirements (height and floor area) for a residential unit?",
+        "it": "Quali sono i requisiti minimi di abitabilità (altezza e superficie) di un'unità residenziale?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 1"
+        },
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 2"
+        }
+      ],
+      "gold_value": "Height 2.70 m (Art. 1) + 14 m²/person, bedrooms 9/14 m² (Art. 2)"
+    },
+    {
+      "id": "q15",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "When is the installation of a lift mandatory in a residential building?",
+        "it": "Quando è obbligatoria l'installazione dell'ascensore in un edificio residenziale?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dm_236_1989",
+          "article_ref": "Art. 3"
+        }
+      ],
+      "gold_value": "Quando l'accesso alla più alta unità immobiliare è posto oltre una certa quota (criteri generali di accessibilità)"
+    },
+    {
+      "id": "q16",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What are the minimum door widths and ramp slopes for wheelchair accessibility?",
+        "it": "Quali sono la larghezza minima delle porte e la pendenza massima delle rampe per l'accessibilità in sedia a ruote?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dm_236_1989",
+          "article_ref": "Art. 8"
+        }
+      ],
+      "gold_value": "Door clear width >= 0.80 m; ramp slope <= 8% (both in Art. 8 'Specifiche funzionali e dimensionali')"
+    },
+    {
+      "id": "q17",
+      "type": "lex_specialis",
+      "tier": "national",
+      "queries": {
+        "en": "In a university student residence, what is the minimum net floor area of a single room (posto letto)?",
+        "it": "In una residenza universitaria, qual è la superficie netta minima di una camera singola?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "gold_value": "Single room >= 11 m² (DM 1256 Allegato A, section 7.1 Area Funzionale Residenza)",
+      "note": "STUDENT-HOUSING framing -> should resolve to DM 1256, NOT the general DM 1975 Art. 2. Doc-level match ('*') because the annex sections have no citable article numbers."
+    },
+    {
+      "id": "q18",
+      "type": "lex_specialis",
+      "tier": "national",
+      "queries": {
+        "en": "What is the minimum area per resident for a double room in a student residence?",
+        "it": "Qual è la superficie minima per residente di una camera doppia in una residenza per studenti?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "gold_value": "Double room >= 9.5 m² per resident (DM 1256 Allegato A)",
+      "note": "STUDENT-HOUSING framing. The general-vs-student split: contrast with q04 (generic 'bedroom' -> DM 1975 Art. 2, 9/14 m²)."
+    },
+    {
+      "id": "q19",
+      "type": "multi_article",
+      "tier": "national",
+      "queries": {
+        "en": "What is the minimum amount of public, green and community space per inhabitant required by urban planning standards?",
+        "it": "Qual è la dotazione minima di spazi pubblici, verde e servizi collettivi per abitante prevista dagli standard urbanistici?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dm_1444_1968",
+          "article_ref": "Art. 3"
+        },
+        {
+          "doc_key": "dm_1444_1968",
+          "article_ref": "Art. 4"
+        }
+      ],
+      "gold_value": "18 m² per inhabitant, inderogable (DM 1444/1968 Art. 3: 4.5 education, 2 common facilities, 9 parks/sport, 2.5 parking)",
+      "note": "Tightened from doc-level to Art. 3 + Art. 4 in the 2026-09 rework: the 18 m² figure is in Art. 3, its zone-by-zone variations in Art. 4."
+    },
+    {
+      "id": "q20",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "How much parking space must be reserved for a new building?",
+        "it": "Quanta superficie a parcheggio deve essere riservata in una nuova costruzione?"
+      },
+      "relevant": [
+        {
+          "doc_key": "legge_122_1989",
+          "article_ref": "Art. 2"
+        }
+      ],
+      "gold_value": "1 m² per 10 m³ of construction (Legge 122/1989 Art. 2, amending art. 41-sexies L.1150/1942)"
+    },
+    {
+      "id": "q21",
+      "type": "conflict",
+      "tier": "regional",
+      "queries": {
+        "en": "When recovering an existing attic (sottotetto) for residential use in Piedmont, what minimum average internal height applies?",
+        "it": "Nel recupero di un sottotetto esistente a fini abitativi in Piemonte, qual è l'altezza media interna minima richiesta?"
+      },
+      "relevant": [
+        {
+          "doc_key": "lr_piemonte_16_2018",
+          "article_ref": "Art. 6"
+        },
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 1"
+        }
+      ],
+      "precedence": {
+        "winner": {
+          "doc_key": "lr_piemonte_16_2018",
+          "article_ref": "Art. 6"
+        },
+        "loser": {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 1"
+        },
+        "rule": "delegated_derogation"
+      },
+      "gold_value": "Average height not less than 2.20 m for habitable rooms (2.00 m for accessory spaces; 2.00 m above 1000 m a.s.l.); at least 1.40 m at the highest point (LR 16/2018 Art. 6 c.3 and c.2-bis) — instead of the 2.70 m of DM Sanità 1975 Art. 1.",
+      "note": "CONFLICT regional < national value, valid because building law is a concurrent competence and DPR 380 Art. 2-bis c.1-quater authorises it. A 'prefer national' or 'prefer stricter' heuristic gets this wrong."
+    },
+    {
+      "id": "q22",
+      "type": "conflict",
+      "tier": "regional",
+      "queries": {
+        "en": "What is the minimum window-to-floor ratio for natural light and ventilation in a recovered attic in Piedmont?",
+        "it": "Qual è il rapporto minimo di aeroilluminazione tra superficie finestrata e pavimento nei sottotetti recuperati in Piemonte?"
+      },
+      "relevant": [
+        {
+          "doc_key": "lr_piemonte_16_2018",
+          "article_ref": "Art. 6"
+        },
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 5"
+        }
+      ],
+      "precedence": {
+        "winner": {
+          "doc_key": "lr_piemonte_16_2018",
+          "article_ref": "Art. 6"
+        },
+        "loser": {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 5"
+        },
+        "rule": "delegated_derogation"
+      },
+      "gold_value": "A ratio equal to or greater than 1/16, sloping roof windows counting (LR 16/2018 Art. 6 c.2-bis) — instead of the general 1/8 of DM Sanità 1975 Art. 5.",
+      "note": "Same mechanism as q21, different parameter. Contrast with q08 (the general 1/8 rule)."
+    },
+    {
+      "id": "q23",
+      "type": "conflict",
+      "tier": "regional",
+      "queries": {
+        "en": "Can a renovation with expansion under the Piedmont reuse law exceed the maximum building-density limits set by national planning standards?",
+        "it": "Gli interventi di ristrutturazione con ampliamento previsti dalla legge regionale piemontese sul riuso possono superare i limiti di densità fondiaria del DM 1444/1968?"
+      },
+      "relevant": [
+        {
+          "doc_key": "lr_piemonte_16_2018",
+          "article_ref": "Art. 5"
+        },
+        {
+          "doc_key": "dm_1444_1968",
+          "article_ref": "Art. 7"
+        }
+      ],
+      "precedence": {
+        "winner": {
+          "doc_key": "lr_piemonte_16_2018",
+          "article_ref": "Art. 5"
+        },
+        "loser": {
+          "doc_key": "dm_1444_1968",
+          "article_ref": "Art. 7"
+        },
+        "rule": "delegated_derogation"
+      },
+      "gold_value": "Yes — LR 16/2018 Art. 5 c.9 lett. b) allows the interventions to exceed the density limits of DM 1444/1968 Art. 7 (and lett. c) the maximum height up to one extra storey), overriding the PRG parameters.",
+      "note": "The national authorisation for this is DPR 380 Art. 2-bis c.1 ('le regioni possono prevedere disposizioni derogatorie al DM 1444')."
+    },
+    {
+      "id": "q24",
+      "type": "conflict",
+      "tier": "regional",
+      "queries": {
+        "en": "Do the national minimum habitability dimensions apply to an existing dwelling undergoing conservative restoration in Piedmont?",
+        "it": "Le misure minime del DM Sanità 1975 si applicano a un alloggio esistente sottoposto a restauro o risanamento conservativo in Piemonte?"
+      },
+      "relevant": [
+        {
+          "doc_key": "lr_piemonte_16_2018",
+          "article_ref": "Art. 10"
+        },
+        {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 77"
+        },
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 1"
+        }
+      ],
+      "precedence": {
+        "winner": {
+          "doc_key": "lr_piemonte_16_2018",
+          "article_ref": "Art. 10"
+        },
+        "loser": {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 1"
+        },
+        "rule": "delegated_derogation"
+      },
+      "gold_value": "No — LR 16/2018 Art. 10 c.6-bis disapplies the DM 5 luglio 1975 minimums for existing units under interventions not exceeding restauro/risanamento conservativo, if at least one hygiene requirement is maintained or improved; Reg. 381 Art. 77.2 c.3 says the same at municipal level.",
+      "note": "Three relevant labels: the regional disapplication, the concordant municipal restatement, and the disapplied national rule."
+    },
+    {
+      "id": "q25",
+      "type": "factual",
+      "tier": "regional",
+      "queries": {
+        "en": "By how much can an existing residential building be enlarged under the renovation incentives of the Piedmont reuse law?",
+        "it": "Di quanto può essere ampliato un edificio residenziale esistente con gli incentivi alla ristrutturazione della legge regionale piemontese sul riuso?"
+      },
+      "relevant": [
+        {
+          "doc_key": "lr_piemonte_16_2018",
+          "article_ref": "Art. 5"
+        }
+      ],
+      "gold_value": "Up to 25% of the legitimately existing surface or volume (residential, tourist-accommodation, office); for one- or two-family houses in any case 30 m² or 90 m³ per unit; +10% bonus if impermeabilised soil is reduced by at least 20% (Art. 5 c.2, c.5)."
+    },
+    {
+      "id": "q26",
+      "type": "conflict",
+      "tier": "regional",
+      "queries": {
+        "en": "Can a rural building (rustico) in Piedmont be recovered for residential use even where the municipal plan's use designations or indices would not allow it?",
+        "it": "Il recupero a fini residenziali di un rustico in Piemonte è ammesso anche in deroga alle destinazioni d'uso e agli indici del PRG comunale?"
+      },
+      "relevant": [
+        {
+          "doc_key": "lr_piemonte_16_2018",
+          "article_ref": "Art. 7"
+        },
+        {
+          "doc_key": "to_prg_nuea_vol1",
+          "article_ref": "Art. 3"
+        }
+      ],
+      "precedence": {
+        "winner": {
+          "doc_key": "lr_piemonte_16_2018",
+          "article_ref": "Art. 7"
+        },
+        "loser": {
+          "doc_key": "to_prg_nuea_vol1",
+          "article_ref": "Art. 3"
+        },
+        "rule": "hierarchy"
+      },
+      "gold_value": "Yes — LR 16/2018 Art. 7 c.10 admits the recovery even in derogation of the uses, indices and parameters of the PRG and its implementing plans (save the municipal exclusion power of Art. 9 and third-party rights); buildings must pre-date 1 Sept 1967 or have local typology.",
+      "note": "CONFLICT regional > municipal: the ordinary hierarchy case. The PRG use table (Art. 3) is the overridden side."
+    },
+    {
+      "id": "q27",
+      "type": "factual",
+      "tier": "regional",
+      "queries": {
+        "en": "For how long can a municipality in Piedmont authorise a temporary use of a vacant building that differs from its permitted use?",
+        "it": "Per quanto tempo un comune piemontese può consentire l'uso temporaneo di un immobile dismesso per usi diversi da quelli consentiti?"
+      },
+      "relevant": [
+        {
+          "doc_key": "lr_piemonte_19_1999",
+          "article_ref": "Art. 8-bis"
+        }
+      ],
+      "gold_value": "Once only, for no more than three years, extendable by a further two; it does not constitute a change of use and, without works, needs no building title (LR 19/1999 Art. 8-bis c.1-2).",
+      "note": "DPR 380 Art. 23-quater (national) provides the temporary-use mechanism but leaves the duration to the convention; the 3+2 years exist only in the regional article, so Art. 23-quater is a deliberate near-miss, not a label."
+    },
+    {
+      "id": "q28",
+      "type": "multi_article",
+      "tier": "regional",
+      "queries": {
+        "en": "What deviation from the approved dimensions (height, volume, distances) is tolerated without constituting a building violation?",
+        "it": "Quale scostamento dalle misure del titolo abilitativo (altezza, cubatura, distacchi) è tollerato senza costituire violazione edilizia?"
+      },
+      "relevant": [
+        {
+          "doc_key": "lr_piemonte_19_1999",
+          "article_ref": "Art. 6-bis"
+        },
+        {
+          "doc_key": "dpr_380_2001",
+          "article_ref": "Art. 34-bis"
+        }
+      ],
+      "gold_value": "2% of the measures in the building title (DPR 380 Art. 34-bis c.1, mirrored by LR 19/1999 Art. 6-bis c.1); for works completed by 24 May 2024 the national rule grades it 2-6% by unit size.",
+      "note": "Concordant national + regional pair — both count."
+    },
+    {
+      "id": "q29",
+      "type": "factual",
+      "tier": "regional",
+      "queries": {
+        "en": "Is a change of use without building works subject to urbanisation charges in Piedmont?",
+        "it": "In Piemonte il mutamento di destinazione d'uso senza opere edilizie è oneroso?"
+      },
+      "relevant": [
+        {
+          "doc_key": "lr_piemonte_19_1999",
+          "article_ref": "Art. 8"
+        }
+      ],
+      "gold_value": "Only when it moves between the six categories of Art. 8 c.1; the charge is the difference between the charges due for the new and the existing use class (Art. 8 c.5-6).",
+      "note": "Same article as q11 but a different question (onerosità), so a different information need."
+    },
+    {
+      "id": "q30",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "What are the minimum dimensions of a kitchen and of the first bathroom in a new dwelling in Turin?",
+        "it": "Quali sono le dimensioni minime della cucina e del primo servizio igienico in un nuovo alloggio a Torino?"
+      },
+      "relevant": [
+        {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 77"
+        }
+      ],
+      "gold_value": "Kitchen-only rooms ≥ 4.00 m² with width ≥ 1.60 m; first bathroom ≥ 3.00 m², width ≥ 1.50 m, with WC, bidet, bath or shower and washbasin; a second bathroom ≥ 1.10 m², width ≥ 0.90 m (Reg. 381 Art. 77.2 c.1).",
+      "note": "Municipal-only values — DM Sanità 1975 sets no kitchen or bathroom area."
+    },
+    {
+      "id": "q31",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "What requirements must a mezzanine (soppalco) built inside a room in Turin comply with?",
+        "it": "Quali requisiti deve rispettare un soppalco realizzato all'interno di un locale a Torino?"
+      },
+      "relevant": [
+        {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 77"
+        }
+      ],
+      "gold_value": "Net area ≤ 1/2 of the room; ≥ 2.00 m between mezzanine floor and ceiling; ≥ 2.20 m under its structure; upper part open for at least 1/4 of its perimeter with a 1.10-1.20 m balustrade; requires a building title (Reg. 381 Art. 77.1 c.7-9)."
+    },
+    {
+      "id": "q32",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "What minimum ceiling height applies to ground-floor premises of a building facing a street or square in Turin?",
+        "it": "Qual è l'altezza minima all'intradosso del soffitto per i piani terreni degli edifici in fregio a vie o piazze a Torino?"
+      },
+      "relevant": [
+        {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 77"
+        }
+      ],
+      "gold_value": "Not less than 3.50 m from sidewalk level (2.70 m for residential ground floors in the part of the city east of the Po); no point of any new habitable room may be below 2.00 m (Reg. 381 Art. 77.1 c.5)."
+    },
+    {
+      "id": "q33",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "What electric-vehicle charging infrastructure must the parking spaces of a new residential building in Turin provide?",
+        "it": "Quali predisposizioni per la ricarica dei veicoli elettrici devono avere i posti auto di un nuovo edificio residenziale a Torino?"
+      },
+      "relevant": [
+        {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 102"
+        }
+      ],
+      "gold_value": "Cable ducting in every parking space (residential new build / major renovation); non-residential buildings with more than ten spaces need at least one charging point per 10 spaces plus ducting for one in five (Reg. 381 Art. 102 c.1)."
+    },
+    {
+      "id": "q34",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "Can the mandatory parking spaces of a new building in Turin be used for bicycle parking instead of cars?",
+        "it": "Gli spazi a parcheggio obbligatori di un nuovo edificio a Torino possono essere destinati alla sola sosta di biciclette?"
+      },
+      "relevant": [
+        {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 83"
+        }
+      ],
+      "gold_value": "Yes, wholly or partly, for bicycles or sustainable-mobility vehicles, provided car parking is shown to be constructively impossible or the spaces remain convertible to car parking with minimal works (Reg. 381 Art. 83 c.5, referring to art. 41-sexies L. 1150/1942)."
+    },
+    {
+      "id": "q35",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "Which national technical rules on architectural barriers does the Turin building regulation require for private residential buildings?",
+        "it": "Quali prescrizioni tecniche nazionali sul superamento delle barriere architettoniche richiama il Regolamento Edilizio di Torino per gli edifici privati?"
+      },
+      "relevant": [
+        {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 121"
+        }
+      ],
+      "gold_value": "Legge 13/1989 and the technical prescriptions of DM 236/1989 for private and public residential buildings (DPR 503/1996 for public buildings); derogations follow the Giunta guidelines of 10 Dec 2008 (Reg. 381 Art. 121 c.1).",
+      "note": "Municipal article that delegates to the national tier — the reverse direction of the cascade."
+    },
+    {
+      "id": "q36",
+      "type": "temporal",
+      "tier": "municipal",
+      "queries": {
+        "en": "What minimum storey height do Turin's municipal regulations prescribe for residential floors?",
+        "it": "Quale altezza minima dei piani abitabili prescrivono i regolamenti comunali di Torino?"
+      },
+      "relevant": [
+        {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 77"
+        },
+        {
+          "doc_key": "to_reg_30_igiene",
+          "article_ref": "Art. 116"
+        }
+      ],
+      "precedence": {
+        "winner": {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 77"
+        },
+        "loser": {
+          "doc_key": "to_reg_30_igiene",
+          "article_ref": "Art. 116"
+        },
+        "rule": "lex_posterior"
+      },
+      "gold_value": "2.70 m (2.40 m for corridors, bathrooms, storage) — Reg. 381 Art. 77.1 c.3 (2023). The older Regolamento d'Igiene Art. 116 figure of 3.00 m under a vault / 2.75 m under a flat slab is superseded (and DM Sanità 1975 fixed 2.70 nationally).",
+      "note": "TEMPORAL: two municipal regulations of the same city and tier give different values; the 2023 one prevails (lex posterior). Also consistent with hierarchy via DM 1975."
+    },
+    {
+      "id": "q37",
+      "type": "temporal",
+      "tier": "municipal",
+      "queries": {
+        "en": "What is the minimum floor area of a habitable room under Turin's municipal regulations?",
+        "it": "Qual è la superficie minima di un locale abitabile secondo i regolamenti comunali di Torino?"
+      },
+      "relevant": [
+        {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 77"
+        },
+        {
+          "doc_key": "to_reg_30_igiene",
+          "article_ref": "Art. 120"
+        }
+      ],
+      "precedence": {
+        "winner": {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 77"
+        },
+        "loser": {
+          "doc_key": "to_reg_30_igiene",
+          "article_ref": "Art. 120"
+        },
+        "rule": "lex_posterior"
+      },
+      "gold_value": "9.00 m² (14.00 m² for double bedrooms and living rooms) — Reg. 381 Art. 77.2 c.1. The Regolamento d'Igiene Art. 120 minimum of 8 m², 2 m width and 25 m³ is the superseded pre-1975 rule.",
+      "note": "TEMPORAL, same-tier. Contrast with q04 (national DM Sanità Art. 2, same 9/14 values)."
+    },
+    {
+      "id": "q38",
+      "type": "temporal",
+      "tier": "national",
+      "queries": {
+        "en": "What minimum window area relative to the floor area is required in Turin for natural lighting of a habitable room?",
+        "it": "Quale superficie finestrata minima rispetto al pavimento è richiesta a Torino per l'illuminazione naturale dei locali abitabili?"
+      },
+      "relevant": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 5"
+        },
+        {
+          "doc_key": "to_reg_30_igiene",
+          "article_ref": "Art. 118"
+        }
+      ],
+      "precedence": {
+        "winner": {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 5"
+        },
+        "loser": {
+          "doc_key": "to_reg_30_igiene",
+          "article_ref": "Art. 118"
+        },
+        "rule": "hierarchy"
+      },
+      "gold_value": "Openable window area ≥ 1/8 of the floor area and mean daylight factor ≥ 2% (DM Sanità 1975 Art. 5). The Regolamento d'Igiene Art. 118 value of 1/10 (min 1.50 m²; 1/15 for attics) is the older, less strict municipal rule and does not prevail.",
+      "note": "Older municipal rule vs newer national one: hierarchy and lex posterior point the same way. Compare q22 where the regional 1/16 legitimately prevails for attics."
+    },
+    {
+      "id": "q39",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "What must the operator of a boarding house or student hall (convitto) in Turin do before opening it?",
+        "it": "Cosa deve fare chi intende aprire un convitto o collegio a Torino prima dell'apertura?"
+      },
+      "relevant": [
+        {
+          "doc_key": "to_reg_30_igiene",
+          "article_ref": "Art. 127"
+        }
+      ],
+      "gold_value": "Notify the Sindaco at least 15 days in advance so that the Ufficiale sanitario can inspect the premises and certify their hygiene conditions (Reg. d'Igiene Art. 127)."
+    },
+    {
+      "id": "q40",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "Under which use categories does the Turin PRG classify residences for students?",
+        "it": "In quali categorie di destinazione d'uso il PRG di Torino classifica le residenze per studenti?"
+      },
+      "relevant": [
+        {
+          "doc_key": "to_prg_nuea_vol1",
+          "article_ref": "Art. 3"
+        }
+      ],
+      "gold_value": "In three places: 1.A Residenza ('residenze per particolari utenze: universitari, anziani'), 2.A Attività turistico-ricettive ('residenze per particolari utenze: studenti, anziani') and 7. Attività di servizio, lett. e) 'residenze collettive per studenti…' and lett. u) 'istruzione universitaria e relativi servizi (residenze universitarie)' (NUEA Art. 3).",
+      "note": "THE municipal classification step for the student-housing use case (see manifest comment on NUEA Art. 3)."
+    },
+    {
+      "id": "q41",
+      "type": "conflict",
+      "tier": "municipal",
+      "queries": {
+        "en": "What minimum private parking provision does the Turin PRG require for new construction in mixed productive zones?",
+        "it": "Quale dotazione minima di parcheggi privati richiede il PRG di Torino per gli interventi di nuova costruzione nelle zone miste produttive?"
+      },
+      "relevant": [
+        {
+          "doc_key": "to_prg_nuea_vol1",
+          "article_ref": "Art. 8"
+        },
+        {
+          "doc_key": "legge_122_1989",
+          "article_ref": "Art. 2"
+        }
+      ],
+      "precedence": {
+        "winner": {
+          "doc_key": "to_prg_nuea_vol1",
+          "article_ref": "Art. 8"
+        },
+        "loser": {
+          "doc_key": "legge_122_1989",
+          "article_ref": "Art. 2"
+        },
+        "rule": "stricter_minimum"
+      },
+      "gold_value": "Not less than 0.5 m² per m² of new or planned SLP for the interventions of Art. 4 lett. d3), e), f), g), i) (NUEA Art. 8, zone M) — stricter than the national 1 m² per 10 m³ of Legge 122/1989 Art. 2 (≈ 0.3 m²/m² at 3 m storeys).",
+      "note": "CONFLICT municipal > national because the national figure is a floor and the local plan sets a higher one. Art. 8 is an 86-chunk article: the article-level label is satisfied by any of its chunks."
+    },
+    {
+      "id": "q42",
+      "type": "conflict",
+      "tier": "municipal",
+      "queries": {
+        "en": "How many square metres of gross floor area per inhabitant does Turin use to compute residential settlement capacity?",
+        "it": "Quanti metri quadrati di superficie lorda per abitante utilizza Torino per il calcolo della capacità insediativa residenziale?"
+      },
+      "relevant": [
+        {
+          "doc_key": "to_prg_nuea_vol1",
+          "article_ref": "Art. 2"
+        },
+        {
+          "doc_key": "dm_1444_1968",
+          "article_ref": "Art. 3"
+        }
+      ],
+      "precedence": {
+        "winner": {
+          "doc_key": "to_prg_nuea_vol1",
+          "article_ref": "Art. 2"
+        },
+        "loser": {
+          "doc_key": "dm_1444_1968",
+          "article_ref": "Art. 3"
+        },
+        "rule": "delegated_derogation"
+      },
+      "gold_value": "34 m² of SLP per inhabitant, conventionally 102 m³/ab (NUEA Art. 2 c.28 'Indice di superficie abitativa'); DM 1444/1968 Art. 3 assumes 25 m² (≈ 80 m³) 'salvo diversa dimostrazione', i.e. it yields to the local determination.",
+      "note": "CONFLICT municipal value ≠ national convention, valid because the national rule itself defers. Art. 2 is a 65-chunk definitions article (article-level label)."
+    }
+  ]
+}

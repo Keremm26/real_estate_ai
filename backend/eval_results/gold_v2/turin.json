@@ -1,0 +1,3557 @@
+{
+  "meta": {
+    "country": "IT",
+    "use_case": "student_housing",
+    "embed_model": "bge-m3",
+    "k_values": [
+      1,
+      3,
+      5,
+      8
+    ],
+    "n_items": 42,
+    "n_runs": 84,
+    "n_chunks_in_scope": 1944,
+    "gold": "gold_queries_turin.json",
+    "include_superseded": false
+  },
+  "aggregate": {
+    "recall": {
+      "1": 0.6091269841269841,
+      "3": 0.8313492063492063,
+      "5": 0.9007936507936508,
+      "8": 0.9345238095238095
+    },
+    "hit": {
+      "1": 0.8095238095238095,
+      "3": 0.9404761904761905,
+      "5": 0.9642857142857143,
+      "8": 0.9761904761904762
+    },
+    "ndcg": {
+      "1": 0.8095238095238095,
+      "3": 0.8017752501891318,
+      "5": 0.8358764568187624,
+      "8": 0.8486605108256071
+    },
+    "precision": {
+      "1": 0.8095238095238095,
+      "3": 0.39682539682539675,
+      "5": 0.2619047619047619,
+      "8": 0.17113095238095238
+    },
+    "mrr": 0.8725198412698413,
+    "n": 84,
+    "precedence": {
+      "n": 22,
+      "pair_recall": 0.6818181818181818,
+      "winner_first": 0.9545454545454546
+    },
+    "dump_tokens": 506584,
+    "rag_avg_tokens": 3163.1309523809523,
+    "reduction_pct": 99.37559596189755
+  },
+  "breakdown": {
+    "lang": {
+      "en": {
+        "recall": {
+          "1": 0.5555555555555556,
+          "3": 0.8492063492063492,
+          "5": 0.9206349206349206,
+          "8": 0.9404761904761905
+        },
+        "hit": {
+          "1": 0.7619047619047619,
+          "3": 0.9523809523809523,
+          "5": 0.9761904761904762,
+          "8": 0.9761904761904762
+        },
+        "ndcg": {
+          "1": 0.7619047619047619,
+          "3": 0.7906466048289431,
+          "5": 0.8260501535995088,
+          "8": 0.8346355549943534
+        },
+        "precision": {
+          "1": 0.7619047619047619,
+          "3": 0.40476190476190477,
+          "5": 0.2666666666666667,
+          "8": 0.17261904761904762
+        },
+        "mrr": 0.8432539682539681,
+        "n": 42,
+        "precedence": {
+          "n": 11,
+          "pair_recall": 0.7272727272727273,
+          "winner_first": 1.0
+        }
+      },
+      "it": {
+        "recall": {
+          "1": 0.6626984126984127,
+          "3": 0.8134920634920635,
+          "5": 0.8809523809523809,
+          "8": 0.9285714285714286
+        },
+        "hit": {
+          "1": 0.8571428571428571,
+          "3": 0.9285714285714286,
+          "5": 0.9523809523809523,
+          "8": 0.9761904761904762
+        },
+        "ndcg": {
+          "1": 0.8571428571428571,
+          "3": 0.8129038955493202,
+          "5": 0.845702760038016,
+          "8": 0.862685466656861
+        },
+        "precision": {
+          "1": 0.8571428571428571,
+          "3": 0.38888888888888884,
+          "5": 0.2571428571428572,
+          "8": 0.16964285714285715
+        },
+        "mrr": 0.9017857142857143,
+        "n": 42,
+        "precedence": {
+          "n": 11,
+          "pair_recall": 0.6363636363636364,
+          "winner_first": 0.9090909090909091
+        }
+      }
+    },
+    "type": {
+      "conflict": {
+        "recall": {
+          "1": 0.4479166666666667,
+          "3": 0.6770833333333334,
+          "5": 0.7291666666666666,
+          "8": 0.8125
+        },
+        "hit": {
+          "1": 0.9375,
+          "3": 1.0,
+          "5": 1.0,
+          "8": 1.0
+        },
+        "ndcg": {
+          "1": 0.9375,
+          "3": 0.7212067566076783,
+          "5": 0.7490573763020498,
+          "8": 0.7843679548127972
+        },
+        "precision": {
+          "1": 0.9375,
+          "3": 0.47916666666666663,
+          "5": 0.3125,
+          "8": 0.21875
+        },
+        "mrr": 0.96875,
+        "n": 16,
+        "precedence": {
+          "n": 16,
+          "pair_recall": 0.625,
+          "winner_first": 0.9375
+        }
+      },
+      "factual": {
+        "recall": {
+          "1": 0.7380952380952381,
+          "3": 0.8809523809523809,
+          "5": 0.9285714285714286,
+          "8": 0.9523809523809523
+        },
+        "hit": {
+          "1": 0.7380952380952381,
+          "3": 0.8809523809523809,
+          "5": 0.9285714285714286,
+          "8": 0.9523809523809523
+        },
+        "ndcg": {
+          "1": 0.7380952380952381,
+          "3": 0.8126411846088443,
+          "5": 0.8331495921361487,
+          "8": 0.8406606606310469
+        },
+        "precision": {
+          "1": 0.7380952380952381,
+          "3": 0.2936507936507936,
+          "5": 0.18571428571428572,
+          "8": 0.11904761904761904
+        },
+        "mrr": 0.804563492063492,
+        "n": 42
+      },
+      "lex_specialis": {
+        "recall": {
+          "1": 1.0,
+          "3": 1.0,
+          "5": 1.0,
+          "8": 1.0
+        },
+        "hit": {
+          "1": 1.0,
+          "3": 1.0,
+          "5": 1.0,
+          "8": 1.0
+        },
+        "ndcg": {
+          "1": 1.0,
+          "3": 1.0,
+          "5": 1.0,
+          "8": 1.0
+        },
+        "precision": {
+          "1": 1.0,
+          "3": 0.3333333333333333,
+          "5": 0.2,
+          "8": 0.125
+        },
+        "mrr": 1.0,
+        "n": 4
+      },
+      "multi_article": {
+        "recall": {
+          "1": 0.46875,
+          "3": 0.8125,
+          "5": 1.0,
+          "8": 1.0
+        },
+        "hit": {
+          "1": 0.9375,
+          "3": 1.0,
+          "5": 1.0,
+          "8": 1.0
+        },
+        "ndcg": {
+          "1": 0.9375,
+          "3": 0.8357693475131263,
+          "5": 0.933115492865142,
+          "8": 0.933115492865142
+        },
+        "precision": {
+          "1": 0.9375,
+          "3": 0.5416666666666666,
+          "5": 0.4,
+          "8": 0.25
+        },
+        "mrr": 0.96875,
+        "n": 16
+      },
+      "temporal": {
+        "recall": {
+          "1": 0.25,
+          "3": 0.8333333333333334,
+          "5": 0.8333333333333334,
+          "8": 0.9166666666666666
+        },
+        "hit": {
+          "1": 0.5,
+          "3": 1.0,
+          "5": 1.0,
+          "8": 1.0
+        },
+        "ndcg": {
+          "1": 0.5,
+          "3": 0.7177622660637882,
+          "5": 0.7177622660637882,
+          "8": 0.75
+        },
+        "precision": {
+          "1": 0.5,
+          "3": 0.5555555555555555,
+          "5": 0.3333333333333333,
+          "8": 0.22916666666666666
+        },
+        "mrr": 0.75,
+        "n": 6,
+        "precedence": {
+          "n": 6,
+          "pair_recall": 0.8333333333333334,
+          "winner_first": 1.0
+        }
+      }
+    },
+    "tier": {
+      "municipal": {
+        "recall": {
+          "1": 0.5833333333333334,
+          "3": 0.8541666666666666,
+          "5": 0.875,
+          "8": 0.9375
+        },
+        "hit": {
+          "1": 0.6666666666666666,
+          "3": 0.9583333333333334,
+          "5": 0.9583333333333334,
+          "8": 1.0
+        },
+        "ndcg": {
+          "1": 0.6666666666666666,
+          "3": 0.7674883662145078,
+          "5": 0.7784912046550324,
+          "8": 0.7996950080051574
+        },
+        "precision": {
+          "1": 0.6666666666666666,
+          "3": 0.3611111111111111,
+          "5": 0.225,
+          "8": 0.15104166666666666
+        },
+        "mrr": 0.796875,
+        "n": 24,
+        "precedence": {
+          "n": 8,
+          "pair_recall": 0.625,
+          "winner_first": 1.0
+        }
+      },
+      "national": {
+        "recall": {
+          "1": 0.6375,
+          "3": 0.825,
+          "5": 0.95,
+          "8": 0.95
+        },
+        "hit": {
+          "1": 0.825,
+          "3": 0.9,
+          "5": 0.95,
+          "8": 0.95
+        },
+        "ndcg": {
+          "1": 0.825,
+          "3": 0.8073007587339551,
+          "5": 0.8677730447784311,
+          "8": 0.8677730447784311
+        },
+        "precision": {
+          "1": 0.825,
+          "3": 0.3833333333333333,
+          "5": 0.27,
+          "8": 0.16875
+        },
+        "mrr": 0.8666666666666666,
+        "n": 40,
+        "precedence": {
+          "n": 2,
+          "pair_recall": 1.0,
+          "winner_first": 1.0
+        }
+      },
+      "regional": {
+        "recall": {
+          "1": 0.5833333333333333,
+          "3": 0.8166666666666667,
+          "5": 0.8333333333333334,
+          "8": 0.9
+        },
+        "hit": {
+          "1": 0.95,
+          "3": 1.0,
+          "5": 1.0,
+          "8": 1.0
+        },
+        "ndcg": {
+          "1": 0.95,
+          "3": 0.8318684938690332,
+          "5": 0.8409455834959008,
+          "8": 0.8691940463044988
+        },
+        "precision": {
+          "1": 0.95,
+          "3": 0.4666666666666666,
+          "5": 0.29000000000000004,
+          "8": 0.2
+        },
+        "mrr": 0.975,
+        "n": 20,
+        "precedence": {
+          "n": 12,
+          "pair_recall": 0.6666666666666666,
+          "winner_first": 0.9166666666666666
+        }
+      }
+    }
+  },
+  "per_run": [
+    {
+      "id": "q01",
+      "lang": "en",
+      "type": "multi_article",
+      "tier": "national",
+      "query": "What is the minimum internal ceiling height for habitable rooms in a dwelling?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 1",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 2866
+    },
+    {
+      "id": "q01",
+      "lang": "it",
+      "type": "multi_article",
+      "tier": "national",
+      "query": "Qual è l'altezza minima interna dei locali abitabili di un alloggio?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 1",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 2767
+    },
+    {
+      "id": "q02",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "Is a reduced ceiling height allowed in mountain municipalities above 1000 metres of altitude?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 1",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3021
+    },
+    {
+      "id": "q02",
+      "lang": "it",
+      "type": "factual",
+      "tier": "national",
+      "query": "È ammessa un'altezza minima ridotta nei comuni montani sopra i 1000 metri di altitudine?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 1",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2635
+    },
+    {
+      "id": "q03",
+      "lang": "en",
+      "type": "multi_article",
+      "tier": "national",
+      "query": "What is the minimum habitable floor area required per occupant?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 2",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 2066
+    },
+    {
+      "id": "q03",
+      "lang": "it",
+      "type": "multi_article",
+      "tier": "national",
+      "query": "Qual è la superficie abitabile minima richiesta per ogni abitante?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 2",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 1966
+    },
+    {
+      "id": "q04",
+      "lang": "en",
+      "type": "multi_article",
+      "tier": "national",
+      "query": "What is the minimum area of a single bedroom and of a double bedroom?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Regolamento comunale n Art. 77 > 77.2 > 2",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.8772153153380493,
+        "8": 0.8772153153380493
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 1958
+    },
+    {
+      "id": "q04",
+      "lang": "it",
+      "type": "multi_article",
+      "tier": "national",
+      "query": "Qual è la superficie minima di una camera da letto singola e di una camera doppia?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Regolamento comunale n Art. 77 > 77.2 > 2",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.8503449055347546,
+        "8": 0.8503449055347546
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 1619
+    },
+    {
+      "id": "q05",
+      "lang": "en",
+      "type": "multi_article",
+      "tier": "national",
+      "query": "What is the minimum size of the living room in a dwelling?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Regolamento comunale n Art. 77 > 77.2 > 1",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 3321
+    },
+    {
+      "id": "q05",
+      "lang": "it",
+      "type": "multi_article",
+      "tier": "national",
+      "query": "Qual è la superficie minima della stanza di soggiorno in un alloggio?",
+      "num_relevant": 2,
+      "first_hit_rank": 2,
+      "top1": "D.M. MUR 1256/2021 — A 7.1",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.6934264036172708,
+        "5": 0.6934264036172708,
+        "8": 0.6934264036172708
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 1619
+    },
+    {
+      "id": "q06",
+      "lang": "en",
+      "type": "multi_article",
+      "tier": "national",
+      "query": "What is the minimum floor area of a studio apartment for one person and for two people?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Regolamento comunale n Art. 77 > 77.2 > 2",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.8772153153380493,
+        "8": 0.8772153153380493
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 2066
+    },
+    {
+      "id": "q06",
+      "lang": "it",
+      "type": "multi_article",
+      "tier": "national",
+      "query": "Qual è la superficie minima di un alloggio monostanza per una persona e per due persone?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 3",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 1727
+    },
+    {
+      "id": "q07",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What indoor air temperature must the heating system be designed to maintain?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 4",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2284
+    },
+    {
+      "id": "q07",
+      "lang": "it",
+      "type": "factual",
+      "tier": "national",
+      "query": "Quale temperatura dell'aria interna deve garantire l'impianto di riscaldamento?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 4",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3022
+    },
+    {
+      "id": "q08",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What is the minimum ratio between window area and floor area for natural lighting?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 5",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2078
+    },
+    {
+      "id": "q08",
+      "lang": "it",
+      "type": "factual",
+      "tier": "national",
+      "query": "Qual è il rapporto minimo tra superficie finestrata e superficie del pavimento per l'illuminazione naturale?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 5",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2000
+    },
+    {
+      "id": "q09",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What ventilation and sanitary fixtures are required for a bathroom?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 7",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3415
+    },
+    {
+      "id": "q09",
+      "lang": "it",
+      "type": "factual",
+      "tier": "national",
+      "query": "Quali requisiti di ventilazione e quali apparecchi sanitari sono richiesti per la stanza da bagno?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 7",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4087
+    },
+    {
+      "id": "q10",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What are the acoustic / noise-protection requirements for building materials in dwellings?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 8",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 7352
+    },
+    {
+      "id": "q10",
+      "lang": "it",
+      "type": "factual",
+      "tier": "national",
+      "query": "Quali requisiti di isolamento acustico devono avere i materiali degli edifici di abitazione?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 8",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4284
+    },
+    {
+      "id": "q11",
+      "lang": "en",
+      "type": "conflict",
+      "tier": "regional",
+      "query": "Does converting a building to a different use (change of use) require authorisation, and when is it urbanistically relevant?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "L.R. Piemonte 8 luglio Art. 8",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 2519,
+      "precedence": {
+        "rule": "delegated_derogation",
+        "winner_rank": 1,
+        "loser_rank": 2,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q11",
+      "lang": "it",
+      "type": "conflict",
+      "tier": "regional",
+      "query": "Il cambio di destinazione d'uso di un immobile richiede un titolo abilitativo, e quando è urbanisticamente rilevante?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "D.P.R. 6 giugno 2001,  Art. 23-ter > 1-quinquies",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.6131471927654584,
+        "8": 0.8065735963827293
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.25
+      },
+      "rag_tokens": 2153,
+      "precedence": {
+        "rule": "delegated_derogation",
+        "winner_rank": 8,
+        "loser_rank": 1,
+        "pair_retrieved": true,
+        "winner_first": false
+      }
+    },
+    {
+      "id": "q12",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "Which building interventions require a building permit (permesso di costruire)?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "D.P.R. 6 giugno 2001,  Art. 10 > 1",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2461
+    },
+    {
+      "id": "q12",
+      "lang": "it",
+      "type": "factual",
+      "tier": "national",
+      "query": "Quali interventi edilizi sono subordinati a permesso di costruire?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "D.P.R. 6 giugno 2001,  Art. 10 > 1",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2147
+    },
+    {
+      "id": "q13",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "Which minor works qualify as free building activity that needs no permit?",
+      "num_relevant": 1,
+      "first_hit_rank": 3,
+      "top1": "D.P.R. 6 giugno 2001,  Art. 9",
+      "rr": 0.3333333333333333,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3314
+    },
+    {
+      "id": "q13",
+      "lang": "it",
+      "type": "factual",
+      "tier": "national",
+      "query": "Quali opere minori rientrano nell'attività edilizia libera e non richiedono titolo abilitativo?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "D.P.R. 6 giugno 2001,  Art. 6 > 6",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2890
+    },
+    {
+      "id": "q14",
+      "lang": "en",
+      "type": "multi_article",
+      "tier": "national",
+      "query": "What are the overall minimum habitability requirements (height and floor area) for a residential unit?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 2",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 2501
+    },
+    {
+      "id": "q14",
+      "lang": "it",
+      "type": "multi_article",
+      "tier": "national",
+      "query": "Quali sono i requisiti minimi di abitabilità (altezza e superficie) di un'unità residenziale?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 2",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.8772153153380493,
+        "8": 0.8772153153380493
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 2248
+    },
+    {
+      "id": "q15",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "When is the installation of a lift mandatory in a residential building?",
+      "num_relevant": 1,
+      "first_hit_rank": 4,
+      "top1": "D.M. Lavori Pubblici 1 8.1.14",
+      "rr": 0.25,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.43067655807339306,
+        "8": 0.43067655807339306
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3000
+    },
+    {
+      "id": "q15",
+      "lang": "it",
+      "type": "factual",
+      "tier": "national",
+      "query": "Quando è obbligatoria l'installazione dell'ascensore in un edificio residenziale?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "D.M. Lavori Pubblici 1 3 > b",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 1870
+    },
+    {
+      "id": "q16",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What are the minimum door widths and ramp slopes for wheelchair accessibility?",
+      "num_relevant": 1,
+      "first_hit_rank": null,
+      "top1": "D.M. Lavori Pubblici 1 8.0.2",
+      "rr": 0.0,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "rag_tokens": 5347
+    },
+    {
+      "id": "q16",
+      "lang": "it",
+      "type": "factual",
+      "tier": "national",
+      "query": "Quali sono la larghezza minima delle porte e la pendenza massima delle rampe per l'accessibilità in sedia a ruote?",
+      "num_relevant": 1,
+      "first_hit_rank": null,
+      "top1": "D.M. Lavori Pubblici 1 8.1.11",
+      "rr": 0.0,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "rag_tokens": 4970
+    },
+    {
+      "id": "q17",
+      "lang": "en",
+      "type": "lex_specialis",
+      "tier": "national",
+      "query": "In a university student residence, what is the minimum net floor area of a single room (posto letto)?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "D.M. MUR 1256/2021 — A 7.1",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 1962
+    },
+    {
+      "id": "q17",
+      "lang": "it",
+      "type": "lex_specialis",
+      "tier": "national",
+      "query": "In una residenza universitaria, qual è la superficie netta minima di una camera singola?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "D.M. MUR 1256/2021 — A 7.1",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2406
+    },
+    {
+      "id": "q18",
+      "lang": "en",
+      "type": "lex_specialis",
+      "tier": "national",
+      "query": "What is the minimum area per resident for a double room in a student residence?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "D.M. MUR 1256/2021 — A 7.1",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2382
+    },
+    {
+      "id": "q18",
+      "lang": "it",
+      "type": "lex_specialis",
+      "tier": "national",
+      "query": "Qual è la superficie minima per residente di una camera doppia in una residenza per studenti?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "D.M. MUR 1256/2021 — A 7.1",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2716
+    },
+    {
+      "id": "q19",
+      "lang": "en",
+      "type": "multi_article",
+      "tier": "national",
+      "query": "What is the minimum amount of public, green and community space per inhabitant required by urban planning standards?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "D.M. Lavori Pubblici 2 Art. 4 > 3",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.8772153153380493,
+        "8": 0.8772153153380493
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 2689
+    },
+    {
+      "id": "q19",
+      "lang": "it",
+      "type": "multi_article",
+      "tier": "national",
+      "query": "Qual è la dotazione minima di spazi pubblici, verde e servizi collettivi per abitante prevista dagli standard urbanistici?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "D.M. Lavori Pubblici 2 Art. 4 > 3",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.8772153153380493,
+        "8": 0.8772153153380493
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 2100
+    },
+    {
+      "id": "q20",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "How much parking space must be reserved for a new building?",
+      "num_relevant": 1,
+      "first_hit_rank": 3,
+      "top1": "D.M. Lavori Pubblici 1 8.2.3",
+      "rr": 0.3333333333333333,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4169
+    },
+    {
+      "id": "q20",
+      "lang": "it",
+      "type": "factual",
+      "tier": "national",
+      "query": "Quanta superficie a parcheggio deve essere riservata in una nuova costruzione?",
+      "num_relevant": 1,
+      "first_hit_rank": 4,
+      "top1": "D.M. Lavori Pubblici 2 Art. 5",
+      "rr": 0.25,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.43067655807339306,
+        "8": 0.43067655807339306
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4514
+    },
+    {
+      "id": "q21",
+      "lang": "en",
+      "type": "conflict",
+      "tier": "regional",
+      "query": "When recovering an existing attic (sottotetto) for residential use in Piedmont, what minimum average internal height applies?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "L.R. Piemonte 4 ottobr Art. 6 > 3",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 2537,
+      "precedence": {
+        "rule": "delegated_derogation",
+        "winner_rank": 1,
+        "loser_rank": 2,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q21",
+      "lang": "it",
+      "type": "conflict",
+      "tier": "regional",
+      "query": "Nel recupero di un sottotetto esistente a fini abitativi in Piemonte, qual è l'altezza media interna minima richiesta?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "L.R. Piemonte 4 ottobr Art. 6 > 3",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.9197207891481876,
+        "5": 0.9197207891481876,
+        "8": 0.9197207891481876
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 2538,
+      "precedence": {
+        "rule": "delegated_derogation",
+        "winner_rank": 1,
+        "loser_rank": 3,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q22",
+      "lang": "en",
+      "type": "conflict",
+      "tier": "regional",
+      "query": "What is the minimum window-to-floor ratio for natural light and ventilation in a recovered attic in Piedmont?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "L.R. Piemonte 4 ottobr Art. 6 > 2 bis",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 2201,
+      "precedence": {
+        "rule": "delegated_derogation",
+        "winner_rank": 1,
+        "loser_rank": 2,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q22",
+      "lang": "it",
+      "type": "conflict",
+      "tier": "regional",
+      "query": "Qual è il rapporto minimo di aeroilluminazione tra superficie finestrata e pavimento nei sottotetti recuperati in Piemonte?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "L.R. Piemonte 4 ottobr Art. 6 > 2 bis",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.6131471927654584,
+        "8": 0.6131471927654584
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 1979,
+      "precedence": {
+        "rule": "delegated_derogation",
+        "winner_rank": 1,
+        "loser_rank": null,
+        "pair_retrieved": false,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q23",
+      "lang": "en",
+      "type": "conflict",
+      "tier": "regional",
+      "query": "Can a renovation with expansion under the Piedmont reuse law exceed the maximum building-density limits set by national planning standards?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "L.R. Piemonte 4 ottobr Art. 5 > 2",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.6131471927654584,
+        "8": 0.6131471927654584
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2663,
+      "precedence": {
+        "rule": "delegated_derogation",
+        "winner_rank": 1,
+        "loser_rank": null,
+        "pair_retrieved": false,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q23",
+      "lang": "it",
+      "type": "conflict",
+      "tier": "regional",
+      "query": "Gli interventi di ristrutturazione con ampliamento previsti dalla legge regionale piemontese sul riuso possono superare i limiti di densità fondiaria del DM 1444/1968?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "L.R. Piemonte 4 ottobr Art. 5 > 9",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.6131471927654584,
+        "8": 0.8175295903539445
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.25
+      },
+      "rag_tokens": 3360,
+      "precedence": {
+        "rule": "delegated_derogation",
+        "winner_rank": 1,
+        "loser_rank": 7,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q24",
+      "lang": "en",
+      "type": "conflict",
+      "tier": "regional",
+      "query": "Do the national minimum habitability dimensions apply to an existing dwelling undergoing conservative restoration in Piedmont?",
+      "num_relevant": 3,
+      "first_hit_rank": 1,
+      "top1": "L.R. Piemonte 4 ottobr Art. 10 > 6 bis",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.3333333333333333,
+        "3": 0.6666666666666666,
+        "5": 0.6666666666666666,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.7039180890341347,
+        "5": 0.7039180890341347,
+        "8": 0.8710785440003369
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.375
+      },
+      "rag_tokens": 2424,
+      "precedence": {
+        "rule": "delegated_derogation",
+        "winner_rank": 1,
+        "loser_rank": 6,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q24",
+      "lang": "it",
+      "type": "conflict",
+      "tier": "regional",
+      "query": "Le misure minime del DM Sanità 1975 si applicano a un alloggio esistente sottoposto a restauro o risanamento conservativo in Piemonte?",
+      "num_relevant": 3,
+      "first_hit_rank": 1,
+      "top1": "L.R. Piemonte 4 ottobr Art. 10 > 6 bis",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.3333333333333333,
+        "3": 0.6666666666666666,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.7039180890341347,
+        "5": 0.8854598815714874,
+        "8": 0.8854598815714874
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.6,
+        "8": 0.375
+      },
+      "rag_tokens": 3532,
+      "precedence": {
+        "rule": "delegated_derogation",
+        "winner_rank": 1,
+        "loser_rank": 5,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q25",
+      "lang": "en",
+      "type": "factual",
+      "tier": "regional",
+      "query": "By how much can an existing residential building be enlarged under the renovation incentives of the Piedmont reuse law?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "L.R. Piemonte 4 ottobr Art. 5 > 2",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2396
+    },
+    {
+      "id": "q25",
+      "lang": "it",
+      "type": "factual",
+      "tier": "regional",
+      "query": "Di quanto può essere ampliato un edificio residenziale esistente con gli incentivi alla ristrutturazione della legge regionale piemontese sul riuso?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "L.R. Piemonte 4 ottobr Art. 5 > 2",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2459
+    },
+    {
+      "id": "q26",
+      "lang": "en",
+      "type": "conflict",
+      "tier": "regional",
+      "query": "Can a rural building (rustico) in Piedmont be recovered for residential use even where the municipal plan's use designations or indices would not allow it?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "L.R. Piemonte 4 ottobr Art. 7 > 8",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.6131471927654584,
+        "8": 0.6131471927654584
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 1635,
+      "precedence": {
+        "rule": "hierarchy",
+        "winner_rank": 1,
+        "loser_rank": null,
+        "pair_retrieved": false,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q26",
+      "lang": "it",
+      "type": "conflict",
+      "tier": "regional",
+      "query": "Il recupero a fini residenziali di un rustico in Piemonte è ammesso anche in deroga alle destinazioni d'uso e agli indici del PRG comunale?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "L.R. Piemonte 4 ottobr Art. 7 > 10",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.6131471927654584,
+        "8": 0.6131471927654584
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 1685,
+      "precedence": {
+        "rule": "hierarchy",
+        "winner_rank": 1,
+        "loser_rank": null,
+        "pair_retrieved": false,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q27",
+      "lang": "en",
+      "type": "factual",
+      "tier": "regional",
+      "query": "For how long can a municipality in Piedmont authorise a temporary use of a vacant building that differs from its permitted use?",
+      "num_relevant": 1,
+      "first_hit_rank": 2,
+      "top1": "D.P.R. 6 giugno 2001,  Art. 23-quater > 1",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.6309297535714575,
+        "5": 0.6309297535714575,
+        "8": 0.6309297535714575
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2572
+    },
+    {
+      "id": "q27",
+      "lang": "it",
+      "type": "factual",
+      "tier": "regional",
+      "query": "Per quanto tempo un comune piemontese può consentire l'uso temporaneo di un immobile dismesso per usi diversi da quelli consentiti?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "L.R. Piemonte 8 luglio Art. 8-bis > 1",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 1958
+    },
+    {
+      "id": "q28",
+      "lang": "en",
+      "type": "multi_article",
+      "tier": "regional",
+      "query": "What deviation from the approved dimensions (height, volume, distances) is tolerated without constituting a building violation?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "D.P.R. 6 giugno 2001,  Art. 34-bis > 1",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 5572
+    },
+    {
+      "id": "q28",
+      "lang": "it",
+      "type": "multi_article",
+      "tier": "regional",
+      "query": "Quale scostamento dalle misure del titolo abilitativo (altezza, cubatura, distacchi) è tollerato senza costituire violazione edilizia?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "L.R. Piemonte 8 luglio Art. 6-bis > 1",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 4815
+    },
+    {
+      "id": "q29",
+      "lang": "en",
+      "type": "factual",
+      "tier": "regional",
+      "query": "Is a change of use without building works subject to urbanisation charges in Piedmont?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "L.R. Piemonte 8 luglio Art. 8",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2306
+    },
+    {
+      "id": "q29",
+      "lang": "it",
+      "type": "factual",
+      "tier": "regional",
+      "query": "In Piemonte il mutamento di destinazione d'uso senza opere edilizie è oneroso?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "L.R. Piemonte 8 luglio Art. 8",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 6099
+    },
+    {
+      "id": "q30",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "What are the minimum dimensions of a kitchen and of the first bathroom in a new dwelling in Turin?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Regolamento comunale n Art. 77 > 77.2 > 1",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2171
+    },
+    {
+      "id": "q30",
+      "lang": "it",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "Quali sono le dimensioni minime della cucina e del primo servizio igienico in un nuovo alloggio a Torino?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Regolamento comunale n Art. 77 > 77.2 > 1",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3653
+    },
+    {
+      "id": "q31",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "What requirements must a mezzanine (soppalco) built inside a room in Turin comply with?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Regolamento comunale n Art. 77 > 77.1 > 9",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2807
+    },
+    {
+      "id": "q31",
+      "lang": "it",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "Quali requisiti deve rispettare un soppalco realizzato all'interno di un locale a Torino?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Regolamento comunale n Art. 77 > 77.1 > 8",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2680
+    },
+    {
+      "id": "q32",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "What minimum ceiling height applies to ground-floor premises of a building facing a street or square in Turin?",
+      "num_relevant": 1,
+      "first_hit_rank": 3,
+      "top1": "Regolamento comunale n Art. 85",
+      "rr": 0.3333333333333333,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 5135
+    },
+    {
+      "id": "q32",
+      "lang": "it",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "Qual è l'altezza minima all'intradosso del soffitto per i piani terreni degli edifici in fregio a vie o piazze a Torino?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Regolamento comunale n Art. 77 > 77.1 > 5",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 5007
+    },
+    {
+      "id": "q33",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "What electric-vehicle charging infrastructure must the parking spaces of a new residential building in Turin provide?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Regolamento comunale n Art. 102",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4323
+    },
+    {
+      "id": "q33",
+      "lang": "it",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "Quali predisposizioni per la ricarica dei veicoli elettrici devono avere i posti auto di un nuovo edificio residenziale a Torino?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Regolamento comunale n Art. 102",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 5925
+    },
+    {
+      "id": "q34",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "Can the mandatory parking spaces of a new building in Turin be used for bicycle parking instead of cars?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Regolamento comunale n Art. 83",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4934
+    },
+    {
+      "id": "q34",
+      "lang": "it",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "Gli spazi a parcheggio obbligatori di un nuovo edificio a Torino possono essere destinati alla sola sosta di biciclette?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Regolamento comunale n Art. 83",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4476
+    },
+    {
+      "id": "q35",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "Which national technical rules on architectural barriers does the Turin building regulation require for private residential buildings?",
+      "num_relevant": 1,
+      "first_hit_rank": 3,
+      "top1": "D.P.R. 6 giugno 2001,  Art. 82 > 1",
+      "rr": 0.3333333333333333,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2755
+    },
+    {
+      "id": "q35",
+      "lang": "it",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "Quali prescrizioni tecniche nazionali sul superamento delle barriere architettoniche richiama il Regolamento Edilizio di Torino per gli edifici privati?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Regolamento comunale n Art. 121",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3308
+    },
+    {
+      "id": "q36",
+      "lang": "en",
+      "type": "temporal",
+      "tier": "municipal",
+      "query": "What minimum storey height do Turin's municipal regulations prescribe for residential floors?",
+      "num_relevant": 2,
+      "first_hit_rank": 2,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 1",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.6934264036172708,
+        "5": 0.6934264036172708,
+        "8": 0.6934264036172708
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 2728,
+      "precedence": {
+        "rule": "lex_posterior",
+        "winner_rank": 2,
+        "loser_rank": 3,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q36",
+      "lang": "it",
+      "type": "temporal",
+      "tier": "municipal",
+      "query": "Quale altezza minima dei piani abitabili prescrivono i regolamenti comunali di Torino?",
+      "num_relevant": 2,
+      "first_hit_rank": 2,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 1",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.6934264036172708,
+        "5": 0.6934264036172708,
+        "8": 0.6934264036172708
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 5477,
+      "precedence": {
+        "rule": "lex_posterior",
+        "winner_rank": 2,
+        "loser_rank": 3,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q37",
+      "lang": "en",
+      "type": "temporal",
+      "tier": "municipal",
+      "query": "What is the minimum floor area of a habitable room under Turin's municipal regulations?",
+      "num_relevant": 2,
+      "first_hit_rank": 2,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 2",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.38685280723454163,
+        "5": 0.38685280723454163,
+        "8": 0.5802792108518124
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.25
+      },
+      "rag_tokens": 2017,
+      "precedence": {
+        "rule": "lex_posterior",
+        "winner_rank": 2,
+        "loser_rank": 8,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q37",
+      "lang": "it",
+      "type": "temporal",
+      "tier": "municipal",
+      "query": "Qual è la superficie minima di un locale abitabile secondo i regolamenti comunali di Torino?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Regolamento comunale n Art. 77 > 77.2 > 1",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.6131471927654584,
+        "8": 0.6131471927654584
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 1986,
+      "precedence": {
+        "rule": "lex_posterior",
+        "winner_rank": 1,
+        "loser_rank": null,
+        "pair_retrieved": false,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q38",
+      "lang": "en",
+      "type": "temporal",
+      "tier": "national",
+      "query": "What minimum window area relative to the floor area is required in Turin for natural lighting of a habitable room?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 5",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 1948,
+      "precedence": {
+        "rule": "hierarchy",
+        "winner_rank": 1,
+        "loser_rank": 2,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q38",
+      "lang": "it",
+      "type": "temporal",
+      "tier": "national",
+      "query": "Quale superficie finestrata minima rispetto al pavimento è richiesta a Torino per l'illuminazione naturale dei locali abitabili?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "D.M. Sanità 5 luglio 1 Art. 5",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.9197207891481876,
+        "5": 0.9197207891481876,
+        "8": 0.9197207891481876
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 2658,
+      "precedence": {
+        "rule": "hierarchy",
+        "winner_rank": 1,
+        "loser_rank": 3,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q39",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "What must the operator of a boarding house or student hall (convitto) in Turin do before opening it?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Regolamento comunale n Art. 127",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3186
+    },
+    {
+      "id": "q39",
+      "lang": "it",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "Cosa deve fare chi intende aprire un convitto o collegio a Torino prima dell'apertura?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Regolamento comunale n Art. 127",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2434
+    },
+    {
+      "id": "q40",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "Under which use categories does the Turin PRG classify residences for students?",
+      "num_relevant": 1,
+      "first_hit_rank": 3,
+      "top1": "D.M. MUR 1256/2021 — A 4",
+      "rr": 0.3333333333333333,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3650
+    },
+    {
+      "id": "q40",
+      "lang": "it",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "In quali categorie di destinazione d'uso il PRG di Torino classifica le residenze per studenti?",
+      "num_relevant": 1,
+      "first_hit_rank": 8,
+      "top1": "D.M. MUR 1256/2021 — A 2",
+      "rr": 0.125,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.31546487678572877
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.125
+      },
+      "rag_tokens": 2834
+    },
+    {
+      "id": "q41",
+      "lang": "en",
+      "type": "conflict",
+      "tier": "municipal",
+      "query": "What minimum private parking provision does the Turin PRG require for new construction in mixed productive zones?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "PRG Torino 1995 — Norm Art. 8 > 41",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.6131471927654584,
+        "8": 0.6131471927654584
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 6412,
+      "precedence": {
+        "rule": "stricter_minimum",
+        "winner_rank": 1,
+        "loser_rank": null,
+        "pair_retrieved": false,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q41",
+      "lang": "it",
+      "type": "conflict",
+      "tier": "municipal",
+      "query": "Quale dotazione minima di parcheggi privati richiede il PRG di Torino per gli interventi di nuova costruzione nelle zone miste produttive?",
+      "num_relevant": 2,
+      "first_hit_rank": 2,
+      "top1": "PRG Torino 1995 — Norm Art. 14 > 11",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.38685280723454163,
+        "5": 0.38685280723454163,
+        "8": 0.38685280723454163
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 7834,
+      "precedence": {
+        "rule": "stricter_minimum",
+        "winner_rank": 2,
+        "loser_rank": null,
+        "pair_retrieved": false,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q42",
+      "lang": "en",
+      "type": "conflict",
+      "tier": "municipal",
+      "query": "How many square metres of gross floor area per inhabitant does Turin use to compute residential settlement capacity?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "PRG Torino 1995 — Norm Art. 2 > 46",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.8772153153380493,
+        "8": 0.8772153153380493
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 3822,
+      "precedence": {
+        "rule": "delegated_derogation",
+        "winner_rank": 1,
+        "loser_rank": 4,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "q42",
+      "lang": "it",
+      "type": "conflict",
+      "tier": "municipal",
+      "query": "Quanti metri quadrati di superficie lorda per abitante utilizza Torino per il calcolo della capacità insediativa residenziale?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "PRG Torino 1995 — Norm Art. 2 > 46",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.9197207891481876,
+        "5": 0.9197207891481876,
+        "8": 0.9197207891481876
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 4301,
+      "precedence": {
+        "rule": "delegated_derogation",
+        "winner_rank": 1,
+        "loser_rank": 3,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    }
+  ]
+}

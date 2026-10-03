@@ -129,14 +129,24 @@ def _openai_key() -> Optional[str]:
         return None
 
 
+def _bearer_for(base: str) -> Optional[str]:
+    """The OpenAI key goes ONLY to api.openai.com. Any other OpenAI-compatible
+    base (institutional vLLM, local server) gets the institutional key or a
+    dummy — never the real OpenAI secret."""
+    if "api.openai.com" in base:
+        return _openai_key()
+    return os.getenv("INSTITUTIONAL_LLM_API_KEY") or "vllm"
+
+
 def _ask(system: str, user: str) -> str:
-    """One chat completion, JSON answer. ``openai`` deliberately uses the real
-    OpenAI base, not the institutional vLLM base ``OPENAI_API_BASE`` points at
-    for gemma; ``ollama`` uses structured output via the JSON-schema ``format``."""
+    """One chat completion, JSON answer. ``openai`` = any OpenAI-compatible
+    chat endpoint at ``CHUNK_OPENAI_BASE`` (real OpenAI, or the institutional
+    vLLM serving gemma-4); ``ollama`` uses structured output via the
+    JSON-schema ``format``."""
     messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
     try:
         if (config.CHUNK_BACKEND or "openai").lower() == "openai":
-            key = _openai_key()
+            key = _bearer_for(config.CHUNK_OPENAI_BASE)
             if not key:
                 raise DetectError("OPENAI_API_KEY not set")
             r = httpx.post(f"{config.CHUNK_OPENAI_BASE.rstrip('/')}/chat/completions",
@@ -656,7 +666,11 @@ def _materialise(chunks: List[ArticleChunk]) -> List[ArticleChunk]:
 # ==========================================================================
 
 def _spec_cache_path(cache_key: str) -> Path:
-    return config.RAW_CACHE_DIR / f"{_slug(cache_key)}.chunkspec.json"
+    """One spec file per (document, detector model): specs from different
+    detectors coexist, so switching ``RAG_CHUNK_MODEL`` (gpt-5.4 vs gemma-4)
+    switches the cache with it instead of silently reusing the other model's
+    answers — that is what makes the detector ablation reproducible."""
+    return config.RAW_CACHE_DIR / f"{_slug(cache_key)}.{_slug(config.CHUNK_MODEL)}.chunkspec.json"
 
 
 def _load_levels(cache_path: Optional[Path]) -> List[Optional[dict]]:

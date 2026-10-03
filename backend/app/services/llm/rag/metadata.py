@@ -55,14 +55,25 @@ class ChunkMetadata(BaseModel):
     city: Optional[str] = None
     effective_date: Optional[str] = None
 
+    # --- temporal validity (filtered on before semantic search) ---
+    # A document that has been repealed or replaced is kept in the store so the
+    # newer-vs-older behaviour can be evaluated, but the production cascade only
+    # sees ``status == "in_force"``. ``repealed_date`` is the day it ceased to
+    # apply; ``superseded_by`` names the doc_key that replaced it.
+    repealed_date: Optional[str] = None
+    superseded_by: Optional[str] = None
+
     # --- signals ---
     has_quantitative: bool = False                 # contains numeric thresholds
 
     # --- dormant graph edges (populated cheaply; used only if 1-hop
     #     expansion is added later — kept out of the cascade for now) ---
     amends: Optional[List[str]] = None
-    superseded_by: Optional[str] = None
     cross_references: Optional[List[str]] = None
+
+    @property
+    def status(self) -> str:
+        return "superseded" if self.repealed_date else "in_force"
 
     def to_chroma(self) -> Dict[str, Any]:
         """Flatten to Chroma-safe primitives (no None, no lists)."""
@@ -75,16 +86,19 @@ class ChunkMetadata(BaseModel):
             "article_ref": self.article_ref,
             "source_url": self.source_url,
             "lang": self.lang,
+            "status": self.status,
             "has_quantitative": self.has_quantitative,
         }
         if self.city:
             out["city"] = self.city
         if self.effective_date:
             out["effective_date"] = self.effective_date
-        if self.amends:
-            out["amends"] = ",".join(self.amends)
+        if self.repealed_date:
+            out["repealed_date"] = self.repealed_date
         if self.superseded_by:
             out["superseded_by"] = self.superseded_by
+        if self.amends:
+            out["amends"] = ",".join(self.amends)
         if self.cross_references:
             out["cross_references"] = ",".join(self.cross_references)
         return out

@@ -37,6 +37,12 @@ class DocSpec(TypedDict):
     lang: str
     effective_date: str
     span: NotRequired[DocSpan]  # ingest only this part of the source
+    # Temporal validity. A row with ``repealed_date`` is ingested as
+    # status=superseded: invisible to the production cascade, retrievable only
+    # when the caller opts in (``include_superseded``) — i.e. by the evaluation
+    # of newer-vs-older behaviour. ``superseded_by`` is the replacing doc_key.
+    repealed_date: NotRequired[str]
+    superseded_by: NotRequired[str]
 
 
 # --------------------------------------------------------------------------
@@ -223,14 +229,17 @@ TURIN: List[DocSpec] = [
 ]
 
 # --------------------------------------------------------------------------
-# London / Tower Hamlets slice (Phase 1 — the decisive PBSA-conversion rules).
+# London / Tower Hamlets slice (Phase 1 — the decisive PBSA-conversion rules;
+# Phase 2 added the borough HMO standard, Approved Document M and a superseded GPDO).
 # England splits into three regimes that do NOT substitute for each other, so
 # doc_type carries real weight here: PLANNING decides whether the use is lawful,
 # while HOUSING (HMO licensing) is where the student room-size rule actually
 # lives — a different tier from Italy (national) and Madrid (municipal).
-# NOT INCLUDED: Tower Hamlets Private Rental Accommodation & Amenity Standards
-# (the local 8.5 m² override) — democracy.towerhamlets.gov.uk returns 403 to
-# automated fetch; save the PDF manually into the raw cache to add it.
+# The local 8.5 m² room-size override lives in the borough's Private Rented
+# Housing Property Standards (democracy.towerhamlets.gov.uk 403s, but the
+# landlord-accreditation copy on towerhamlets.gov.uk fetches cleanly).
+# Approved Document M vol. 1 gives England the accessibility tier that
+# DM 236/1989 (IT) and CTE DB-SUA (ES) provide, so cross-city items line up.
 # DELIBERATELY EXCLUDED: NDSS and Housing Design Standards LPG — both are C3-only
 # and expressly do not apply to PBSA; ingesting them would inject wrong room
 # sizes (e.g. 37 m²) into student queries.
@@ -259,6 +268,26 @@ LONDON: List[DocSpec] = [
         "use_case": UseCase.GENERAL,
         "lang": "en",
         "effective_date": "2015-04-15",
+    },
+    # --- SUPERSEDED: the same Part 3 as it stood on 1 Jan 2021, when offices
+    #     converted to dwellings under Class O (revoked 31 Jul 2021 and replaced
+    #     by Class MA from 1 Aug 2021). legislation.gov.uk serves point-in-time
+    #     text at a dated URL. Ingested with status=superseded so the production
+    #     cascade never sees it; the retrieval evaluation opts in to measure
+    #     whether the current rule outranks the obsolete one (lex posterior).
+    {
+        "doc_key": "gpdo_2015_part3_asat_2021",
+        "doc_name": "T&CP (General Permitted Development) (England) Order 2015 — Sch. 2 Part 3, version as at 1 January 2021 (Class O)",
+        "url": "https://www.legislation.gov.uk/uksi/2015/596/schedule/2/part/3/2021-01-01",
+        "fetch_url": "https://www.legislation.gov.uk/uksi/2015/596/schedule/2/part/3/2021-01-01",
+        "country": "UK",
+        "jurisdiction_level": JurisdictionLevel.NATIONAL,
+        "doc_type": DocType.PLANNING,
+        "use_case": UseCase.GENERAL,
+        "lang": "en",
+        "effective_date": "2015-04-15",
+        "repealed_date": "2021-08-01",
+        "superseded_by": "gpdo_2015_part3",
     },
     {
         "doc_key": "hmo_mandatory_conditions_2018",
@@ -308,6 +337,34 @@ LONDON: List[DocSpec] = [
         "use_case": UseCase.GENERAL,
         "lang": "en",
         "effective_date": "2022-08-18",
+    },
+    # --- municipal HOUSING tier: the borough's own HMO space/amenity standard.
+    #     8.5 m² for one occupier with a separate kitchen vs the 6.51 m² national
+    #     floor of SI 2018/616 — the stricter local minimum prevails.
+    {
+        "doc_key": "th_prs_property_standards",
+        "doc_name": "Tower Hamlets — Private Rented Housing Property Standards (HMO space and amenity standards)",
+        "url": "https://www.towerhamlets.gov.uk/lgnl/housing/Private-tenants-landlords-and-homeowners/Property-licensing/Licences/Additional-licensing.aspx",
+        "fetch_url": "https://www.towerhamlets.gov.uk/Documents/Housing/Housing-provision/Landlord-accreditation/Private-Rented-Housing-Property-Standards.pdf",
+        "country": "UK",
+        "jurisdiction_level": JurisdictionLevel.MUNICIPAL,
+        "doc_type": DocType.HOUSING,
+        "use_case": UseCase.GENERAL,
+        "lang": "en",
+        "effective_date": "2014-12-03",   # document date (PDF metadata); no date printed in the text
+    },
+    # --- national accessibility tier (Building Regulations 2010, Part M).
+    {
+        "doc_key": "approved_doc_m_vol1",
+        "doc_name": "Building Regulations 2010 — Approved Document M, Volume 1: Dwellings (2015 edition incorporating 2016 amendments)",
+        "url": "https://www.gov.uk/government/publications/access-to-and-use-of-buildings-approved-document-m",
+        "fetch_url": "https://assets.publishing.service.gov.uk/media/5a7f8a82ed915d74e622b17b/BR_PDF_AD_M1_2015_with_2016_amendments_V3.pdf",
+        "country": "UK",
+        "jurisdiction_level": JurisdictionLevel.NATIONAL,
+        "doc_type": DocType.ACCESSIBILITY,
+        "use_case": UseCase.GENERAL,
+        "lang": "en",
+        "effective_date": "2016-03-01",
     },
 ]
 

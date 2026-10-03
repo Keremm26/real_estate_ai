@@ -7,7 +7,7 @@ is True iff the item retrieved at rank i (0-based) is a relevant document.
 query (the size of the gold set for that query), needed to normalise recall and
 the ideal DCG.
 
-Metric choice for this corpus (see gold_queries.json):
+Metric choice for this corpus (see gold_queries_<city>.json):
   - recall@k / MRR / nDCG@k are the headline metrics.
   - hit@k equals recall@k when a query has a single relevant doc, so it adds no
     information here — reported only for completeness.

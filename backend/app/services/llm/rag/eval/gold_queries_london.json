@@ -1,102 +1,737 @@
 {
   "meta": {
-    "description": "Hand-labelled gold set for the London / Tower Hamlets slice. Mirrors the Italian set but tests a corpus where the three English regimes (planning / building regs / HMO licensing) are legally separate — and where the student room-size rule lives at the HMO-LICENSING tier, not in planning.",
-    "corpus": "London Phase 1 — 6 documents, national -> regional (London Plan) -> municipal (Tower Hamlets)",
+    "description": "Hand-labelled gold set for the London / Tower Hamlets slice. English only (no local-language pair). Tests a corpus where the three English regimes (planning / building regs / HMO licensing) are legally separate, where the student room-size rule lives at the HMO-licensing tier and the borough sets a stricter standard than the national floor, and where a superseded version of the GPDO is kept for the temporal test.",
+    "corpus": "London Phase 2 — 9 documents: national (Use Classes 1987, GPDO 2015 Pt 3 current + its superseded 1 Jan 2021 version, HMO Mandatory Conditions 2018, Approved Document M vol. 1), regional (London Plan 2021), municipal (Tower Hamlets Local Plan 2031, Article 4 Direction, Private Rented Housing Property Standards)",
     "country": "UK",
     "use_case": "student_housing",
-    "match_on": "doc_key + article_ref against each retrieved chunk's metadata. article_ref '*' = doc-level (any chunk from that document counts), satisfied at most once. Doc-level is used for most London queries because oversized sections are sub-split into '(part N)' refs, which are not stable enough to label; the GPDO is labelled at article level because its 'Class MA' / 'Class L' refs are clean and stable.",
+    "match_on": "Three label kinds. Unit: doc_key + article_ref against the chunk's top-level unit (statutory instruments, AD M paragraphs). Anchor: article_ref '*' + `anchor` = any chunk of the document whose text contains the phrase — used for the two plans (London Plan, TH Local Plan) whose detected units differ per chunker, so a policy is labelled by its own name ('Policy H15'). Doc-level '*' only for the three tiny documents (Article 4 direction 6 chunks, TH Property Standards 5 chunks). Each label is satisfied at most once. Anchors are chosen so that both the policy text and its supporting paragraphs match (e.g. '5% of student rooms' hits Policy D.H6 and para 9.64).",
     "caveats": [
-      "Author-constructed, not validated by an English planning lawyer — state as a limitation. Every gold_value below was verified verbatim against the ingested text.",
-      "Doc-level matching makes this an easier task than the Italian article-level set; the two are NOT directly comparable. Report them separately.",
-      "The cascade filters on country=UK, so Italian chunks are out of scope here and the competition is among 212 UK chunks across 6 documents."
+      "Author-constructed, not validated by an English planning lawyer — state as a limitation. Every gold_value was verified verbatim against the ingested text (2026-09-22).",
+      "uk04 (Class L) misses under the gemma-4 detector, which swallows Class L into Class I — a known chunker defect kept in the set on purpose.",
+      "Temporal items (uk03, uk24) name a superseded document as the loser; it is outside production scope, so their pair_recall is 0 unless the run passes --include-superseded. Compare the two runs.",
+      "Anchor labels on 10k-char London Plan chunks (gemma-4 store) are lenient by construction; the gpt-5.4 store has finer units and the same labels apply."
+    ],
+    "schema": "Schema v2: each item is one information need with one label set and one query string per language (`queries: {lang: text}`), so same-language vs cross-language retrieval is compared on identical needs. `type` in {factual, multi_article, lex_specialis, conflict, temporal}; `tier` is the jurisdiction level of the prevailing answer; `precedence: {winner, loser, rule}` on conflict/temporal items feeds the pair_recall / winner_first metrics (rule in {hierarchy, stricter_minimum, delegated_derogation, lex_specialis, lex_posterior}).",
+    "changelog": [
+      "2026-09-22 rework: labels moved from doc-level to unit/anchor level; uk03 typed temporal against the superseded Class O; uk08 labels both sides; uk12 reworded and its gold value corrected (55% of the maintenance loan, para 4.15.8); uk13-uk40 added for the borough HMO standard, the HMO regs, AD M vol. 1, London Plan D7/H16 and TH D.H7."
     ]
   },
   "queries": [
     {
       "id": "uk01",
-      "lang": "en",
-      "query": "What is the minimum floor area of a room used as sleeping accommodation by one person in a licensed HMO?",
-      "relevant": [{"doc_key": "hmo_mandatory_conditions_2018", "article_ref": "*"}],
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What is the minimum floor area of a room used as sleeping accommodation by one person in a licensed HMO?"
+      },
+      "relevant": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
       "gold_value": "Not less than 6.51 square metres (one person aged over 10)",
       "note": "THE English student room-size rule — lives in HOUSING/HMO licensing, not planning. Cross-country contrast: Italy=national habitability, Madrid=municipal PGOU, London=HMO licensing."
     },
     {
       "id": "uk02",
-      "lang": "en",
-      "query": "What is the minimum sleeping room area for two persons sharing in an HMO?",
-      "relevant": [{"doc_key": "hmo_mandatory_conditions_2018", "article_ref": "*"}],
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What is the minimum sleeping room area for two persons sharing in an HMO?"
+      },
+      "relevant": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
       "gold_value": "Not less than 10.22 square metres (two persons aged over 10)"
     },
     {
       "id": "uk03",
-      "lang": "en",
-      "query": "Which permitted development right allows commercial premises to be converted to residential use?",
-      "relevant": [{"doc_key": "gpdo_2015_part3", "article_ref": "Class MA"}],
-      "gold_value": "Class MA — commercial, business and service uses to dwellinghouses"
+      "type": "temporal",
+      "tier": "national",
+      "queries": {
+        "en": "Which permitted development right allows commercial premises to be converted to residential use?"
+      },
+      "relevant": [
+        {
+          "doc_key": "gpdo_2015_part3",
+          "article_ref": "Class MA"
+        }
+      ],
+      "gold_value": "Class MA — commercial, business and service uses to dwellinghouses",
+      "precedence": {
+        "winner": {
+          "doc_key": "gpdo_2015_part3",
+          "article_ref": "Class MA"
+        },
+        "loser": {
+          "doc_key": "gpdo_2015_part3_asat_2021",
+          "article_ref": "Class O"
+        },
+        "rule": "lex_posterior"
+      },
+      "note": "TEMPORAL: the answer today is Class MA (from 1 Aug 2021). The store also holds the Part 3 text as at 1 Jan 2021, where offices-to-dwellings was Class O — status=superseded, so it competes only under --include-superseded. Not in `relevant`: production retrieval must never return it."
     },
     {
       "id": "uk04",
-      "lang": "en",
-      "query": "Which permitted development class covers change of use between a dwellinghouse and a small house in multiple occupation?",
-      "relevant": [{"doc_key": "gpdo_2015_part3", "article_ref": "Class L"}],
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "Which permitted development class covers change of use between a dwellinghouse and a small house in multiple occupation?"
+      },
+      "relevant": [
+        {
+          "doc_key": "gpdo_2015_part3",
+          "article_ref": "Class L"
+        }
+      ],
       "gold_value": "Class L — small HMOs to dwellinghouses and vice versa (C3 <-> C4)"
     },
     {
       "id": "uk05",
-      "lang": "en",
-      "query": "What proportion of student accommodation must be affordable to follow the Fast Track Route?",
-      "relevant": [{"doc_key": "london_plan_2021", "article_ref": "*"}],
-      "gold_value": "At least 35 per cent affordable student accommodation (50 per cent where required by Part B of Policy H5) — London Plan Policy H15"
+      "type": "factual",
+      "tier": "regional",
+      "queries": {
+        "en": "What proportion of student accommodation must be affordable to follow the Fast Track Route?"
+      },
+      "relevant": [
+        {
+          "doc_key": "london_plan_2021",
+          "article_ref": "*",
+          "anchor": "affordable student accommodation"
+        }
+      ],
+      "gold_value": "At least 35 per cent of the accommodation secured as affordable student accommodation to follow the Fast Track Route, or 50 per cent where the development is on public land or on industrial land appropriate for residential uses under Policy E7 (Policy H15 A.4.a)."
     },
     {
       "id": "uk06",
-      "lang": "en",
-      "query": "Must purpose-built student accommodation be secured through a nomination agreement with a higher education provider?",
-      "relevant": [{"doc_key": "london_plan_2021", "article_ref": "*"}],
+      "type": "factual",
+      "tier": "regional",
+      "queries": {
+        "en": "Must purpose-built student accommodation be secured through a nomination agreement with a higher education provider?"
+      },
+      "relevant": [
+        {
+          "doc_key": "london_plan_2021",
+          "article_ref": "*",
+          "anchor": "nomination agreement"
+        }
+      ],
       "gold_value": "Yes — bedrooms secured through a nomination agreement with one or more higher education providers (Policy H15)"
     },
     {
       "id": "uk07",
-      "lang": "en",
-      "query": "What percentage of student rooms must be wheelchair accessible in Tower Hamlets?",
-      "relevant": [{"doc_key": "th_local_plan_2031", "article_ref": "*"}],
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "What percentage of student rooms must be wheelchair accessible in Tower Hamlets?"
+      },
+      "relevant": [
+        {
+          "doc_key": "th_local_plan_2031",
+          "article_ref": "*",
+          "anchor": "5% of student rooms"
+        }
+      ],
       "gold_value": "5% of student rooms wheelchair accessible, including a wheelchair-accessible shower room for independent use"
     },
     {
       "id": "uk08",
-      "lang": "en",
-      "query": "Has Tower Hamlets removed the Class MA permitted development right for converting commercial buildings?",
-      "relevant": [{"doc_key": "th_article4_class_e", "article_ref": "*"}],
+      "type": "conflict",
+      "tier": "municipal",
+      "queries": {
+        "en": "Has Tower Hamlets removed the Class MA permitted development right for converting commercial buildings?"
+      },
+      "relevant": [
+        {
+          "doc_key": "th_article4_class_e",
+          "article_ref": "*"
+        },
+        {
+          "doc_key": "gpdo_2015_part3",
+          "article_ref": "Class MA"
+        }
+      ],
+      "precedence": {
+        "winner": {
+          "doc_key": "th_article4_class_e",
+          "article_ref": "*"
+        },
+        "loser": {
+          "doc_key": "gpdo_2015_part3",
+          "article_ref": "Class MA"
+        },
+        "rule": "delegated_derogation"
+      },
       "gold_value": "Yes — an Article 4 Direction removes Class MA in the mapped area, so a full planning application is required",
-      "note": "JURISDICTION CASCADE demo: a municipal direction switches off a national permitted-development right. Contrast with uk03, which finds the national right."
+      "note": "CONFLICT municipal switches off a national right by delegated power (Article 4 is a mechanism the GPDO itself provides). Both sides labelled: the direction and the right it removes."
     },
     {
       "id": "uk09",
-      "lang": "en",
-      "query": "What is the definition of Class C4, a small house in multiple occupation?",
-      "relevant": [{"doc_key": "use_classes_1987", "article_ref": "*"}],
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What is the definition of Class C4, a small house in multiple occupation?"
+      },
+      "relevant": [
+        {
+          "doc_key": "use_classes_1987",
+          "article_ref": "*",
+          "anchor": "Class C4"
+        }
+      ],
       "gold_value": "Class C4 — occupation by between 3 and 6 residents as their only or main residence, sharing a basic amenity"
     },
     {
       "id": "uk10",
-      "lang": "en",
-      "query": "Which use class covers a dwellinghouse occupied by a single household?",
-      "relevant": [{"doc_key": "use_classes_1987", "article_ref": "*"}],
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "Which use class covers a dwellinghouse occupied by a single household?"
+      },
+      "relevant": [
+        {
+          "doc_key": "use_classes_1987",
+          "article_ref": "*",
+          "anchor": "Class C3"
+        }
+      ],
       "gold_value": "Class C3 — dwellinghouses used as a single household (other than a use within Class C4)"
     },
     {
       "id": "uk11",
-      "lang": "en",
-      "query": "What are the planning requirements for purpose-built student accommodation in Tower Hamlets?",
-      "relevant": [{"doc_key": "th_local_plan_2031", "article_ref": "*"}],
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "What are the planning requirements for purpose-built student accommodation in Tower Hamlets?"
+      },
+      "relevant": [
+        {
+          "doc_key": "th_local_plan_2031",
+          "article_ref": "*",
+          "anchor": "student housing"
+        }
+      ],
       "gold_value": "Policy on student housing: affordable student accommodation or nominations, respect residential amenity, 5% wheelchair-accessible rooms"
     },
     {
       "id": "uk12",
-      "lang": "en",
-      "query": "What is the maximum level of rent or affordability benchmark for student accommodation in London?",
-      "relevant": [{"doc_key": "london_plan_2021", "article_ref": "*"}],
-      "gold_value": "Policy H15 sets the maximum level of rent for affordable student accommodation"
+      "type": "multi_article",
+      "tier": "regional",
+      "queries": {
+        "en": "How is affordable student accommodation defined in terms of rent in London?"
+      },
+      "relevant": [
+        {
+          "doc_key": "london_plan_2021",
+          "article_ref": "*",
+          "anchor": "55 per cent"
+        },
+        {
+          "doc_key": "th_local_plan_2031",
+          "article_ref": "*",
+          "anchor": "55% of average student income"
+        }
+      ],
+      "gold_value": "A PBSA bedroom let for the academic year at or below 55 per cent of the maximum income a new full-time student studying in London and living away from home could receive from the Government's maintenance loan for living costs; the figure is published yearly in the Mayor's Annual Monitoring Report (para 4.15.8).",
+      "note": "Reworded in the 2026-09 rework: the pre-rework gold value ('Policy H15 sets the maximum level of rent') did not match the text. TH Local Plan para 9.65 restates the 55% rule — concordant municipal label."
+    },
+    {
+      "id": "uk13",
+      "type": "conflict",
+      "tier": "municipal",
+      "queries": {
+        "en": "In Tower Hamlets, what is the minimum floor area of a room for one person in an HMO where the kitchen is in a separate room?"
+      },
+      "relevant": [
+        {
+          "doc_key": "th_prs_property_standards",
+          "article_ref": "*"
+        },
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "precedence": {
+        "winner": {
+          "doc_key": "th_prs_property_standards",
+          "article_ref": "*"
+        },
+        "loser": {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        },
+        "rule": "stricter_minimum"
+      },
+      "gold_value": "8.5 m² (13 m² if the kitchen facilities are within the room) under the borough's Private Rented Housing Property Standards — above the 6.51 m² national floor of SI 2018/616 para 1A(2)(a).",
+      "note": "CONFLICT municipal > national because the national figure is a minimum licence condition and the borough sets a higher standard. Cross-city twin of Turin q41."
+    },
+    {
+      "id": "uk14",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "What is the minimum room size for two people sharing a bedsit in Tower Hamlets?"
+      },
+      "relevant": [
+        {
+          "doc_key": "th_prs_property_standards",
+          "article_ref": "*"
+        }
+      ],
+      "gold_value": "13 m² with kitchen facilities in a separate room, 18 m² with kitchen facilities within the room (TH Property Standards, space standards for sleeping accommodation)."
+    },
+    {
+      "id": "uk15",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "How large must a shared kitchen be in a Tower Hamlets HMO, and how many occupiers may share one set of cooking facilities?"
+      },
+      "relevant": [
+        {
+          "doc_key": "th_prs_property_standards",
+          "article_ref": "*"
+        }
+      ],
+      "gold_value": "5.5 m² for up to 3 sharers, 7.5 m² for 4-5, 9.5 m² for 6-7, 11.5 m² for 8-10; one full set of cooking facilities per 5 persons (flexibility for 6-7 subject to risk assessment; a second set for 8-10)."
+    },
+    {
+      "id": "uk16",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "What minimum ceiling height applies to a sleeping room in a Tower Hamlets HMO, and which floor area is disregarded?"
+      },
+      "relevant": [
+        {
+          "doc_key": "th_prs_property_standards",
+          "article_ref": "*"
+        }
+      ],
+      "gold_value": "At least 2.14 m over 75% of the floor area; any floor area where the ceiling is lower than 1.53 m is disregarded."
+    },
+    {
+      "id": "uk17",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "Can a room smaller than 4.64 square metres be used as sleeping accommodation in a licensed HMO?"
+      },
+      "relevant": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "gold_value": "No — the licence must require that no room under 4.64 m² is used for sleeping, that a room for a child under 10 is at least 4.64 m², and that any such room is notified to the local housing authority (para 1A(2)(c)-(d), 1A(6))."
+    },
+    {
+      "id": "uk18",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "If an HMO does not meet the room-size conditions when the licence is granted, how long can the authority give the licence holder to comply?"
+      },
+      "relevant": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "gold_value": "A specified period of not more than 18 months from the date of the notification (para 1A(4)-(5))."
+    },
+    {
+      "id": "uk19",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What condition about household waste must a Part 2 HMO licence in England include?"
+      },
+      "relevant": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1B"
+        }
+      ],
+      "gold_value": "Compliance with any scheme provided by the local housing authority for the storage and disposal of household waste at the HMO pending collection (para 1C).",
+      "note": "Para 1C is detected inside the '1B' unit by the chunker (its heading follows 1B(5) with no blank line), hence the 1B label."
+    },
+    {
+      "id": "uk20",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "If part of a dwellinghouse is used as a separate dwelling, is that treated as development under the Use Classes Order?"
+      },
+      "relevant": [
+        {
+          "doc_key": "use_classes_1987",
+          "article_ref": "4"
+        }
+      ],
+      "gold_value": "Yes — article 4: the use as a separate dwellinghouse of any part of a Class C3 building is not, by virtue of the Order, to be taken as not amounting to development."
+    },
+    {
+      "id": "uk21",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "Which use class covers a residential college, a boarding school or a nursing home?"
+      },
+      "relevant": [
+        {
+          "doc_key": "use_classes_1987",
+          "article_ref": "*",
+          "anchor": "Class C2"
+        }
+      ],
+      "gold_value": "Class C2 Residential institutions — residential accommodation and care for people in need of care, hospitals or nursing homes, and residential schools, colleges or training centres."
+    },
+    {
+      "id": "uk22",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What conditions must be met to convert a commercial building to dwellings under Class MA?"
+      },
+      "relevant": [
+        {
+          "doc_key": "gpdo_2015_part3",
+          "article_ref": "Class MA"
+        }
+      ],
+      "gold_value": "The building must have been in a Class E use for a continuous period of at least 2 years before the prior-approval application; prior approval is required on transport, contamination, flooding, noise, natural light, fire safety etc.; development must be completed within 3 years of the prior approval date (MA.1-MA.2)."
+    },
+    {
+      "id": "uk23",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "How many dwellings, and how much floor space, can be created from agricultural buildings under Class Q?"
+      },
+      "relevant": [
+        {
+          "doc_key": "gpdo_2015_part3",
+          "article_ref": "Class Q"
+        }
+      ],
+      "gold_value": "Not more than 10 dwellinghouses and not more than 1,000 m² of cumulative dwellinghouse floor space per established agricultural unit (Q.1(d))."
+    },
+    {
+      "id": "uk24",
+      "type": "temporal",
+      "tier": "national",
+      "queries": {
+        "en": "Can an office building be converted into flats without a full planning application, and under which permitted development class?"
+      },
+      "relevant": [
+        {
+          "doc_key": "gpdo_2015_part3",
+          "article_ref": "Class MA"
+        }
+      ],
+      "precedence": {
+        "winner": {
+          "doc_key": "gpdo_2015_part3",
+          "article_ref": "Class MA"
+        },
+        "loser": {
+          "doc_key": "gpdo_2015_part3_asat_2021",
+          "article_ref": "Class O"
+        },
+        "rule": "lex_posterior"
+      },
+      "gold_value": "Yes, subject to prior approval — offices are within Class E and convert to C3 under Class MA (from 1 Aug 2021). The office-specific Class O of the pre-2021 Order no longer exists.",
+      "note": "TEMPORAL, harder twin of uk03: the wording ('office building') is much closer to the superseded Class O heading than to Class MA. Loser is superseded, so pair_recall is 0 by design unless --include-superseded."
+    },
+    {
+      "id": "uk25",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What floor-space limit applies when a betting office, launderette or takeaway is converted to a dwellinghouse under Class M?"
+      },
+      "relevant": [
+        {
+          "doc_key": "gpdo_2015_part3",
+          "article_ref": "Class M"
+        }
+      ],
+      "gold_value": "The cumulative floor space changing use under Class M may not exceed 150 m², and the building must have been in one of the qualifying uses on 20 March 2013 (M.1(a), (c)-(d))."
+    },
+    {
+      "id": "uk26",
+      "type": "multi_article",
+      "tier": "regional",
+      "queries": {
+        "en": "What proportion of new dwellings in London must be wheelchair user dwellings, and what standard must the rest meet?"
+      },
+      "relevant": [
+        {
+          "doc_key": "london_plan_2021",
+          "article_ref": "*",
+          "anchor": "Policy D7"
+        },
+        {
+          "doc_key": "th_local_plan_2031",
+          "article_ref": "*",
+          "anchor": "wheelchair user dwellings"
+        }
+      ],
+      "gold_value": "At least 10 per cent must meet Building Regulation M4(3) 'wheelchair user dwellings'; all other dwellings must meet M4(2) 'accessible and adaptable dwellings' (Policy D7 A).",
+      "note": "TH Local Plan para 9.44 restates the London Plan's 10% wheelchair user dwellings — concordant municipal label."
+    },
+    {
+      "id": "uk27",
+      "type": "factual",
+      "tier": "regional",
+      "queries": {
+        "en": "What minimum tenancy length and management arrangements does the London Plan require for large-scale purpose-built shared living?"
+      },
+      "relevant": [
+        {
+          "doc_key": "london_plan_2021",
+          "article_ref": "*",
+          "anchor": "Policy H16"
+        }
+      ],
+      "gold_value": "All units for rent with minimum tenancies of no less than three months, under single management, with communal kitchen, internal and outside communal amenity space, laundry, a concierge and cleaning/linen services (Policy H16 A.4-A.6)."
+    },
+    {
+      "id": "uk28",
+      "type": "factual",
+      "tier": "regional",
+      "queries": {
+        "en": "For the purposes of the London Plan's student accommodation policy, who counts as a student and what is a higher education provider?"
+      },
+      "relevant": [
+        {
+          "doc_key": "london_plan_2021",
+          "article_ref": "*",
+          "anchor": "higher education provider"
+        }
+      ],
+      "gold_value": "A student is a person following a course in higher education recognised by the Office for Students; a higher education provider is an institution providing a designated course approved by the Department for Education (Level 4 or above) that lets students apply for government-financed loans (Policy H15 footnotes 76-77)."
+    },
+    {
+      "id": "uk29",
+      "type": "lex_specialis",
+      "tier": "municipal",
+      "queries": {
+        "en": "What share of rooms in a purpose-built student accommodation scheme in Tower Hamlets must be wheelchair accessible?"
+      },
+      "relevant": [
+        {
+          "doc_key": "th_local_plan_2031",
+          "article_ref": "*",
+          "anchor": "5% of student rooms"
+        },
+        {
+          "doc_key": "london_plan_2021",
+          "article_ref": "*",
+          "anchor": "Policy D7"
+        }
+      ],
+      "precedence": {
+        "winner": {
+          "doc_key": "th_local_plan_2031",
+          "article_ref": "*",
+          "anchor": "5% of student rooms"
+        },
+        "loser": {
+          "doc_key": "london_plan_2021",
+          "article_ref": "*",
+          "anchor": "Policy D7"
+        },
+        "rule": "lex_specialis"
+      },
+      "gold_value": "5% of student rooms, including access to a wheelchair-accessible shower room for independent use (Policy D.H6 1.d) — the student-specific rule; the general 10% M4(3) requirement of London Plan Policy D7 applies to dwellings, not PBSA rooms.",
+      "note": "LEX SPECIALIS across tiers: the specific municipal student rule prevails over the general regional dwelling rule."
+    },
+    {
+      "id": "uk30",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "When will Tower Hamlets support a new house in multiple occupation?"
+      },
+      "relevant": [
+        {
+          "doc_key": "th_local_plan_2031",
+          "article_ref": "*",
+          "anchor": "Policy D.H7"
+        }
+      ],
+      "gold_value": "Where it meets an identified need, does not lose larger family housing, is secured as long-term low-cost or provides affordable housing, is in an area of high transport accessibility, has no significant amenity impact and meets the space standards of Policies D.H3 and D.DH8 (Policy D.H7 1)."
+    },
+    {
+      "id": "uk31",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "Under what conditions does Tower Hamlets accept the loss of existing student accommodation?"
+      },
+      "relevant": [
+        {
+          "doc_key": "th_local_plan_2031",
+          "article_ref": "*",
+          "anchor": "loss of student accommodation"
+        }
+      ],
+      "gold_value": "Only where the accommodation is shown to be no longer needed because students' needs can be better met elsewhere, or adequate replacement housing meeting Part 1 of the policy is provided (Policy D.H6 2)."
+    },
+    {
+      "id": "uk32",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "Where in Tower Hamlets does the Article 4 direction removing Class MA apply, and when was it made?"
+      },
+      "relevant": [
+        {
+          "doc_key": "th_article4_class_e",
+          "article_ref": "*"
+        }
+      ],
+      "gold_value": "Made on 1 August 2021 and modified by the Secretary of State on 14 June 2023 to apply only to the mapped land: parts of the Central Activities Zone, Preferred Office Locations, Local Employment Locations, the Strategic Industrial Location, Local Industrial Locations, the Metropolitan Centre and district/neighbourhood centres and parades."
+    },
+    {
+      "id": "uk33",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What is the minimum clear opening width of the principal communal entrance door of a building containing visitable dwellings?"
+      },
+      "relevant": [
+        {
+          "doc_key": "approved_doc_m_vol1",
+          "article_ref": "1.9"
+        }
+      ],
+      "gold_value": "775 mm, measured per Diagram 1.1, with an accessible threshold (AD M vol. 1 para 1.9, M4(1))."
+    },
+    {
+      "id": "uk34",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What door width and external landing does an accessible and adaptable dwelling (M4(2)) need at its principal private entrance?"
+      },
+      "relevant": [
+        {
+          "doc_key": "approved_doc_m_vol1",
+          "article_ref": "2.20"
+        }
+      ],
+      "gold_value": "A minimum clear opening width of 850 mm, a level external landing of at least 1200 mm x 1200 mm, covered over 900 x 600 mm, automatic lighting and a 300 mm nib to the leading edge (para 2.20)."
+    },
+    {
+      "id": "uk35",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "On which storey must a visitable dwelling provide a WC?"
+      },
+      "relevant": [
+        {
+          "doc_key": "approved_doc_m_vol1",
+          "article_ref": "1.17"
+        }
+      ],
+      "gold_value": "On the entrance storey, or on the principal storey where the entrance storey has no habitable rooms; with clear access space per Diagram 1.3 and an outward-opening door (para 1.17)."
+    },
+    {
+      "id": "uk36",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What clear width and turning spaces must the approach route to a wheelchair user dwelling provide?"
+      },
+      "relevant": [
+        {
+          "doc_key": "approved_doc_m_vol1",
+          "article_ref": "3.9"
+        }
+      ],
+      "gold_value": "A minimum clear width of 1200 mm, a 1500 mm x 1500 mm level passing/turning space at each end and at most every 10 m, and gates with an 850 mm clear opening (para 3.9, M4(3))."
+    },
+    {
+      "id": "uk37",
+      "type": "factual",
+      "tier": "national",
+      "queries": {
+        "en": "What clear turning circle must the WC/shower room of an accessible and adaptable dwelling provide?"
+      },
+      "relevant": [
+        {
+          "doc_key": "approved_doc_m_vol1",
+          "article_ref": "2.27"
+        }
+      ],
+      "gold_value": "A 1500 mm diameter clear turning circle, which may overlap the shower area; basins may encroach by at most 300 mm (para 2.27, Diagram 2.5)."
+    },
+    {
+      "id": "uk38",
+      "type": "multi_article",
+      "tier": "regional",
+      "queries": {
+        "en": "Which Building Regulations accessibility categories do new London dwellings have to meet, and what are the three categories?"
+      },
+      "relevant": [
+        {
+          "doc_key": "london_plan_2021",
+          "article_ref": "*",
+          "anchor": "Policy D7"
+        },
+        {
+          "doc_key": "approved_doc_m_vol1",
+          "article_ref": "0.1"
+        }
+      ],
+      "gold_value": "London Plan Policy D7 requires M4(3) for at least 10% and M4(2) for the rest; Approved Document M vol. 1 defines M4(1) visitable, M4(2) accessible and adaptable, M4(3) wheelchair user dwellings (para 0.1).",
+      "note": "Regional policy that cites the national technical document — both count."
+    },
+    {
+      "id": "uk39",
+      "type": "multi_article",
+      "tier": "regional",
+      "queries": {
+        "en": "How much of a new student housing scheme in Tower Hamlets must be affordable student accommodation?"
+      },
+      "relevant": [
+        {
+          "doc_key": "th_local_plan_2031",
+          "article_ref": "*",
+          "anchor": "affordable student"
+        },
+        {
+          "doc_key": "london_plan_2021",
+          "article_ref": "*",
+          "anchor": "affordable student accommodation"
+        }
+      ],
+      "gold_value": "Tower Hamlets Policy D.H6 requires either a nomination undertaking with specific institutions or 'an element of affordable student accommodation' without a figure; the number comes from London Plan Policy H15 — at least 35 per cent (50 per cent on public or industrial land).",
+      "note": "Two tiers, one answer: the local plan sets the requirement, the regional plan quantifies it — general-conformity, not conflict."
+    },
+    {
+      "id": "uk40",
+      "type": "factual",
+      "tier": "municipal",
+      "queries": {
+        "en": "How many people may share one room for sleeping in a Tower Hamlets HMO?"
+      },
+      "relevant": [
+        {
+          "doc_key": "th_prs_property_standards",
+          "article_ref": "*"
+        }
+      ],
+      "gold_value": "A maximum of two, who must be living together as partners, family members or consenting friends; a room shared by more than two is overcrowded (TH Property Standards)."
     }
   ]
 }
