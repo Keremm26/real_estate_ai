@@ -112,7 +112,7 @@ class GraphState(TypedDict):
     regulatory_result: Optional[RegulatoryAgentResult]
     ranking_result: Optional[RankingAgentResult]
     constraint_ir: Optional[Any]  # structured constraint snapshot built from agent outputs
-    constraint_mode: str  # "observe" (v1: log only) | "enforce" (v2: repair + IR fallback)
+    constraint_mode: str  # "observe" (v1: log only) | "repair" (alias rename only) | "enforce" (v2: repair + IR fallback + relaxation safety)
     sql_query: str
     selected_data: pd.DataFrame  # Results filtered by SQL
     execution_error: Optional[str]
@@ -1485,7 +1485,7 @@ class GraphOrchestratorAgent(BaseAgent):
         state.setdefault("gemini_responses", {})["constraint_layer"] = snapshot
 
     def _apply_ir_repair(self, state: GraphState) -> None:
-        """v2 (enforce): repair alias-mismatched columns before execution.
+        """v2 (repair / enforce): repair alias-mismatched columns before execution.
 
         Safe, logic-preserving step: it only renames columns that are not literal
         dataset columns but resolve (via the shared alias map) to one that is —
@@ -1493,10 +1493,12 @@ class GraphOrchestratorAgent(BaseAgent):
         exact failure observed in v1, caught before execution instead of after.
 
         Columns that do not resolve are left alone (a genuine invalid column is a
-        job for the deterministic fallback, not for repair). No-op in observe
-        mode. The caller wraps this in try/except so it can never break the run.
+        job for the deterministic fallback, not for repair). Runs in "repair" mode
+        (rename only: the IR fallback and relaxation safety stay off, so other
+        experiments are not confounded) and in "enforce" mode; no-op in observe.
+        The caller wraps this in try/except so it can never break the run.
         """
-        if (state.get("constraint_mode") or "observe").lower() != "enforce":
+        if (state.get("constraint_mode") or "observe").lower() not in ("repair", "enforce"):
             return
 
         snapshot = state.get("gemini_responses", {}).get("constraint_layer")

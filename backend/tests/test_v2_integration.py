@@ -174,6 +174,22 @@ def test_ir_fallback_geo_only_executes():
     assert len(state["selected_data"]) == 2
 
 
+def test_repair_mode_applies_alias_repair():
+    state = _base_state("repair", _office_ir(),
+                        sql="SELECT * FROM ESTATES WHERE surface_area >= 1000")
+    GraphOrchestratorAgent._apply_ir_repair(_fake_agent(), state)
+    assert "superficie_di_riferimento_mq >= 1000" in state["sql_query"]
+    assert state["gemini_responses"]["constraint_layer"]["sql_source"] == "repaired_llm"
+
+
+def test_repair_mode_does_not_enable_ir_fallback():
+    # "repair" is rename-only: the deterministic fallback stays an enforce-only behaviour.
+    state = _base_state("repair", _office_ir())
+    ok = GraphOrchestratorAgent._try_ir_fallback(_fake_agent(), state)
+    assert ok is False
+    assert state["gemini_responses"]["constraint_layer"]["fallback_used"] is None
+
+
 if __name__ == "__main__":
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     passed = 0

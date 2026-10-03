@@ -119,6 +119,17 @@ def test_observe_drops_hard_typology_and_records_hit():
     assert "tipologia_bene_immobile" in snap["relaxation_safety_columns"]
 
 
+def test_repair_mode_relaxes_like_observe():
+    # "repair" is rename-only: relaxation keeps the original (unguarded) behaviour.
+    agent = _agent()
+    state = _state("repair")
+    final_sql = agent._apply_ast_relaxation_workflow(state, INITIAL_SQL, proposals=[])
+    assert not _has_typology(final_sql)
+    snap = state["gemini_responses"]["constraint_layer"]
+    assert snap["relaxation_safety_hits"] >= 1
+    assert snap["relaxation_safety_blocked"] == 0
+
+
 def test_enforce_preserves_hard_typology_and_blocks():
     agent = _agent()
     state = _state("enforce")

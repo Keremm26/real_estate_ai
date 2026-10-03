@@ -222,6 +222,12 @@ def check_sql_ood(sql, data_stats):
 
 # --- 3. EXECUTION DISPATCHERS ---
 
+# TriSQL constraint layer mode for benchmark runs: "repair" applies only the
+# column-alias rename (surface_area -> superficie_di_riferimento_mq), which every
+# arm needs to avoid SQL binder errors, without TriSQL's IR fallback / relaxation
+# safety confounding other experiments. Use "enforce" for TriSQL evaluations.
+CONSTRAINT_MODE = os.environ.get("CONSTRAINT_MODE", "repair")
+
 @with_query_context
 async def run_query(query, architecture="multiagent", disabled=None, use_knowledge=True, use_relaxation=False):
     log_output(f"[QUERY] Searching: {query}")
@@ -234,6 +240,7 @@ async def run_query(query, architecture="multiagent", disabled=None, use_knowled
             analysis_mode="agent", disabled_agents=disabled, use_data_knowledge=use_knowledge,
             use_relaxation=use_relaxation,
             architecture=architecture,
+            constraint_mode=CONSTRAINT_MODE,
         )
         duration = round((time.time() - start_t) * 1000, 2)
         buildings = res.get("buildings", [])
