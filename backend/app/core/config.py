@@ -107,6 +107,7 @@ class Settings(BaseSettings):
     # model_type, test_suite --model) -> concrete model name.
     MODEL_ALIASES: Dict[str, str] = {
         "gpt-5.4": "gpt-5.4",
+        "gpt-5.4-mini": "gpt-5.4-mini",   # cheaper OpenAI sibling (TriSQL batch evals)
         "gemma-4": "gemma-4",
         "gpt-oss-120b": "gemma-4",
         "gemma3-27b": "gemma-4",
