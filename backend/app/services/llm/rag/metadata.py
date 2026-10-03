@@ -38,6 +38,22 @@ class UseCase(str, Enum):
     GENERAL = "general"            # national baselines that apply across uses
 
 
+# What each use-case tag covers — read by the query router (router.py), which
+# maps a query's intended use onto this vocabulary. Adding a tag = adding an
+# enum member and a description here; the router needs no other change.
+USE_CASE_DESCRIPTIONS: Dict[str, str] = {
+    UseCase.STUDENT_HOUSING.value: (
+        "housing specifically for university students: student residences, halls, "
+        "colleges, purpose-built student accommodation (residenze universitarie / "
+        "per studenti, residencias de estudiantes)"
+    ),
+    UseCase.GENERAL.value: (
+        "any other intended use, or no intended use stated (ordinary housing, co-housing, "
+        "senior housing, offices, retail, ...): only rules that apply across uses"
+    ),
+}
+
+
 class ChunkMetadata(BaseModel):
     """Metadata attached to a single article-level chunk."""
 

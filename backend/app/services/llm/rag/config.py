@@ -132,3 +132,11 @@ QUANT_ONLY = os.getenv("RAG_QUANT_ONLY", "1") == "1"
 DEFAULT_COUNTRY = "IT"
 DEFAULT_CITY = "Torino"
 DEFAULT_USE_CASE = "student_housing"
+
+# Pipeline callers pass no use case: when on, an LLM router (router.py) reads
+# the query's intended use and maps it onto the use-case vocabulary, falling
+# back to "general" when unsure. Off -> DEFAULT_USE_CASE for every query (the
+# pre-router behaviour). Callers that pass use_case explicitly (gold eval,
+# downstream eval) are never routed.
+USE_CASE_ROUTING = os.getenv("RAG_USE_CASE_ROUTING", "1") == "1"
+ROUTER_FALLBACK_USE_CASE = "general"

@@ -50,13 +50,23 @@ def load_regulatory_context(
     """
     mode = (retrieval_mode or rag_config.RETRIEVAL_MODE).lower()
     country = country or rag_config.DEFAULT_COUNTRY
-    use_case = use_case or rag_config.DEFAULT_USE_CASE
 
     if mode == "none":
+        use_case = use_case or rag_config.DEFAULT_USE_CASE
         docs, sources, images = load_regulatory_documents()
         trace = {"mode": "none", "country": country, "use_case": use_case, "top_k": None,
                  "n_chunks": 0, "context_chars": len(docs) if sources else 0, "hits": []}
         return docs, sources, images, trace
+
+    # No use case from the caller (the pipeline paths): route the query's
+    # intended use onto the use-case vocabulary. Explicit callers (evals) skip it.
+    routing = None
+    if not use_case:
+        if rag_config.USE_CASE_ROUTING:
+            from app.services.llm.rag.router import route_use_case
+            use_case, routing = route_use_case(query)
+        else:
+            use_case = rag_config.DEFAULT_USE_CASE
 
     try:
         docs, sources, trace = retrieve_with_trace(
@@ -69,6 +79,8 @@ def load_regulatory_context(
         docs, sources = "No regulatory documents available.", []
         trace = {"mode": mode, "country": country, "use_case": use_case, "top_k": None,
                  "n_chunks": 0, "context_chars": 0, "hits": [], "error": str(e)}
+    if routing is not None:
+        trace["use_case_routing"] = routing
     return docs, sources, [], trace
 
 
