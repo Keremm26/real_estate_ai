@@ -105,6 +105,7 @@ EVALUATION_MODEL = "gpt-5.4"
 # Models not listed here will use the global --max-concurrent value.
 MODEL_CONCURRENCY_LIMITS = {
     "gpt-5.4": 2,
+    "gpt-5.4-mini": 4,
     "gpt-oss-120b": 48,
     "gemma3-27b": 48,
     "qwen3-8b": 48,
@@ -164,6 +165,44 @@ async def preload_data():
                 RealEstateService._dataset_indexed_cache["full"] = df_indexed
         except Exception as e:
             print(f"Error preloading data: {e}")
+
+# Sensitivity / ablation configurations: (id, disabled_agents, use_knowledge, architecture).
+# Disabled-agent names must match the graph's task keys
+# (graph_agent: ranking / building / location / energy / proximity / regulatory).
+SENSITIVITY_CONFIGS = [
+    ("no_ranking", ["ranking"], True, "multiagent"),
+    ("no_knowledge", None, False, "multiagent"),
+    ("no_proximity", ["proximity"], True, "multiagent"),
+    ("no_regulatory", ["regulatory"], True, "multiagent"),
+    ("no_location", ["location"], True, "multiagent"),
+    ("no_energy", ["energy"], True, "multiagent"),
+    ("no_building", ["building"], True, "multiagent"),
+    ("baseline_columns", None, False, "baseline"),
+    ("baseline_stats", None, True, "baseline"),
+]
+
+def extract_ranking_logic(res: dict) -> dict:
+    """Ranking weights for one run, as recorded by the graph (gemini_responses):
+    original_weights  = the ranking agent's weights
+    effective_weights = weights actually used (agents without scorable
+                        requirements excluded and their weight redistributed)
+    discovered_agents = agents with at least one scorable requirement
+    contributing_agents = agents with an effective weight > 0"""
+    data = (res.get("gemini_responses") or {}).get("ranking_weights") or {}
+    effective = {a: w for a, w in (data.get("effective_weights") or {}).items() if w and w > 0}
+    return {
+        "original_weights": data.get("weights") or {},
+        "effective_weights": effective,
+        "contributing_agents": list(effective.keys()),
+        "discovered_agents": list(data.get("found_agents") or []),
+        "excluded_agents": list(data.get("excluded_agents") or []),
+    }
+
+
+def _fmt_metric(value, digits: int = 3) -> str:
+    """Format a metric for the report; missing data shows as n/a instead of a
+    default that looks like a real result (1.0 IoU read as 'no impact')."""
+    return "n/a" if value is None else f"{value:.{digits}f}"
 
 def calculate_sql_iou(sql_a, sql_b, file_a="N/A", file_b="N/A"):
     # This uses extract_sql_columns from analysis_utils
@@ -228,6 +267,50 @@ def check_sql_ood(sql, data_stats):
 # safety confounding other experiments. Use "enforce" for TriSQL evaluations.
 CONSTRAINT_MODE = os.environ.get("CONSTRAINT_MODE", "repair")
 
+# Query set and retrieval arm, set once per process by configure_run() (CLI
+# --queries / --arm; the conductor forwards both to its model subprocesses).
+#   legacy  = Marco's combinatorial generator (query_parameters.json)
+#   curated = benchmark_queries_turin.json (RAG study: arms none vs rag)
+# suite_root holds the suite CSVs and outputs/. Legacy without an arm keeps the
+# original layout (results/); every other run gets its own folder so the arms
+# never overwrite each other.
+from app.services.llm.rag import config as rag_config
+
+CURATED_QUERIES_PATH = suite_path / "benchmark_queries_turin.json"
+QUERY_SET = "legacy"
+suite_root = results_path
+
+
+def configure_run(query_set: str = "legacy", arm: Optional[str] = None) -> Path:
+    """Select the query set and the regulatory retrieval arm for this process."""
+    global QUERY_SET, suite_root
+    QUERY_SET = query_set
+    if arm:
+        rag_config.RETRIEVAL_MODE = arm   # read at call time by load_regulatory_context
+    if query_set == "legacy" and not arm:
+        suite_root = results_path
+    else:
+        suite_root = results_path / f"{query_set}_{rag_config.RETRIEVAL_MODE}"
+    suite_root.mkdir(parents=True, exist_ok=True)
+    return suite_root
+
+
+def load_curated_queries() -> List[Dict[str, Any]]:
+    with open(CURATED_QUERIES_PATH, encoding="utf-8") as f:
+        return json.load(f)["queries"]
+
+
+def _summarize_building(b: dict) -> dict:
+    """Compact view of a ranked building: what the compliance metric and the
+    pairwise judge need, without the heavy nested fields."""
+    keys = ["id", "score", "address", "omi_zone", "property_type", "surface_area", "energy_class",
+            "construction_year", "legal_nature", "cultural_constraint", "purpose", "rooms",
+            "distance_km", "proximity_reference", "greenery", "mobility", "education",
+            "location_score", "regulatory_score", "energy_score", "building_score", "proximity_score"]
+    out = {k: b.get(k) for k in keys}
+    out["id"] = str(out["id"])
+    return out
+
 @with_query_context
 async def run_query(query, architecture="multiagent", disabled=None, use_knowledge=True, use_relaxation=False):
     log_output(f"[QUERY] Searching: {query}")
@@ -248,102 +331,47 @@ async def run_query(query, architecture="multiagent", disabled=None, use_knowled
         ranking = [{"id": str(b.get("id")), "score": float(round(b.get("score", 0.0), 1))} for b in buildings_dicts[:10]]
         trace = res.get("agent_trace", [])
         
-        # 1. Extract Ranking Context (for 2a, 2c, 3a)
-        ranking_weights_data = res.get("gemini_responses", {}).get("ranking_weights") or {}
-        original_weights = ranking_weights_data.get("weights") or {}
-        
-        # Fallback: find ranking weights in the trace if missing from response
-        if not original_weights:
-            for t in trace:
-                if t.get("agent_name") == "ranking-agent" and isinstance(t.get("output"), dict):
-                    # In some runs, weights are directly in output
-                    if "weights" in t["output"]:
-                        original_weights = t["output"]["weights"]
-                    else:
-                        original_weights = {k: v for k, v in t["output"].items() if k in ["location", "normative", "ape", "property_technical", "poi"]}
-                    if original_weights: break
+        # 1. Ranking context (for 2a, 2c, 3a), as recorded by the graph itself:
+        #    "weights"           = the ranking agent's original weights
+        #    "effective_weights" = the weights actually used, after agents that
+        #                          found no scorable requirement were excluded
+        #    "found_agents"      = agents with at least one scorable requirement
+        ranking_logic = extract_ranking_logic(res)
 
-        # 2. Identify contributing agents (for 3a)
-        discovered_agents = []
-        ranking_keys = ["location", "normative", "ape", "property_technical", "poi"]
-        
-        # Clean up trace and identify contributors
+        # 2. Clean up trace: cap long outputs (e.g. ranking data) to 5 items
         cleaned_trace = []
         for t in trace:
-            # Copy entry to avoid modifying original res
             t_entry = t.copy() if isinstance(t, dict) else {}
-            if not t_entry: continue
-            
-            name = t_entry.get("agent_name", "")
+            if not t_entry:
+                continue
             out = t_entry.get("output")
-
-            # CAP TRACE OUTPUTS: If out is a long list (e.g. ranking data), cap to first 5 items
             if isinstance(out, list) and len(out) > 5:
-                 t_entry["output"] = out[:5] + [f"... truncated (+{len(out)-5} items)"]
-
+                t_entry["output"] = out[:5] + [f"... truncated (+{len(out)-5} items)"]
             cleaned_trace.append(t_entry)
-
-            # IDENTIFY CONTRIBUTORS: Must be in ranking_keys and have found something
-            if "-" in name:
-                agent_key = name.split("-")[0]
-                if agent_key in ranking_keys:
-                    has_found = False
-                    if isinstance(out, dict):
-                        # Strict check for extraction content
-                        if agent_key == "location":
-                             if out.get("places") or out.get("locations"): has_found = True
-                        elif agent_key == "property_technical":
-                             if out.get("typologies") or out.get("requisiti"): has_found = True
-                        elif out.get("requisiti") and len(out["requisiti"]) > 0:
-                             has_found = True
-                        # Fallback for generic dicts with found=True (backward compatibility)
-                        elif out.get("found") is True:
-                             has_found = True
-                    elif isinstance(out, list) and len(out) > 0:
-                        has_found = True
-                    elif isinstance(out, str) and out not in ["{}", "[]", "{\"found\": false}", "{\"found\": False}"]:
-                        # If it is a string, it might be a JSON that we should parse if we really want to be strict
-                        # but for now we keep the previous string-based check as fallback
-                        has_found = True
-                    
-                    if has_found and agent_key not in discovered_agents:
-                        discovered_agents.append(agent_key)
-
-        # 3. Calculate effective weights (normalized based on active contributors)
-        # A contributing agent MUST have weight > 0 AND have found something
-        eff_weights = {}
-        active_f = [a for a in discovered_agents if a in original_weights and original_weights.get(a, 0) > 0]
-        s_w = sum(original_weights.get(a, 0) for a in active_f)
-        if s_w > 0:
-            eff_weights = {a: round(original_weights[a]/s_w, 2) for a in active_f}
-        
-        # Ensure sum of effective weights is exactly 1.0 (rounding adjustment)
-        if eff_weights:
-            curr_sum = sum(eff_weights.values())
-            if curr_sum > 0 and curr_sum != 1.0:
-                diff = round(1.0 - curr_sum, 2)
-                best_a = max(eff_weights, key=eff_weights.get)
-                eff_weights[best_a] = round(eff_weights[best_a] + diff, 2)
-
-        # 4. Final contributing agents list (strictly Aligned with weights)
-        final_contributors = list(eff_weights.keys())
 
         # 5. Extract evaluations (for 4a)
         eval_resp = res.get("gemini_responses", {}).get("evaluation", {}) or []
         evaluations = eval_resp.get("results", []) if isinstance(eval_resp, dict) else []
 
+        # 6. Regulatory output + retrieval trace (RAG study: scored per query
+        #    against the curated file's `regulatory` expectation in compare_arms.py)
+        gr = res.get("gemini_responses") or {}
+        reg = gr.get("regulatory_analysis") or {}
+        retrieval = reg.get("retrieval") or gr.get("regulatory_retrieval") or {}
+
         results_pack = {
-            "query": query, 
+            "query": query,
+            "arm": rag_config.RETRIEVAL_MODE,
             "results_count": res.get("results_count", 0),
-            "execution_time_ms": duration, 
+            "execution_time_ms": duration,
             "final_sql": res.get("filters_applied", {}).get("final_sql", ""),
-            "ranking": ranking, 
-            "ranking_logic": {
-                "original_weights": original_weights,
-                "effective_weights": eff_weights,
-                "contributing_agents": final_contributors,
-                "discovered_agents": discovered_agents
-            },
+            "ranking": ranking,
+            "top10": [_summarize_building(b) for b in buildings_dicts[:10]],
+            "ranking_logic": ranking_logic,
+            "regulatory": {"response": reg.get("response"), "found": reg.get("found"),
+                           "sources": reg.get("sources") or []},
+            "retrieval": {k: retrieval.get(k) for k in
+                          ("mode", "use_case", "use_case_routing", "n_chunks", "hits", "error")},
             "agent_trace": cleaned_trace,
             "evaluations": evaluations
         }
@@ -414,7 +442,8 @@ async def run_individual_job(
                 status = "OK" if "error" not in res else "ERR"
 
                 if "error" not in res:
-                    with open(target_path, "w") as f: json.dump(res, f, indent=4)
+                    res["query_id"] = str(query_id)
+                    with open(target_path, "w") as f: json.dump(res, f, indent=4, ensure_ascii=False)
                     if csv_path and col:
                         safe_update_csv_column(csv_path, idx, col, 1)
                 elif csv_path and col:
@@ -433,8 +462,8 @@ async def sync_shared_baselines(model_key: str, df_sens: pd.DataFrame, sens_csv_
     if model_key == BASELINE_MODEL:
         return
 
-    source_root = results_path / "outputs" / "sensitivity" / BASELINE_MODEL
-    target_root = results_path / "outputs" / "sensitivity" / model_key
+    source_root = suite_root / "outputs" / "sensitivity" / BASELINE_MODEL
+    target_root = suite_root / "outputs" / "sensitivity" / model_key
     baseline_configs = ["baseline_columns", "baseline_stats"]
     
     copy_count = 0
@@ -461,7 +490,7 @@ async def sync_shared_baselines(model_key: str, df_sens: pd.DataFrame, sens_csv_
         log_output(f"[*] Synced {copy_count} baseline reference results from {BASELINE_MODEL} to {model_key}")
         
         # Also sync to benchmark directory as it's used for main architecture comparison analysis
-        target_bench_root = results_path / "outputs" / "benchmarks" / model_key
+        target_bench_root = suite_root / "outputs" / "benchmarks" / model_key
         for cid in baseline_configs:
             source_dir = source_root / cid
             if not source_dir.exists(): continue
@@ -477,7 +506,7 @@ async def sync_shared_baselines(model_key: str, df_sens: pd.DataFrame, sens_csv_
             for cid in baseline_configs:
                 col = f"status_{model_key.replace('-', '_')}_{cid}"
                 if col in df_sens.columns and df_sens.at[i, col] == 0:
-                    target_file = results_path / "outputs" / "sensitivity" / model_key / cid / f"query_{query_id}.json"
+                    target_file = suite_root / "outputs" / "sensitivity" / model_key / cid / f"query_{query_id}.json"
                     if target_file.exists():
                         df_sens.at[i, col] = 1
                         updated = True
@@ -565,6 +594,63 @@ def analyze_activation(results_dir, mapping, model_name):
     vlog.log("ACTIVATION", f"Summary: PerfectRate={summary['perfect_rate']} | MeanF1={summary['mean_f1']}")
     return {"summary": summary, "agent_metrics": agent_metrics}
 
+def analyze_curated_activation(results_dir, model_name):
+    """Activation on the curated set: per query, the agents that found a scorable
+    requirement (graph `found_agents`) vs the item's expected_agents. Optional
+    agents are neither required nor penalised. Same output shape as
+    analyze_activation so the report is unchanged."""
+    items = {q["id"]: q for q in load_curated_queries()}
+    agents = sorted({a for q in items.values() for a in q["expected_agents"] + q.get("optional_agents", [])})
+    metrics = {a: {"tp": 0, "fp": 0, "fn": 0} for a in agents}
+    total_j, perfect, n = 0.0, 0, 0
+    per_query = {}
+    for f in sorted(results_dir.glob("query_*.json")):
+        with open(f) as jf:
+            data = json.load(jf)
+        item = items.get(str(data.get("query_id") or f.stem[len("query_"):]))
+        if not item:
+            continue
+        n += 1
+        expected = set(item["expected_agents"])
+        optional = set(item.get("optional_agents", []))
+        pred = set((data.get("ranking_logic") or {}).get("discovered_agents") or [])
+        for a in agents:
+            if a in optional:
+                continue
+            is_ex, is_ac = a in expected, a in pred
+            if is_ex and is_ac: metrics[a]["tp"] += 1
+            elif not is_ex and is_ac: metrics[a]["fp"] += 1
+            elif is_ex and not is_ac: metrics[a]["fn"] += 1
+        scored_pred = pred - optional
+        ok = expected <= pred and scored_pred <= expected
+        perfect += ok
+        u = expected | scored_pred
+        total_j += len(expected & scored_pred) / len(u) if u else 1.0
+        per_query[item["id"]] = {"expected": sorted(expected), "optional": sorted(optional),
+                                 "found": sorted(pred), "ok": ok}
+        vlog.log("ACTIVATION", f"  {item['id']} | Exp: {sorted(expected)} | Found: {sorted(pred)} | ok={ok}")
+    if not n:
+        return {}
+
+    agent_metrics = {}
+    for a, m in metrics.items():
+        precision = round(m["tp"]/(m["tp"]+m["fp"]), 3) if (m["tp"]+m["fp"]) > 0 else 0.0
+        recall = round(m["tp"]/(m["tp"]+m["fn"]), 3) if (m["tp"]+m["fn"]) > 0 else 0.0
+        f1 = round(2*precision*recall/(precision+recall) if (precision+recall) > 0 else 0.0, 3)
+        agent_metrics[a] = {"precision": precision, "recall": recall, "f1": f1}
+    expected_once = [a for a, m in metrics.items() if m["tp"] + m["fn"] > 0]
+    summary = {
+        "model": model_name,
+        "perfect_rate": round(perfect / n, 3),
+        "mean_jaccard": round(total_j / n, 3),
+        "mismatches": n - perfect,
+        "mean_precision": round(np.mean([agent_metrics[a]["precision"] for a in expected_once]), 3) if expected_once else 0.0,
+        "mean_recall": round(np.mean([agent_metrics[a]["recall"] for a in expected_once]), 3) if expected_once else 0.0,
+        "mean_f1": round(np.mean([agent_metrics[a]["f1"] for a in expected_once]), 3) if expected_once else 0.0,
+    }
+    vlog.log("ACTIVATION", f"Summary: PerfectRate={summary['perfect_rate']} | MeanF1={summary['mean_f1']}")
+    return {"summary": summary, "agent_metrics": agent_metrics, "per_query": per_query}
+
 def analyze_performance(results_dir):
     """Calculates execution time statistics for queries in a directory."""
     durations = []
@@ -611,7 +697,7 @@ def analyze_architecture_comparison(agent_dir, baseline_dir):
                 iou_rank = calculate_iou([str(r['id']) for r in da.get('ranking', [])], [str(r['id']) for r in db.get('ranking', [])])
                 ranking_ious.append(iou_rank)
                 vlog.log("ARCH_COMP", f"  File: {name} | SQL IoU: {iou_sql:.3f} | Rank IoU: {iou_rank:.3f}")
-    return {"mean_sql_iou": round(np.mean(sql_ious), 3) if sql_ious else 0, "mean_ranking_iou": round(np.mean(ranking_ious), 3) if ranking_ious else 0, "sample_size": len(sql_ious)}
+    return {"mean_sql_iou": round(np.mean(sql_ious), 3) if sql_ious else None, "mean_ranking_iou": round(np.mean(ranking_ious), 3) if ranking_ious else None, "sample_size": len(sql_ious)}
 
 def analyze_ranking_impact(multiagent_dir, no_ranking_dir):
     vlog.log("RANK_IMPACT", f"Analyzing ranking impact: {multiagent_dir.absolute()} vs {no_ranking_dir.absolute()}")
@@ -626,8 +712,10 @@ def analyze_ranking_impact(multiagent_dir, no_ranking_dir):
                 iou = calculate_iou([str(r['id']) for r in da.get('ranking', [])], [str(r['id']) for r in db.get('ranking', [])])
                 ious.append(iou)
                 vlog.log("RANK_IMPACT", f"  File: {name} | Rank IoU: {iou:.3f} | Files: {f_ma.absolute()} vs {f_nr.absolute()}")
-    mean_iou = np.mean(ious) if ious else 1.0
-    return {"mean_iou": round(mean_iou, 3), "impact": round(1.0 - mean_iou, 3)}
+    if not ious:  # no paired results: unknown, not "no impact"
+        return {"mean_iou": None, "impact": None, "sample_size": 0}
+    mean_iou = np.mean(ious)
+    return {"mean_iou": round(mean_iou, 3), "impact": round(1.0 - mean_iou, 3), "sample_size": len(ious)}
 
 def analyze_knowledge_impact(multiagent_dir, no_knowledge_dir, data_stats):
     vlog.log("KNOW_IMPACT", f"Analyzing knowledge impact: {multiagent_dir.absolute()} vs {no_knowledge_dir.absolute()}")
@@ -664,7 +752,7 @@ def analyze_knowledge_impact(multiagent_dir, no_knowledge_dir, data_stats):
         }
 
     return {
-        "mean_ranking_iou": round(np.mean(ious), 3) if ious else 1.0,
+        "mean_ranking_iou": round(np.mean(ious), 3) if ious else None,
         "metrics_with": get_metrics(ood_stats["with"]),
         "metrics_without": get_metrics(ood_stats["without"])
     }
@@ -690,7 +778,7 @@ def analyze_consistency(consistency_dir):
                 vlog.log("CONSISTENCY", f"  Q:{q_idx} | Trial {i} vs {j} | IoU: {iou:.3f} | Files: {entries[i][0]} vs {entries[j][0]}")
         avg_ious.append(np.mean(pair_ious))
     
-    res = round(np.mean(avg_ious), 3) if avg_ious else 1.0
+    res = round(np.mean(avg_ious), 3) if avg_ious else None
     vlog.log("CONSISTENCY", f"Mean Self-IoU: {res}")
     return {"mean_self_iou": res}
 
@@ -838,7 +926,8 @@ def analyze_rank_contribution_correlation(results_dir):
             vlog.log("RANK_CONTRIB", f"  File: {f.absolute()} | OrigWeights: {orig} | Contribs: {contribs}")
             
             # Rank agents across all 5 standard keys to evaluate zero-weight logic
-            ranking_keys = ["location", "normative", "ape", "property_technical", "poi"]
+            # (RankingWeights field names, as written by the graph)
+            ranking_keys = ["location", "regulatory", "energy", "building", "proximity"]
             all_weights = {k: orig.get(k, 0.0) for k in ranking_keys}
             
             # Sort agents based on weights (Descending)
@@ -889,7 +978,8 @@ def compare_dirs_sql_similarity(dir_a, dir_b):
 def generate_report(bench, sens, models):
     """Generate the definitive multi-section technical report."""
     report_md = f"# Multi-Agent Real Estate Analysis: Technical Evaluation Report\n"
-    report_md += f"*Generated at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*\n\n"
+    report_md += f"*Generated at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*  \n"
+    report_md += f"*Query set: {QUERY_SET} · regulatory retrieval arm: {rag_config.RETRIEVAL_MODE}*\n\n"
 
     completed = [m for m in models if m in bench and "activation" in bench[m]]
     if not completed: return report_md + "\n*Waiting for results...*\n"
@@ -916,7 +1006,7 @@ def generate_report(bench, sens, models):
         report_md += "Analisi della differenziazione, impatto dei pesi e stabilità deterministica.\n\n"
         
         # Differentiation (2a)
-        diff_score = analyze_ranking_differentiation(results_path / "outputs" / "benchmarks" / mod / "full")
+        diff_score = analyze_ranking_differentiation(suite_root / "outputs" / "benchmarks" / mod / "full")
         report_md += f"**A. Ranking Differentiation (IoU across queries):** `{diff_score:.3f}`\n"
         report_md += "> Una IoU bassa indica che query diverse producono ranking significativamente diversi (buona specificità).\n\n"
 
@@ -927,26 +1017,25 @@ def generate_report(bench, sens, models):
         
         # Values from sensitivity_results
         sens_data = sens.get(mod, {}).get("sensitivity", {})
-        agents_map = {"no_location": "Location", "no_poi": "Proximity/POI", "no_property_technical": "Building/Technical", "no_ape": "Energy/APE", "no_normative": "Regulatory"}
+        agents_map = {"no_location": "Location", "no_proximity": "Proximity/POI", "no_building": "Building/Technical", "no_energy": "Energy/APE", "no_regulatory": "Regulatory"}
         for k, label in agents_map.items():
-            iou_val = sens_data.get(k, 1.0)
-            report_md += f"| {label} | {iou_val:.3f} |\n"
+            report_md += f"| {label} | {_fmt_metric(sens_data.get(k))} |\n"
         
         # No Ranking Impact (2c)
         ri = bench[mod].get("ranking_impact", {})
-        report_md += f"\n**C. Weighting Similarity (`Full` vs `No Ranking`):** `{ri.get('mean_iou', 1.0):.3f}` (IoU)\n"
+        report_md += f"\n**C. Weighting Similarity (`Full` vs `No Ranking`):** `{_fmt_metric(ri.get('mean_iou'))}` (IoU)\n"
         report_md += "> Somiglianza tra ranking pesato dall'agente e ranking a pesi uniformi.\n\n"
         
         # Consistency (2d)
         co = bench[mod].get("consistency", {})
-        report_md += f"**D. Model Consistency (Self-IoU across 3 trials):** `{co.get('mean_self_iou', 0):.3f}`\n\n"
+        report_md += f"**D. Model Consistency (Self-IoU across 3 trials):** `{_fmt_metric(co.get('mean_self_iou'))}`\n\n"
         
         # --- SECTION 3: SQL & KNOWLEDGE ---
         report_md += "### 3. SQL Synthesis & Knowledge Integration\n"
         report_md += "Analisi della qualità della generazione SQL e della 'data awareness'.\n\n"
         
         # Rank/Contribution Correlation (3a)
-        corr = analyze_rank_contribution_correlation(results_path / "outputs" / "benchmarks" / mod / "full")
+        corr = analyze_rank_contribution_correlation(suite_root / "outputs" / "benchmarks" / mod / "full")
         if corr:
             report_md += f"**A. Rank-Requirement Correlation:** Spearman ρ = `{corr['spearman']['rho']:.3f}` (p={corr['spearman']['p_value']:.4f})\n"
             report_md += "> Correlazione tra il rank assegnato dal modello (basato sui pesi) e l'effettiva presenza di requisiti estratti (Discovery Rate). Un valore negativo indica che gli agenti con rank più alto (1, 2) contribuiscono più spesso di quelli con rank basso (4, 5).\n\n"
@@ -954,26 +1043,29 @@ def generate_report(bench, sens, models):
             rank_stats = " | ".join([f"Rank {r}: **{val*100:.1f}%**" for r, val in sorted(corr['by_rank'].items())])
             report_md += f"> {rank_stats}\n\n"
         
-        # Architecture SQL Sim (3b)
-        fs = results_path / "outputs" / "sensitivity" / mod / "all_enabled"
-        bc = results_path / "outputs" / "sensitivity" / mod / "baseline_columns"
-        bs = results_path / "outputs" / "sensitivity" / mod / "baseline_stats"
-        sim_ma_bc = compare_dirs_sql_similarity(fs, bc)
-        sim_ma_bs = compare_dirs_sql_similarity(fs, bs)
-        sim_bs_bc = compare_dirs_sql_similarity(bs, bc)
-        
-        report_md += "**B. SQL Similarity Matrix (IoU):**\n"
-        report_md += f"| Architecture Pair | Similarity (IoU) |\n| :--- | :---: |\n"
-        report_md += f"| Multi-Agent vs Baseline (Columns Only) | {sim_ma_bc:.3f} |\n"
-        report_md += f"| Multi-Agent vs Baseline (with Stats) | {sim_ma_bs:.3f} |\n"
-        report_md += f"| Baseline Stats vs Baseline Columns | {sim_bs_bc:.3f} |\n\n"
+        # Architecture SQL Sim (3b) — baselines exist only in the legacy study
+        if QUERY_SET == "legacy":
+            fs = suite_root / "outputs" / "sensitivity" / mod / "all_enabled"
+            bc = suite_root / "outputs" / "sensitivity" / mod / "baseline_columns"
+            bs = suite_root / "outputs" / "sensitivity" / mod / "baseline_stats"
+            sim_ma_bc = compare_dirs_sql_similarity(fs, bc)
+            sim_ma_bs = compare_dirs_sql_similarity(fs, bs)
+            sim_bs_bc = compare_dirs_sql_similarity(bs, bc)
+
+            report_md += "**B. SQL Similarity Matrix (IoU):**\n"
+            report_md += f"| Architecture Pair | Similarity (IoU) |\n| :--- | :---: |\n"
+            report_md += f"| Multi-Agent vs Baseline (Columns Only) | {sim_ma_bc:.3f} |\n"
+            report_md += f"| Multi-Agent vs Baseline (with Stats) | {sim_ma_bs:.3f} |\n"
+            report_md += f"| Baseline Stats vs Baseline Columns | {sim_bs_bc:.3f} |\n\n"
+        else:
+            report_md += "**B. SQL Similarity Matrix:** n/a (baselines are not run in the curated RAG study)\n\n"
         
         # Knowledge Impact (3c)
         ki = bench[mod].get("knowledge_impact", {})
         mw, mwo = ki.get("metrics_with", {}), ki.get("metrics_without", {})
         
         report_md += f"**C. Knowledge Impact & Data Awareness:**\n"
-        report_md += f"- SQL Alignment (`Full` vs `No Knowledge`): `{ki.get('mean_ranking_iou', 1.0):.3f}` (Ranking IoU)\n\n"
+        report_md += f"- SQL Alignment (`Full` vs `No Knowledge`): `{_fmt_metric(ki.get('mean_ranking_iou'))}` (Ranking IoU)\n\n"
         
         report_md += "| Metric | Multi-Agent (Full Knowledge) | Multi-Agent (No Knowledge) |\n"
         report_md += "| :--- | :---: | :---: |\n"
@@ -1057,6 +1149,48 @@ def generate_compositions(json_path, output_path, ablation=False):
     df.to_csv(output_path, index=False)
 
 
+def sync_curated_csv(csv_path: Path, items: List[Dict[str, Any]], outputs_root: Path):
+    """(Re)build a curated suite CSV from the query file. Status columns are kept
+    for rows whose (query_id, query) is unchanged; result files of an id whose
+    text changed are deleted, so a stale answer is never reused from cache.
+    Ids no longer in the file are removed by prune_obsolete_results."""
+    new = pd.DataFrame([{"query_id": q["id"], "query": q["query"]} for q in items])
+    if csv_path.exists():
+        old = pd.read_csv(csv_path, dtype={"query_id": str})
+        old_text = dict(zip(old["query_id"], old["query"]))
+        changed = {qid for qid, text in zip(new["query_id"], new["query"])
+                   if qid in old_text and old_text[qid] != text}
+        for qid in changed:
+            for f in outputs_root.rglob(f"query_{qid}*.json"):
+                if re.fullmatch(rf"query_{re.escape(qid)}(?:_tr\d+)?\.json", f.name):
+                    f.unlink()
+        if changed:
+            log_output(f"[*] Query text changed for {sorted(changed)}: cached results removed")
+        status_cols = [c for c in old.columns if c.startswith("status_")]
+        if status_cols:
+            keep = old[~old["query_id"].isin(changed)].set_index("query_id")[status_cols]
+            new = new.join(keep, on="query_id")
+            new[status_cols] = new[status_cols].fillna(0).astype(int)
+    safe_save_csv(new, csv_path)
+
+
+def prepare_suites() -> Tuple[Path, Path]:
+    """Benchmark and sensitivity suite CSVs for the configured query set."""
+    if QUERY_SET == "curated":
+        bench_csv = suite_root / "benchmark_queries_suite.csv"
+        sens_csv = suite_root / "sensitivity_queries_suite.csv"
+        items = load_curated_queries()
+        sync_curated_csv(bench_csv, [q for q in items if "benchmark" in q["suites"]], suite_root / "outputs" / "benchmarks")
+        sync_curated_csv(sens_csv, [q for q in items if "sensitivity" in q["suites"]], suite_root / "outputs" / "sensitivity")
+    else:
+        pos_json = suite_path / "query_parameters.json"
+        bench_csv = suite_root / "combinatorial_queries_suite.csv"
+        sens_csv = suite_root / "sensitivity_queries_suite.csv"
+        if not bench_csv.exists(): generate_compositions(pos_json, bench_csv)
+        if not sens_csv.exists(): generate_compositions(pos_json, sens_csv, ablation=True)
+    return bench_csv, sens_csv
+
+
 async def compute_consensus_results(model: str, df: pd.DataFrame, out_root: Path):
     """Determine the most frequent result among trials and populate the 'full' config directory."""
     cons_dir = out_root / "consistency"
@@ -1096,13 +1230,13 @@ def prune_obsolete_results(df: pd.DataFrame, out_root: Path):
         return
 
     valid_ids = set(df["query_id"].astype(str))
-    log_output(f"[*] Pruning obsolete results in {out_root.relative_to(base_dir)}")
+    log_output(f"[*] Pruning obsolete results in {out_root}")
     
     removed_count = 0
     # Search in all subdirectories recursively
     for json_file in out_root.rglob("query_*.json"):
-        # Handle formats like "query_111000.json" or "query_111000_tr1.json"
-        match = re.search(r"query_(\d+)(?:_tr\d+)?\.json", json_file.name)
+        # Handle formats like "query_111000.json", "query_111000_tr1.json", "query_PQ-01_tr1.json"
+        match = re.fullmatch(r"query_([A-Za-z0-9-]+?)(?:_tr\d+)?\.json", json_file.name)
         if match:
             qid = match.group(1)
             if qid not in valid_ids:
@@ -1124,8 +1258,8 @@ async def sync_sensitivity_with_benchmark(df_sens: pd.DataFrame, df_bench: pd.Da
         ("all_enabled", "full")
     ]
     
-    bench_root = results_path / "outputs" / "benchmarks" / model_key
-    sens_root = results_path / "outputs" / "sensitivity" / model_key
+    bench_root = suite_root / "outputs" / "benchmarks" / model_key
+    sens_root = suite_root / "outputs" / "sensitivity" / model_key
     
     for sens_cid, bench_cid in configurations_to_sync:
         sens_col = f"status_{model_key.replace('-', '_')}_{sens_cid}"
@@ -1162,44 +1296,42 @@ async def sync_sensitivity_with_benchmark(df_sens: pd.DataFrame, df_bench: pd.Da
                     if sens_file.exists():
                         df_sens.at[i, sens_col] = 1
 
-async def run_single_model_suite(model: str, max_concurrent: int, limit: int = None):
+async def run_single_model_suite(model: str, max_concurrent: int, limit: int = None, ids: List[str] = None):
     """Execution logic for a single model with optimized non-redundant workflow."""
-    # Initialize environment
-    pos_json = suite_path / "query_parameters.json"
-    mapping_json = suite_path / "agent_ground_truth.json"
-    with open(mapping_json) as f: mapping = json.load(f)
-    
     await preload_data()
     data_stats = get_data_stats()
     sem = asyncio.Semaphore(max_concurrent)
     csv_lock = asyncio.Lock()
 
     log_output(f"\n" + "="*50)
-    log_output(f"=== [START] MODEL: {model} ===")
+    log_output(f"=== [START] MODEL: {model} | queries={QUERY_SET} | arm={rag_config.RETRIEVAL_MODE} | {suite_root} ===")
     log_output(f"="*50)
-    
-    bench_csv = results_path / "combinatorial_queries_suite.csv"
-    sens_csv = results_path / "sensitivity_queries_suite.csv"
-    if not bench_csv.exists(): generate_compositions(pos_json, bench_csv)
-    if not sens_csv.exists(): generate_compositions(pos_json, sens_csv, ablation=True)
+
+    bench_csv, sens_csv = prepare_suites()
 
     df_bench = safe_read_csv(bench_csv)
     df_sens = safe_read_csv(sens_csv)
 
+    apply_model_config(settings, model)
+    # Force re-initialization of the agents with the new model settings
+    analysis_service._init_graph_agent(force=True)
+    out_root_bench = suite_root / "outputs" / "benchmarks" / model
+    out_root_sens = suite_root / "outputs" / "sensitivity" / model
+
+    # Prune results whose query is no longer in the suite file. Done on the
+    # full suite, before --limit / --ids, so a smoke run never deletes results.
+    prune_obsolete_results(df_bench, out_root_bench)
+    prune_obsolete_results(df_sens, out_root_sens)
+
+    # Row filters keep the original index, so status updates hit the right CSV rows.
+    if ids:
+        log_output(f"[*] Restricting to query ids: {ids}")
+        df_bench = df_bench[df_bench["query_id"].astype(str).isin(ids)].copy()
+        df_sens = df_sens[df_sens["query_id"].astype(str).isin(ids)].copy()
     if limit:
         log_output(f"[*] Applying sampling limit: {limit} queries per suite")
         df_bench = df_bench.head(limit).copy()
         df_sens = df_sens.head(limit).copy()
-
-    apply_model_config(settings, model)
-    # Force re-initialization of the agents with the new model settings
-    analysis_service._init_graph_agent(force=True)
-    out_root_bench = results_path / "outputs" / "benchmarks" / model
-    out_root_sens = results_path / "outputs" / "sensitivity" / model
-
-    # Prune obsolete results (e.g. if the suite has been restricted)
-    prune_obsolete_results(df_bench, out_root_bench)
-    prune_obsolete_results(df_sens, out_root_sens)
 
     # Clear old execution logs to start fresh in each run
     for d in [out_root_bench, out_root_sens]:
@@ -1210,32 +1342,28 @@ async def run_single_model_suite(model: str, max_concurrent: int, limit: int = N
                 except Exception:
                     pass
 
-    # Sync shared baselines from Master Model before starting execution wave
-    await sync_shared_baselines(model, df_sens, sens_csv)
-    # Reload df_sens as it might have been updated by sync_shared_baselines
-    df_sens = safe_read_csv(sens_csv)
+    # Baselines (single-LLM planner) belong to Marco's legacy study only; the
+    # curated RAG study skips them, and there gpt-5.4 is an ordinary model.
+    baseline_master = (QUERY_SET == "legacy" and model == BASELINE_MODEL)
+    if QUERY_SET == "legacy":
+        # Sync shared baselines from Master Model before starting execution wave
+        await sync_shared_baselines(model, df_sens, sens_csv)
+        # Reload df_sens as it might have been updated by sync_shared_baselines
+        # (same rows as before: --limit / --ids stay applied)
+        df_sens = safe_read_csv(sens_csv).loc[df_sens.index]
 
     # --- PHASE 1 & 3: GROUPED PER-QUERY EXECUTION ---
     log_output(f"[*] Starting unified grouped execution wave (Per-Query) for {model}...")
-    
+
     # Define configurations to run
-    sens_configs = [
-        # (id, disabled_agents, use_knowledge, architecture)
-        ("no_ranking", ["ranking"], True, "multiagent"),
-        ("no_knowledge", None, False, "multiagent"),
-        ("no_poi", ["poi"], True, "multiagent"), 
-        ("no_normative", ["normative"], True, "multiagent"), 
-        ("no_location", ["location"], True, "multiagent"), 
-        ("no_ape", ["ape"], True, "multiagent"), 
-        ("no_property_technical", ["property_technical"], True, "multiagent"),
-        ("baseline_columns", None, False, "baseline"),
-        ("baseline_stats", None, True, "baseline")
-    ]
-    
-    if model == BASELINE_MODEL:
+    sens_configs = list(SENSITIVITY_CONFIGS)
+
+    if baseline_master:
         sens_configs = [c for c in sens_configs if c[0].startswith("baseline")]
     else:
         sens_configs = [c for c in sens_configs if not c[0].startswith("baseline")]
+    if QUERY_SET == "curated" and rag_config.RETRIEVAL_MODE != "rag":
+        sens_configs = []   # ablations run only in the rag arm (RAG study design)
 
     from collections import defaultdict
     jobs_by_query = defaultdict(list)
@@ -1260,7 +1388,7 @@ async def run_single_model_suite(model: str, max_concurrent: int, limit: int = N
             })
 
     # 2. Collect Benchmark Consistency Jobs
-    if model != BASELINE_MODEL:
+    if not baseline_master:
         for tr in [1, 2, 3]:
             out_dir = out_root_bench / "consistency"
             out_dir.mkdir(parents=True, exist_ok=True)
@@ -1314,32 +1442,32 @@ async def run_single_model_suite(model: str, max_concurrent: int, limit: int = N
     
     log_output(f"=== [COMPLETE] Queries for {model} finished. ===")
 
-async def conductor_main(max_concurrent: int, only_analysis: bool = False, limit: int = None, models: List[str] = None):
-    """Main orchestrator that manages model processes and generates final reports."""
-    pos_json = suite_path / "query_parameters.json"
+async def conductor_main(max_concurrent: int, only_analysis: bool = False, limit: int = None,
+                         models: List[str] = None, run_flags: List[str] = None):
+    """Main orchestrator that manages model processes and generates final reports.
+    ``run_flags`` (--queries / --arm / --ids) are forwarded to every model subprocess."""
     mapping_json = suite_path / "agent_ground_truth.json"
     with open(mapping_json) as f: mapping = json.load(f)
     await preload_data()
     data_stats = get_data_stats()
+    run_flags = run_flags or []
 
     if not models:
         models = ["gpt-oss-120b", "gemma3-27b", "qwen3-8b"]
     
-    # 1. PREPARE SUITES (Only if not in analysis-only mode)
-    bench_csv = results_path / "combinatorial_queries_suite.csv"
-    sens_csv = results_path / "sensitivity_queries_suite.csv"
+    # 1. PREPARE SUITES (also in analysis-only mode, for reference)
+    bench_csv, sens_csv = prepare_suites()
     
     if not only_analysis:
-        if not bench_csv.exists(): generate_compositions(pos_json, bench_csv)
-        if not sens_csv.exists(): generate_compositions(pos_json, sens_csv, ablation=True)
-
         # 1. Run Master Baseline (gpt-5.4) first to ensure reference results exist
-        log_output(f"[CONDUCTOR] Ensuring Master Baseline ({BASELINE_MODEL}) is complete...")
-        m_concurrency = get_model_concurrency(BASELINE_MODEL, max_concurrent)
-        base_cmd = [sys.executable, __file__, "--model", BASELINE_MODEL, "--max-concurrent", str(m_concurrency)]
-        if limit is not None: base_cmd.extend(["--limit", str(limit)])
-        p_base = await asyncio.create_subprocess_exec(*base_cmd)
-        await p_base.wait()
+        #    (legacy study only: the curated RAG study skips baselines)
+        if QUERY_SET == "legacy":
+            log_output(f"[CONDUCTOR] Ensuring Master Baseline ({BASELINE_MODEL}) is complete...")
+            m_concurrency = get_model_concurrency(BASELINE_MODEL, max_concurrent)
+            base_cmd = [sys.executable, __file__, "--model", BASELINE_MODEL, "--max-concurrent", str(m_concurrency)] + run_flags
+            if limit is not None: base_cmd.extend(["--limit", str(limit)])
+            p_base = await asyncio.create_subprocess_exec(*base_cmd)
+            await p_base.wait()
 
         # 2. RUN ALL MODELS IN PARALLEL
         log_output(f"[CONDUCTOR] Launching {len(models)} model benchmark processes in parallel...")
@@ -1347,7 +1475,7 @@ async def conductor_main(max_concurrent: int, only_analysis: bool = False, limit
         for m in models:
             m_concurrency = get_model_concurrency(m, max_concurrent)
             log_output(f"[CONDUCTOR] -> Starting {m} (max_concurrent={m_concurrency})")
-            m_cmd = [sys.executable, __file__, "--model", m, "--max-concurrent", str(m_concurrency)]
+            m_cmd = [sys.executable, __file__, "--model", m, "--max-concurrent", str(m_concurrency)] + run_flags
             if limit is not None: m_cmd.extend(["--limit", str(limit)])
             p = await asyncio.create_subprocess_exec(*m_cmd)
             processes.append(p)
@@ -1355,11 +1483,6 @@ async def conductor_main(max_concurrent: int, only_analysis: bool = False, limit
         await asyncio.gather(*(p.wait() for p in processes))
     else:
         log_output("[CONDUCTOR] SKIPPING execution phase (using existing results).")
-        # Ensure CSVs are loaded even in only_analysis
-        if not bench_csv.exists() or not sens_csv.exists():
-            log_output("[!] Warning: CSV suites missing. Generating them for reference...")
-            if not bench_csv.exists(): generate_compositions(pos_json, bench_csv)
-            if not sens_csv.exists(): generate_compositions(pos_json, sens_csv, ablation=True)
 
     # 4. AGGREGATE ANALYSIS & GENERATE REPORT
     log_output("[CONDUCTOR] All processes finished. Running final analysis...")
@@ -1369,8 +1492,8 @@ async def conductor_main(max_concurrent: int, only_analysis: bool = False, limit
     report_models = models
 
     for model in report_models:
-        out_root = results_path / "outputs" / "benchmarks" / model
-        out_sens = results_path / "outputs" / "sensitivity" / model
+        out_root = suite_root / "outputs" / "benchmarks" / model
+        out_sens = suite_root / "outputs" / "sensitivity" / model
         
         if not (out_root / "full").exists():
             log_output(f"[!] Warning: No results found for {model}. Skipping analysis.")
@@ -1382,19 +1505,23 @@ async def conductor_main(max_concurrent: int, only_analysis: bool = False, limit
         # Benchmark Analysis
         benchmark_results[model] = {
             "performance": analyze_performance(out_root / "full"),
-            "activation": analyze_activation(out_root / "full", mapping, model),
+            "activation": (analyze_curated_activation(out_root / "full", model) if QUERY_SET == "curated"
+                           else analyze_activation(out_root / "full", mapping, model)),
             "iou": analyze_iou_stats(out_root / "full"),
             "arch_comp": analyze_architecture_comparison(out_root / "full", out_root / "baseline_stats"),
             "baseline_impact": analyze_architecture_comparison(out_root / "baseline_stats", out_root / "baseline_columns"),
-            "ranking_impact": analyze_ranking_impact(out_root / "full", out_root / "no_ranking"),
-            "knowledge_impact": analyze_knowledge_impact(out_root / "full", out_root / "no_knowledge", data_stats),
+            # no_ranking / no_knowledge are sensitivity configs: they are written
+            # under sensitivity/<model>/, so compare them with that suite's
+            # all_enabled run (same queries), not with benchmarks/<model>/full.
+            "ranking_impact": analyze_ranking_impact(out_sens / "all_enabled", out_sens / "no_ranking"),
+            "knowledge_impact": analyze_knowledge_impact(out_sens / "all_enabled", out_sens / "no_knowledge", data_stats),
             "consistency": analyze_consistency(out_root / "consistency"),
             "eval_quality": await evaluate_with_judge(model, out_root / "full")
         }
         benchmark_results[model]["arch_comp"]["baseline_model"] = "baseline_stats"
 
         # Sensitivity Analysis
-        sens_configs = ["no_ranking", "no_knowledge", "no_poi", "no_normative", "no_location", "no_ape", "no_property_technical"]
+        sens_configs = [cid for cid, _, _, arch in SENSITIVITY_CONFIGS if arch == "multiagent"]
         sens_vals = {}
         all_enabled_dir = out_sens / "all_enabled"
         if all_enabled_dir.exists():
@@ -1404,16 +1531,16 @@ async def conductor_main(max_concurrent: int, only_analysis: bool = False, limit
                 if cfg_dir.exists():
                     cfg_res = {f.name: [r['id'] for r in json.load(open(f))['ranking']] for f in cfg_dir.glob("*.json")}
                     ious = [calculate_iou(base_ref[n], cfg_res[n]) for n in cfg_res if n in base_ref]
-                    sens_vals[cid] = np.mean(ious) if ious else 1.0
+                    sens_vals[cid] = np.mean(ious) if ious else None
         
         sensitivity_results[model] = {"sensitivity": sens_vals}
 
     # Final report
     report = generate_report(benchmark_results, sensitivity_results, report_models)
-    with open(results_path / "report.md", "w") as f:
+    with open(suite_root / "report.md", "w") as f:
         f.write(report)
     
-    log_output(f"\nWorkflow complete. Final report: {results_path / 'report.md'}")
+    log_output(f"\nWorkflow complete. Final report: {suite_root / 'report.md'}")
     log_output(f"Detailed execution log: {execution_csv_path}")
 
 if __name__ == "__main__":
@@ -1423,7 +1550,15 @@ if __name__ == "__main__":
     parser.add_argument("--max-concurrent", type=int, default=48, help="Max concurrent queries per model")
     parser.add_argument("--limit", type=int, default=None, help="Limit number of queries per model")
     parser.add_argument("--models", type=str, help="Comma-separated list of models to run")
+    parser.add_argument("--queries", choices=["curated", "legacy"], default="curated",
+                        help="curated = benchmark_queries_turin.json (RAG study); legacy = Marco's generator")
+    parser.add_argument("--arm", choices=list(rag_config.RETRIEVAL_MODES), default=None,
+                        help="regulatory retrieval arm (default: RAG_RETRIEVAL_MODE, i.e. rag)")
+    parser.add_argument("--ids", type=str, default=None, help="Comma-separated query ids to run (smoke runs)")
     args = parser.parse_args()
+
+    configure_run(args.queries, args.arm)
+    ids = [i.strip() for i in args.ids.split(",") if i.strip()] if args.ids else None
 
     if args.model:
         # Use model-specific concurrency if the user didn't explicitly override it from CLI
@@ -1433,9 +1568,11 @@ if __name__ == "__main__":
             m_concurrency = get_model_concurrency(args.model, 48)
             
         # Run a single model suite (to be called as a subprocess or manually)
-        asyncio.run(run_single_model_suite(args.model, m_concurrency, limit=args.limit))
+        asyncio.run(run_single_model_suite(args.model, m_concurrency, limit=args.limit, ids=ids))
     else:
         # Launch the conductor
         selected_models = args.models.split(",") if args.models else None
-        asyncio.run(conductor_main(args.max_concurrent, args.only_analysis, limit=args.limit, models=selected_models))
-
+        run_flags = ["--queries", args.queries] + (["--arm", args.arm] if args.arm else []) \
+            + (["--ids", args.ids] if args.ids else [])
+        asyncio.run(conductor_main(args.max_concurrent, args.only_analysis, limit=args.limit,
+                                   models=selected_models, run_flags=run_flags))

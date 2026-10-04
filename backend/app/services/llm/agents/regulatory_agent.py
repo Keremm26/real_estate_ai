@@ -95,6 +95,30 @@ def load_regulatory_context(
     return docs, sources, [], trace
 
 
+def drop_empty_requirements(raw: str) -> Tuple[str, int]:
+    """Remove requirements that carry no constraint: a missing value or a
+    non-positive number (e.g. ``surface_area >= 0``, which the model sometimes
+    emits while stating that no value can be derived). Such a requirement
+    filters nothing but would still mark the agent as having found a rule.
+    Returns (raw_text, n_dropped); raw_text is unchanged when nothing is dropped."""
+    data = safe_extract_json(raw, schema=RegulatoryResponse)
+    if not data or not data.requirements:
+        return raw, 0
+
+    def has_constraint(req: Dict[str, Any]) -> bool:
+        value = req.get("value")
+        if value is None or value == "" or value == []:
+            return False
+        number = to_number(value)
+        return number is None or number > 0
+
+    kept = [r for r in data.requirements if has_constraint(r)]
+    dropped = len(data.requirements) - len(kept)
+    if not dropped:
+        return raw, 0
+    return json.dumps({"found": bool(kept) and data.found, "requirements": kept}, ensure_ascii=False), dropped
+
+
 def load_regulatory_documents() -> tuple[str, list[str], List[Dict[str, Any]]]:
     """
     Legacy loader (retrieval mode ``none``): read every file under
@@ -268,7 +292,11 @@ class RegulatoryAgent(BaseAgent):
                 "user_content": user_text
             }
             raw = invoke_with_langfuse(self.chain, model_inputs)
-        
+
+        raw, n_dropped = drop_empty_requirements(raw)
+        if n_dropped:
+            logger.info(f"Regulatory agent: dropped {n_dropped} requirement(s) without a constraint value")
+
         norm_data = safe_extract_json(raw, schema=RegulatoryResponse)
         has_requirements = norm_data.found if norm_data else False
 

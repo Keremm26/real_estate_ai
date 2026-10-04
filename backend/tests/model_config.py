@@ -14,6 +14,10 @@ MODEL_OPTIONS = {
         "model": "gpt-5.4",
         "supports_structured_output": True,
     },
+    "gpt-5.4-mini": {
+        "model": "gpt-5.4-mini",
+        "supports_structured_output": True,
+    },
     "gpt-oss-120b": {
         "model": "gemma-4",
         "supports_structured_output": False,

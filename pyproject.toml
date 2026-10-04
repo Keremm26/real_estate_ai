@@ -38,4 +38,5 @@ dependencies = [
     # normative RAG (backend/app/services/llm/rag): local vector store + PDF sources
     "chromadb>=1.5",
     "pypdf>=6.0",
+    "anthropic>=1.0",
 ]

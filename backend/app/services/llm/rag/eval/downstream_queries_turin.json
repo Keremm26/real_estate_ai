@@ -1,0 +1,1445 @@
+{
+  "meta": {
+    "description": "Downstream evaluation of the regulatory agent with RAG retrieval (Turin). Each item is one production-shaped request; the agent must either produce a document-grounded building-level surface threshold (surface_area >= X) or decline (found: false). Measures whether retrieval + extraction yield the RIGHT threshold, and whether the agent declines when the corpus has no applicable rule or the request lacks the capacity needed to compute one.",
+    "schema": "downstream-v2. One item = one need, one query per language (queries: {it, en}). type in {dimensioning, room_mix, service_rate, derogation, accessibility, precedence, general_dwelling, studio_minimum, echo_trap, ambiguous_use, no_capacity, out_of_corpus, retrieval_probe, non_surface_rule, procedural, negative, long_query, number_in_words, self_correction, code_switching, mixed_use, negation, typos}. tier = jurisdiction level of the governing rule (null when no rule applies). use_case = expected router output (student_housing | general). capacity = structured occupancy used to derive the range (beds / single_beds / double_beds / persons). user_values = numbers stated by the user (echo guard: the regulatory value must not simply repeat them). expect.activate in {true, false, 'either'}; value_min / value_max bound the main requirement's value (inclusive). sources use the gold-v2 label format (doc_key + article_ref, or '*' for the whole document). precedence {winner, loser, rule} on items where two applicable rules compete; rule in {lex_specialis, delegated_derogation}. covers = aspect tags for coverage and de-duplication review.",
+    "country": "IT",
+    "corpus": "Turin slice of the normative store: national (DPR 380/2001, DM Sanità 1975, DM 236/1989, DM 1444/1968, Legge 122/1989, DM MUR 1256/2021 + Allegato A), Piemonte (LR 19/1999, LR 16/2018), Città di Torino (NUEA PRG, Reg. 381 Edilizio, Reg. 30 Igiene Titolo III).",
+    "value_basis": {
+      "student_residence": "DM MUR 1256/2021 Allegato A. Residential net area per bed (6.1.1): 12.5 m2 in a single room, 9.5 m2 in a double room (bathroom included). Service area per bed (6.2.1): >= 5.0 m2, or >= 3.0 m2 for the 'nuclei integrati' typology. Per-bed totals: single 17.5, double 14.5; nuclei integrati single 15.5, double 12.5. When the room type is not stated the accepted range is [9.5 N, 17.5 N] (residential-only double rooms up to single rooms with services). Art. 2 c.2: on existing buildings the SERVICE areas may be up to 15% smaller (5.0 -> 4.25 m2/bed). 6.1.2: >= 5% of places reserved for students with disabilities, with +10% area on those places.",
+      "dwelling": "DM Sanità 1975 Art. 2 (restated by Reg. 381 Art. 77.2.1 for new units): habitable area >= 14 m2 per inhabitant for the first 4 and 10 m2 for each additional one, i.e. H(N) = 14*min(N,4) + 10*max(N-4,0). Accepted range [H, 1.25 H] (the agent may add the 14 m2 living room or a kitchen allowance).",
+      "studio": "DM Sanità 1975 Art. 3 (restated by Reg. 381 Art. 77.2.2): one-room dwelling incl. services >= 28 m2 for one person, >= 38 m2 for two. DPR 380/2001 Art. 24 c.5-bis b): on recovery of existing buildings the designer may certify down to 20 m2 (one person) and 28 m2 (two people). Accepted range [minimum, 1.25 x minimum] for new builds; [derogated minimum, standard minimum] for existing buildings."
+    },
+    "metrics": "Per run (one per item and language): activation vs expect.activate; value in [value_min, value_max]; target_column and operator; routing accuracy (trace use_case_routing vs use_case); echo rate (main value equals a user_values number although it is not derivable from the documents); source_in_context (any sources label among the retrieved chunks; separates retrieval misses from extraction misses); winner_cited on precedence items (the requirement's regulation names the winner document). Breakdowns by lang / type / tier. Items with activate 'either' are scored on grounding only.",
+    "caveats": [
+      "Author-constructed, not validated by an Italian planning lawyer: state as a limitation.",
+      "Ranges follow the arithmetic in value_basis; the agent is asked for a BUILDING-level threshold on surface_area, so per-room minima (DM 1256 7.1, DM 1975 Art. 2 bedrooms) are not accepted as the main requirement.",
+      "Reg. 381 Art. 77.2.2 and Reg. 30 Art. 123 are tagged has_quantitative=False in the store, so production retrieval (QUANT_ONLY=1) cannot reach them: items relying on them are typed retrieval_probe or list only the reachable concordant source.",
+      "The dataset surface column is the APE reference area, while the rules speak of net or habitable area: the comparison is the convention used by the regulatory agent prompt, not a legal equivalence."
+    ],
+    "changelog": [
+      "2026-10-04: v2 created (replaces the 12-item v1 downstream_queries.json, removed 2026-10-04 together with its Sep-16 results). Bilingual pairs, type/tier strata, precedence items, echo traps, retrieval probes.",
+      "2026-10-04: + 8 stress / long items (DQ-36..43): long realistic requests, number in words, self-correction, code-switching, mixed use, negation, typos, number distractors.",
+      "2026-10-04: DQ-43 / PQ-43 activate false -> either [75, 94]: the corpus has a workplace rule (Reg. 30 Art. 130 c.1, 3 m2 per person) that genuinely applies to a 25-person office; found during the first downstream run."
+    ]
+  },
+  "queries": [
+    {
+      "id": "DQ-01",
+      "type": "dimensioning",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Cerco un immobile da destinare a residenza per studenti con 4 posti letto.",
+        "en": "I am looking for a property to turn into a student residence with 4 beds."
+      },
+      "capacity": {
+        "beds": 4
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 38,
+        "value_max": 70,
+        "basis": "N=4, room type not stated: [9.5 N, 17.5 N]"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "small-capacity",
+        "beds"
+      ],
+      "note": "Smallest scale: per-bed arithmetic still applies."
+    },
+    {
+      "id": "DQ-02",
+      "type": "dimensioning",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Mi serve un edificio per uno studentato da 30 posti.",
+        "en": "I need a building for a 30-place student dormitory."
+      },
+      "capacity": {
+        "beds": 30
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 285,
+        "value_max": 525,
+        "basis": "N=30, room type not stated: [9.5 N, 17.5 N]"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "mid-capacity",
+        "synonym-studentato",
+        "places-not-beds"
+      ],
+      "note": "Colloquial 'studentato' and 'posti' (not 'posti letto'): the router and the agent must still treat it as a university student residence."
+    },
+    {
+      "id": "DQ-03",
+      "type": "dimensioning",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Residenza universitaria per 60 studenti: quale superficie minima deve avere l'edificio?",
+        "en": "University residence for 60 students: what minimum floor area must the building have?"
+      },
+      "capacity": {
+        "beds": 60
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 570,
+        "value_max": 1050,
+        "basis": "N=60, room type not stated: [9.5 N, 17.5 N]"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "mid-capacity",
+        "explicit-question"
+      ],
+      "note": "Reference case; mirrored by pipeline queries."
+    },
+    {
+      "id": "DQ-04",
+      "type": "dimensioning",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Cerco un immobile per una residenza universitaria da 120 posti letto.",
+        "en": "Looking for a property for purpose-built student accommodation with 120 beds."
+      },
+      "capacity": {
+        "beds": 120
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 1140,
+        "value_max": 2100,
+        "basis": "N=120, room type not stated: [9.5 N, 17.5 N]"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "large-capacity",
+        "term-PBSA"
+      ],
+      "note": "English uses the UK term 'purpose-built student accommodation' for an Italian rule."
+    },
+    {
+      "id": "DQ-05",
+      "type": "room_mix",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Residenza per studenti con 40 camere singole.",
+        "en": "Student residence with 40 single rooms."
+      },
+      "capacity": {
+        "beds": 40,
+        "single_beds": 40,
+        "double_beds": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 500,
+        "value_max": 700,
+        "basis": "40 single rooms = 40 beds: [12.5 N, 17.5 N]"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "capacity-in-rooms",
+        "single-room-rate"
+      ],
+      "note": "Capacity given as rooms: single-room rate 12.5 m2/bed applies."
+    },
+    {
+      "id": "DQ-06",
+      "type": "room_mix",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Studentato con 25 camere doppie.",
+        "en": "Student dormitory with 25 double rooms."
+      },
+      "capacity": {
+        "beds": 50,
+        "single_beds": 0,
+        "double_beds": 50
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 475,
+        "value_max": 725,
+        "basis": "25 double rooms = 50 beds: [9.5 N, 14.5 N]"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "capacity-in-rooms",
+        "double-room-rate",
+        "rooms-to-beds"
+      ],
+      "note": "The agent must convert 25 double rooms into 50 beds before multiplying."
+    },
+    {
+      "id": "DQ-07",
+      "type": "room_mix",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Residenza universitaria con 20 camere singole e 10 camere doppie.",
+        "en": "University residence with 20 single rooms and 10 double rooms."
+      },
+      "capacity": {
+        "beds": 40,
+        "single_beds": 20,
+        "double_beds": 20
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 440,
+        "value_max": 640,
+        "basis": "20 single beds + 20 double-room beds: min 12.5*20 + 9.5*20, max 17.5*20 + 14.5*20"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "mixed-rooms",
+        "two-rates"
+      ],
+      "note": "Mixed room types: two per-bed rates in one computation."
+    },
+    {
+      "id": "DQ-08",
+      "type": "service_rate",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Residenza universitaria a nuclei integrati (minialloggi) per 24 studenti.",
+        "en": "Student residence organised as integrated units (mini-apartments) for 24 students."
+      },
+      "capacity": {
+        "beds": 24
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 228,
+        "value_max": 372,
+        "basis": "Nuclei integrati: service area 3.0 m2/bed (6.2.1); room type not stated: [9.5 N, 15.5 N]"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "typology-nuclei-integrati",
+        "reduced-service-rate"
+      ],
+      "note": "Tests the reduced service rate (3.0 instead of 5.0 m2/bed)."
+    },
+    {
+      "id": "DQ-09",
+      "type": "derogation",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Riconversione di un edificio esistente in residenza per 60 studenti in camere singole.",
+        "en": "Conversion of an existing building into a residence for 60 students in single rooms."
+      },
+      "capacity": {
+        "beds": 60,
+        "single_beds": 60,
+        "double_beds": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 750,
+        "value_max": 1050,
+        "basis": "60 single beds: residential 12.5 N = 750; with services 17.5 N = 1050, or 16.75 N = 1005 applying the Art. 2 c.2 15% reduction of service areas on existing buildings"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        },
+        {
+          "doc_key": "dm_1256_2021",
+          "article_ref": "Art. 2"
+        }
+      ],
+      "covers": [
+        "existing-building",
+        "service-area-derogation",
+        "single-room-rate"
+      ],
+      "note": "Derogation awareness: citing DM 1256 Art. 2 (up to -15% on service areas only) is the desired behaviour; the range accepts both computations."
+    },
+    {
+      "id": "DQ-10",
+      "type": "accessibility",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Residenza per 100 studenti, con posti riservati a studenti con disabilità.",
+        "en": "Residence for 100 students, with places reserved for students with disabilities."
+      },
+      "capacity": {
+        "beds": 100
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 950,
+        "value_max": 1760,
+        "basis": "N=100, room type not stated: [9.5 N, 17.5 N]; 6.1.2 adds +10% area on >= 5% of places (at most +0.5% overall), upper bound rounded to 1760"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "accessibility",
+        "disabled-places",
+        "large-capacity"
+      ],
+      "note": "Retrieval should surface Allegato A 6.1.2 next to 6.1.1/6.2.1."
+    },
+    {
+      "id": "DQ-11",
+      "type": "precedence",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Alloggio condiviso per 10 studenti universitari.",
+        "en": "Shared accommodation for 10 university students."
+      },
+      "capacity": {
+        "beds": 10,
+        "persons": 10
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 95,
+        "value_max": 175,
+        "basis": "Student-specific rule: N=10, [9.5 N, 17.5 N]. The general dwelling rule would give H(10) = 116 m2 (inside the range), so the value alone cannot tell the rules apart: scored by winner_cited."
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        },
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 2"
+        }
+      ],
+      "precedence": {
+        "winner": "dm_1256_2021_allegato_a",
+        "loser": "dm_sanita_1975",
+        "rule": "lex_specialis"
+      },
+      "covers": [
+        "lex-specialis",
+        "student-vs-general"
+      ],
+      "note": "Phrased as 'alloggio condiviso' to invite the general dwelling rule; the student-specific standard should prevail."
+    },
+    {
+      "id": "DQ-12",
+      "type": "general_dwelling",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "it": "Immobile per un progetto di co-housing per 12 persone.",
+        "en": "Property for a co-housing project for 12 people."
+      },
+      "capacity": {
+        "persons": 12
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 136,
+        "value_max": 170,
+        "basis": "H(12) = 14*4 + 10*8 = 136; range [H, 1.25 H]"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 2"
+        },
+        {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 77"
+        }
+      ],
+      "covers": [
+        "general-rule",
+        "more-than-4-persons",
+        "concordant-municipal"
+      ],
+      "note": "Co-housing has no specific standard; the general per-inhabitant rule applies (national and municipal concordant)."
+    },
+    {
+      "id": "DQ-13",
+      "type": "general_dwelling",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "it": "Abitazione per una famiglia di 6 persone.",
+        "en": "Home for a family of 6 people."
+      },
+      "capacity": {
+        "persons": 6
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 76,
+        "value_max": 95,
+        "basis": "H(6) = 14*4 + 10*2 = 76; range [H, 1.25 H]"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 2"
+        },
+        {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 77"
+        }
+      ],
+      "covers": [
+        "general-rule",
+        "family",
+        "more-than-4-persons"
+      ],
+      "note": "Ordinary housing: tests that the regulatory agent is useful beyond student housing."
+    },
+    {
+      "id": "DQ-14",
+      "type": "general_dwelling",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "it": "Appartamento per 3 persone.",
+        "en": "Apartment for 3 people."
+      },
+      "capacity": {
+        "persons": 3
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 42,
+        "value_max": 53,
+        "basis": "H(3) = 14*3 = 42; range [H, 1.25 H] rounded up"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 2"
+        },
+        {
+          "doc_key": "to_reg_381_edilizio",
+          "article_ref": "Art. 77"
+        }
+      ],
+      "covers": [
+        "general-rule",
+        "up-to-4-persons"
+      ],
+      "note": "The <= 4 inhabitants branch of the formula."
+    },
+    {
+      "id": "DQ-15",
+      "type": "studio_minimum",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "it": "Monolocale per una persona.",
+        "en": "Studio flat for one person."
+      },
+      "capacity": {
+        "persons": 1
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 28,
+        "value_max": 35,
+        "basis": "DM 1975 Art. 3: one-room dwelling for one person >= 28 m2; range [28, 1.25 x 28]"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 3"
+        }
+      ],
+      "covers": [
+        "studio",
+        "one-person"
+      ],
+      "note": "Reg. 381 Art. 77.2.2 restates it but is unreachable under QUANT_ONLY (has_quantitative=False)."
+    },
+    {
+      "id": "DQ-16",
+      "type": "studio_minimum",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "it": "Monolocale per due persone.",
+        "en": "Studio flat for two people."
+      },
+      "capacity": {
+        "persons": 2
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 38,
+        "value_max": 48,
+        "basis": "DM 1975 Art. 3: one-room dwelling for two people >= 38 m2; range [38, 1.25 x 38] rounded up"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 3"
+        }
+      ],
+      "covers": [
+        "studio",
+        "two-persons"
+      ],
+      "note": "Not the per-inhabitant formula (H(2) = 28): the one-room rule is the specific one."
+    },
+    {
+      "id": "DQ-17",
+      "type": "derogation",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "it": "Monolocale per due persone ricavato da un edificio esistente sottoposto a recupero.",
+        "en": "Studio flat for two people created in an existing building undergoing renovation."
+      },
+      "capacity": {
+        "persons": 2
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 28,
+        "value_max": 38,
+        "basis": "DPR 380 Art. 24 c.5-bis b): on recovery of existing buildings the two-person one-room minimum may go down from 38 to 28 m2"
+      },
+      "sources": [
+        {
+          "doc_key": "dpr_380_2001",
+          "article_ref": "Art. 24"
+        },
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 3"
+        }
+      ],
+      "precedence": {
+        "winner": "dpr_380_2001",
+        "loser": "dm_sanita_1975",
+        "rule": "delegated_derogation"
+      },
+      "covers": [
+        "existing-building",
+        "studio-derogation"
+      ],
+      "note": "Same need as DQ-16 but on an existing building: the derogation should prevail."
+    },
+    {
+      "id": "DQ-18",
+      "type": "echo_trap",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Residenza per 60 studenti, l'edificio deve avere una superficie sopra i 2000 mq.",
+        "en": "Residence for 60 students; the building must be larger than 2000 square metres."
+      },
+      "capacity": {
+        "beds": 60
+      },
+      "user_values": [
+        2000
+      ],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 570,
+        "value_max": 1050,
+        "basis": "N=60, room type not stated: [9.5 N, 17.5 N]. The user's own 2000 m2 is a preference, not a regulation"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "echo-with-capacity",
+        "user-bound-above-regulation"
+      ],
+      "note": "The regulatory value must come from DM 1256, not repeat the user's 2000 (an echo would also fall outside the range)."
+    },
+    {
+      "id": "DQ-19",
+      "type": "ambiguous_use",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "it": "Co-housing per 8 anziani autosufficienti.",
+        "en": "Co-housing for 8 self-sufficient elderly people."
+      },
+      "capacity": {
+        "persons": 8
+      },
+      "user_values": [],
+      "expect": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 96,
+        "value_max": 120,
+        "basis": "No senior-housing standard in the corpus; if the general dwelling rule is applied: H(8) = 14*4 + 10*4 = 96, range [H, 1.25 H]"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 2"
+        }
+      ],
+      "covers": [
+        "senior",
+        "general-rule-fallback"
+      ],
+      "note": "Declining is acceptable; if the agent activates, the value must be the grounded general rule."
+    },
+    {
+      "id": "DQ-20",
+      "type": "echo_trap",
+      "tier": null,
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Cerca un immobile vicino a Porta Susa con superficie sopra i 1000 mq, finalizzato a residenza per studenti.",
+        "en": "Find a property near Porta Susa larger than 1000 square metres, intended as a student residence."
+      },
+      "capacity": null,
+      "user_values": [
+        1000
+      ],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "No capacity stated: the per-bed standard cannot become a building threshold; the per-room minima (7.1) are not building-level"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "echo-without-capacity",
+        "benchmark-shape"
+      ],
+      "note": "Exact shape of the old benchmark queries. Observed failure (2026-10-04 smoke run): the agent returned surface_area >= 1000 citing 'the threshold requested by the user'."
+    },
+    {
+      "id": "DQ-21",
+      "type": "echo_trap",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "it": "Cerca un'abitazione tra 50 e 80 mq finalizzata a co-housing.",
+        "en": "Find a home between 50 and 80 square metres for co-housing."
+      },
+      "capacity": null,
+      "user_values": [
+        50,
+        80
+      ],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "No number of people stated: the per-inhabitant rule cannot be applied"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_sanita_1975",
+          "article_ref": "Art. 2"
+        }
+      ],
+      "covers": [
+        "echo-without-capacity",
+        "user-range"
+      ],
+      "note": "Must not turn the user's 50-80 m2 range into a regulation."
+    },
+    {
+      "id": "DQ-22",
+      "type": "no_capacity",
+      "tier": null,
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Quali requisiti di superficie deve avere un immobile per una residenza universitaria?",
+        "en": "What floor-area requirements must a property meet to become a university residence?"
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Standards are per bed or per room; without a capacity there is no building-level threshold"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "no-capacity",
+        "question-form"
+      ],
+      "note": "Retrieval should still find Allegato A (source_in_context), but extraction should decline."
+    },
+    {
+      "id": "DQ-23",
+      "type": "out_of_corpus",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "it": "Immobile da destinare a centro diurno per anziani.",
+        "en": "Property to be used as a day centre for the elderly."
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "No standard for day centres in the corpus (NUEA Art. 3 only classifies the use)"
+      },
+      "sources": [],
+      "covers": [
+        "senior",
+        "out-of-corpus"
+      ],
+      "note": "Use classification without numeric standards."
+    },
+    {
+      "id": "DQ-24",
+      "type": "out_of_corpus",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "it": "Edificio per una RSA (residenza sanitaria assistenziale) da 40 posti letto.",
+        "en": "Building for a nursing home (RSA) with 40 beds."
+      },
+      "capacity": {
+        "beds": 40
+      },
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Healthcare accreditation standards (Piemonte) are not in the corpus; a bed count must not trigger the student per-bed rule"
+      },
+      "sources": [],
+      "covers": [
+        "capacity-without-rule",
+        "healthcare",
+        "out-of-corpus"
+      ],
+      "note": "Capacity present but no applicable rule: tests that beds alone do not trigger DM 1256."
+    },
+    {
+      "id": "DQ-25",
+      "type": "out_of_corpus",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "it": "Albergo da 50 camere.",
+        "en": "Hotel with 50 rooms."
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "No reachable hotel standard (Reg. 30 lodging rules are not quantitative-tagged and are air-volume based)"
+      },
+      "sources": [],
+      "covers": [
+        "hospitality",
+        "rooms-without-rule"
+      ],
+      "note": "Rooms stated, but hotels are not student residences."
+    },
+    {
+      "id": "DQ-26",
+      "type": "retrieval_probe",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "it": "Ostello con dormitori per 30 ospiti.",
+        "en": "Hostel with dormitories for 30 guests."
+      },
+      "capacity": {
+        "persons": 30
+      },
+      "user_values": [],
+      "expect": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 333,
+        "value_max": 420,
+        "basis": "Reg. 30 Art. 123: >= 30 m3 of air per person in dormitories; at 2.70 m height = 11.1 m2/person -> 333 m2 (upper bound 14 m2/person). Unreachable under QUANT_ONLY"
+      },
+      "sources": [
+        {
+          "doc_key": "to_reg_30_igiene",
+          "article_ref": "Art. 123"
+        }
+      ],
+      "covers": [
+        "dormitory",
+        "volume-rule",
+        "quant-flag-miss"
+      ],
+      "note": "A real rule the retriever cannot reach (has_quantitative=False): a decline here is a retrieval miss, not a correct 'no answer'."
+    },
+    {
+      "id": "DQ-27",
+      "type": "negative",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "it": "Cerca un ufficio di almeno 200 mq vicino a Porta Nuova.",
+        "en": "Find an office of at least 200 square metres near Porta Nuova."
+      },
+      "capacity": null,
+      "user_values": [
+        200
+      ],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Office use: no regulatory surface threshold in the corpus"
+      },
+      "sources": [],
+      "covers": [
+        "office",
+        "echo-guard"
+      ],
+      "note": "Negative control with a user surface that must not be echoed."
+    },
+    {
+      "id": "DQ-28",
+      "type": "negative",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "it": "Negozio vicino a Piazza Castello.",
+        "en": "Shop near Piazza Castello."
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Retail use: no regulatory surface threshold"
+      },
+      "sources": [],
+      "covers": [
+        "retail"
+      ],
+      "note": "Negative control."
+    },
+    {
+      "id": "DQ-29",
+      "type": "negative",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "it": "Capannone industriale da almeno 1000 mq.",
+        "en": "Industrial warehouse of at least 1000 square metres."
+      },
+      "capacity": null,
+      "user_values": [
+        1000
+      ],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Industrial use: no regulatory surface threshold"
+      },
+      "sources": [],
+      "covers": [
+        "industrial",
+        "echo-guard"
+      ],
+      "note": "Negative control."
+    },
+    {
+      "id": "DQ-30",
+      "type": "negative",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "it": "Qualsiasi immobile in classe energetica A.",
+        "en": "Any property in energy class A."
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Energy-only request: no regulatory requirement"
+      },
+      "sources": [],
+      "covers": [
+        "energy-only"
+      ],
+      "note": "Belongs to the energy agent, not the regulatory one."
+    },
+    {
+      "id": "DQ-31",
+      "type": "negative",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "it": "Immobili vicino al Politecnico.",
+        "en": "Properties near the Politecnico."
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Location-only request: no regulatory requirement"
+      },
+      "sources": [],
+      "covers": [
+        "location-only"
+      ],
+      "note": "Belongs to the location agent."
+    },
+    {
+      "id": "DQ-32",
+      "type": "non_surface_rule",
+      "tier": "regional",
+      "use_case": "general",
+      "queries": {
+        "it": "Sottotetto da recuperare a fini abitativi.",
+        "en": "Attic to be converted into living space."
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "LR 16/2018 Art. 6 sets mean HEIGHTS (2.40 / 2.20 m); the dataset has no height column, so no surface_area requirement follows"
+      },
+      "sources": [
+        {
+          "doc_key": "lr_piemonte_16_2018",
+          "article_ref": "Art. 6"
+        }
+      ],
+      "covers": [
+        "attic",
+        "height-rule",
+        "regional"
+      ],
+      "note": "The rule exists and should be retrieved, but must not be turned into a surface threshold."
+    },
+    {
+      "id": "DQ-33",
+      "type": "non_surface_rule",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "it": "Nuova costruzione residenziale con parcheggi pertinenziali.",
+        "en": "New residential building with private parking spaces."
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Legge 122/1989 Art. 2: 1 m2 of parking per 10 m3 of building VOLUME; not a building surface threshold (and not quantitative-tagged)"
+      },
+      "sources": [
+        {
+          "doc_key": "legge_122_1989",
+          "article_ref": "Art. 2"
+        }
+      ],
+      "covers": [
+        "parking",
+        "volume-rule"
+      ],
+      "note": "Parking standards depend on volume, which the dataset does not hold."
+    },
+    {
+      "id": "DQ-34",
+      "type": "procedural",
+      "tier": "regional",
+      "use_case": "general",
+      "queries": {
+        "it": "Cambio di destinazione d'uso da ufficio a residenza.",
+        "en": "Change of use from office to residential."
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "LR 19/1999 Art. 8 and DPR 380 Art. 23-ter are procedural: permit route, no surface threshold"
+      },
+      "sources": [
+        {
+          "doc_key": "lr_piemonte_19_1999",
+          "article_ref": "Art. 8"
+        }
+      ],
+      "covers": [
+        "change-of-use",
+        "procedural",
+        "regional"
+      ],
+      "note": "Relevant regulation exists but yields no building filter."
+    },
+    {
+      "id": "DQ-35",
+      "type": "out_of_corpus",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "it": "Edificio storico vincolato da riconvertire in appartamenti.",
+        "en": "Listed historic building to be converted into apartments."
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Heritage law (D.Lgs. 42/2004) is not in the corpus and the dataset has no heritage column"
+      },
+      "sources": [],
+      "covers": [
+        "heritage",
+        "out-of-corpus"
+      ],
+      "note": "cultural_constraint is offered to the agent but has no dataset column."
+    },
+    {
+      "id": "DQ-36",
+      "type": "long_query",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Buongiorno, sono un investitore privato e sto valutando l'acquisto di un edificio a Torino, possibilmente in una zona universitaria, da trasformare in una residenza per studenti. L'idea è di ricavare circa 45 posti letto in camere singole, ognuna con il proprio bagno, più qualche spazio comune per lo studio e il relax. Il budget c'è, ma prima di fare offerte vorrei capire quale superficie minima deve avere l'immobile per essere in regola con la normativa.",
+        "en": "Good morning, I am a private investor considering buying a building in Turin, ideally in a university area, to turn into a student residence. The plan is to create about 45 beds in single rooms, each with its own bathroom, plus some common space for studying and relaxing. Budget is not the issue, but before making offers I would like to know what minimum floor area the property needs to comply with the regulations."
+      },
+      "capacity": {
+        "beds": 45,
+        "single_beds": 45,
+        "double_beds": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 562.5,
+        "value_max": 787.5,
+        "basis": "45 single beds: [12.5 N, 17.5 N]"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "long-query",
+        "irrelevant-details",
+        "single-room-rate"
+      ],
+      "note": "Realistic multi-sentence request: the capacity is buried among context (investor, budget, common rooms)."
+    },
+    {
+      "id": "DQ-37",
+      "type": "number_in_words",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Residenza universitaria per sessanta studenti in camere doppie.",
+        "en": "University residence for sixty students in double rooms."
+      },
+      "capacity": {
+        "beds": 60,
+        "single_beds": 0,
+        "double_beds": 60
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 570,
+        "value_max": 870,
+        "basis": "60 beds in double rooms: [9.5 N, 14.5 N]"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "number-in-words",
+        "double-room-rate"
+      ],
+      "note": "Capacity written as a word, not a digit."
+    },
+    {
+      "id": "DQ-38",
+      "type": "self_correction",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Vorrei capire che superficie serve per una residenza per 40 studenti... anzi no, facciamo 50 posti letto, perché il progetto è cresciuto.",
+        "en": "I'd like to know what floor area a residence for 40 students needs... actually no, make it 50 beds, because the project has grown."
+      },
+      "capacity": {
+        "beds": 50
+      },
+      "user_values": [
+        40
+      ],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 475,
+        "value_max": 875,
+        "basis": "Final capacity N=50 (the user corrected 40): [9.5 N, 17.5 N]"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "self-correction",
+        "latest-value-wins"
+      ],
+      "note": "A value computed from 40 beds (380-700) means the correction was missed; 40 is listed as a user value so an echo of it is flagged."
+    },
+    {
+      "id": "DQ-39",
+      "type": "code_switching",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Cerco un building per uno student housing con 30 posti letto, tutte single rooms.",
+        "en": "Looking for an edificio for a residenza per studenti with 30 beds, all camere singole."
+      },
+      "capacity": {
+        "beds": 30,
+        "single_beds": 30,
+        "double_beds": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 375,
+        "value_max": 525,
+        "basis": "30 single beds: [12.5 N, 17.5 N]"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "code-switching",
+        "mixed-language"
+      ],
+      "note": "Each version mixes Italian and English terms, as people often do."
+    },
+    {
+      "id": "DQ-40",
+      "type": "mixed_use",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "it": "Immobile a uso misto: al piano terra un negozio, ai piani superiori una residenza per 20 studenti.",
+        "en": "Mixed-use property: a shop on the ground floor and a residence for 20 students on the upper floors."
+      },
+      "capacity": {
+        "beds": 20
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 190,
+        "value_max": 350,
+        "basis": "Residential part only, N=20: [9.5 N, 17.5 N]; the shop adds no regulatory threshold"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "mixed-use",
+        "two-uses"
+      ],
+      "note": "Two uses in one building: only the student part carries a standard."
+    },
+    {
+      "id": "DQ-41",
+      "type": "negation",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "it": "Non mi interessa una residenza per studenti: cerco un ufficio di 300 mq.",
+        "en": "I am not interested in a student residence: I am looking for a 300 square metre office."
+      },
+      "capacity": null,
+      "user_values": [
+        300
+      ],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Student residence is explicitly excluded; office use has no threshold"
+      },
+      "sources": [],
+      "covers": [
+        "negation",
+        "keyword-trap"
+      ],
+      "note": "Mentions 'residenza per studenti' only to exclude it: keyword matching would wrongly activate."
+    },
+    {
+      "id": "DQ-42",
+      "type": "typos",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "it": "cerco palazzina x studentato 70 posti lett, zona politecnico, urgente",
+        "en": "lookin for small bldg for student dorm 70 bds near politecnico asap"
+      },
+      "capacity": {
+        "beds": 70
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 665,
+        "value_max": 1225,
+        "basis": "N=70, room type not stated: [9.5 N, 17.5 N]"
+      },
+      "sources": [
+        {
+          "doc_key": "dm_1256_2021_allegato_a",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "typos",
+        "abbreviations",
+        "informal"
+      ],
+      "note": "Lower-case, abbreviations ('x', 'bds', 'asap') and truncated words."
+    },
+    {
+      "id": "DQ-43",
+      "type": "long_query",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "it": "Siamo una startup di 25 persone e cerchiamo un nuovo ufficio vicino a Porta Nuova, perché molti di noi arrivano in treno. Ci servirebbero almeno 400 mq, possibilmente su un unico piano, con 3 sale riunioni e una decina di posti auto. Il budget è di circa 3000 euro al mese e la classe energetica per noi non è importante.",
+        "en": "We are a 25-person startup looking for a new office near Porta Nuova, since many of us commute by train. We would need at least 400 square metres, ideally on a single floor, with 3 meeting rooms and about ten parking spaces. Our budget is around 3000 euros a month and the energy class does not matter to us."
+      },
+      "capacity": {
+        "persons": 25
+      },
+      "user_values": [
+        25,
+        400,
+        3,
+        3000
+      ],
+      "expect": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 75,
+        "value_max": 94,
+        "basis": "Reg. 30 Art. 130 c.1: workplaces must ensure at least 3 m2 per person present; 25 persons -> 75 m2 (range [75, 1.25 x 75]). Declining is also acceptable (the user's own 400 m2 makes it non-binding). The per-inhabitant dwelling rule must NOT be used."
+      },
+      "sources": [
+        {
+          "doc_key": "to_reg_30_igiene",
+          "article_ref": "Art. 130"
+        }
+      ],
+      "covers": [
+        "long-query",
+        "number-distractors",
+        "persons-not-residential"
+      ],
+      "note": "Many numbers (people, m2, rooms, parking, euros); none is a regulation. Only the head count may drive the workplace rule."
+    }
+  ]
+}

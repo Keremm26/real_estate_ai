@@ -2521,6 +2521,17 @@ class GraphOrchestratorAgent(BaseAgent):
                 weights = RankingWeights(**uniform_weights_dict)
                 active_agents = ["location", "building", "energy", "proximity", "regulatory"]
 
+        # Record the weights actually used for ranking next to the ranking agent's
+        # original ones ("weights"), which predate the exclusion of agents that
+        # found nothing — reading those alone overstates excluded agents.
+        weight_record = state.setdefault("gemini_responses", {}).setdefault("ranking_weights", {})
+        weight_record["effective_weights"] = {
+            a: (getattr(weights, a, 0.0) if a in active_agents else 0.0)
+            for a in ["location", "building", "energy", "proximity", "regulatory"]
+        }
+        weight_record["found_agents"] = list(really_found_agents)
+        weight_record["excluded_agents"] = list(agents_to_exclude)
+
         # Compute global statistics for all relevant columns for ranking
         # This allows agents to normalize scores against the entire dataset instead of the current subset.
         all_ranking_cols = list(set(ENERGY_AGENT_COLUMNS + REGULATORY_AGENT_COLUMNS + PROXIMITY_AGENT_COLUMNS + BUILDING_AGENT_COLUMNS))

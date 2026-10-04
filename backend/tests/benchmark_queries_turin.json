@@ -1,0 +1,2350 @@
+{
+  "meta": {
+    "description": "Hand-curated full-pipeline benchmark for MURENA (Turin). Each query runs end to end through all agents; ground truth is stored per query (expected agent activation and the regulatory expectation), replacing the combinatorial generator and the phrase-substring activation map.",
+    "schema": "pipeline-v1. id: stable, [A-Za-z0-9-] only (no '_', not purely numeric); change the id whenever the query text changes (results and judge outputs are cached by id). lang: language of this query (it, en, or mixed for code-switching queries). suites: 'benchmark' = main runs (3 consistency trials); 'sensitivity' = also run all ablations and baselines. complexity: simple (1-2 constraints) / medium (3) / complex (4-5). slots: machine-readable constraints used for feasibility checks (typology = dataset tipologia label or null; landmark = key of LOCAL_LANDMARKS; radius_km = explicit radius if stated, else the location agent's 3 km default; surface min/max m2 as stated by the user; energy_classes; services among mobility/education/healthcare/green/sport/commercial; intended_use; capacity). expected_agents = agents that must contribute (graph names: location, building, energy, proximity, regulatory); optional_agents = acceptable either way. regulatory = same expectation shape as rag/eval/downstream_queries_turin.json (activate true/false/'either', value range, user_values echo guard). mirrors = matching downstream item.",
+    "country": "IT",
+    "dataset": "data/metadata/estates.parquet (89,200 records, Turin)",
+    "composition": "50 queries: 31 with an applicable regulatory rule (incl. 3 'either'), 19 without. Includes long realistic requests (PQ-41..44) and linguistic stress cases (numbers in words, code-switching, negation, self-correction, typos, two landmarks).",
+    "caveats": [
+      "Author-constructed; regulatory ranges follow downstream_queries_turin.json value_basis.",
+      "expected_agents encode what the query explicitly asks for; agents may legitimately add requirements (e.g. proximity adding education for a student residence), listed in optional_agents.",
+      "Feasibility (non-empty results) was checked on the dataset with the slots as SQL-like filters within the stated or default radius; the pipeline's own SQL may differ."
+    ],
+    "changelog": [
+      "2026-10-04: v1 created (replaces generate_compositions over query_parameters.json for new runs).",
+      "2026-10-04: + 10 queries (PQ-41..50): long realistic requests, ambiguous intent, number in words, code-switching, negation, self-correction, typos, two landmarks.",
+      "2026-10-04: DQ-43 / PQ-43 activate false -> either [75, 94]: the corpus has a workplace rule (Reg. 30 Art. 130 c.1, 3 m2 per person) that genuinely applies to a 25-person office; found during the first downstream run."
+    ]
+  },
+  "queries": [
+    {
+      "id": "PQ-01",
+      "lang": "it",
+      "query": "Cerca un immobile per una residenza universitaria da 60 posti letto.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "simple",
+      "slots": {
+        "typology": null,
+        "landmark": null,
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 60
+        }
+      },
+      "expected_agents": [
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 570,
+        "value_max": 1050,
+        "user_values": [],
+        "basis": "DM 1256: N=60, [9.5 N, 17.5 N]"
+      },
+      "mirrors": "DQ-03",
+      "covers": [
+        "regulatory-only",
+        "student-capacity"
+      ],
+      "note": "The regulatory threshold is the only filter: isolates RAG's contribution."
+    },
+    {
+      "id": "PQ-02",
+      "lang": "en",
+      "query": "Find a building near the Politecnico to convert into student housing for 40 students in single rooms.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "politecnico",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 40,
+          "single_beds": 40,
+          "double_beds": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 500,
+        "value_max": 700,
+        "user_values": [],
+        "basis": "DM 1256: 40 single beds, [12.5 N, 17.5 N]"
+      },
+      "mirrors": "DQ-05",
+      "covers": [
+        "english",
+        "single-room-rate",
+        "location"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-03",
+      "lang": "it",
+      "query": "Cerco un edificio vicino a Palazzo Nuovo, in classe energetica C o più efficiente, per una residenza per 50 studenti, vicino ai mezzi di trasporto.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": null,
+        "landmark": "palazzo nuovo",
+        "surface": null,
+        "energy_classes": [
+          "A4",
+          "A3",
+          "A2",
+          "A1",
+          "B",
+          "C"
+        ],
+        "services": [
+          "mobility"
+        ],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 50
+        }
+      },
+      "expected_agents": [
+        "location",
+        "energy",
+        "proximity",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 475,
+        "value_max": 875,
+        "user_values": [],
+        "basis": "DM 1256: N=50, [9.5 N, 17.5 N]"
+      },
+      "mirrors": null,
+      "covers": [
+        "four-agents",
+        "energy-efficient",
+        "mobility"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-04",
+      "lang": "it",
+      "query": "Cerca un ufficio da riconvertire in studentato con 25 camere doppie vicino a Porta Nuova.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Uffici e assimilabili",
+        "landmark": "porta nuova",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 50,
+          "single_beds": 0,
+          "double_beds": 50
+        }
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 475,
+        "value_max": 725,
+        "user_values": [],
+        "basis": "DM 1256: 25 double rooms = 50 beds, [9.5 N, 14.5 N]"
+      },
+      "mirrors": "DQ-06",
+      "covers": [
+        "adaptive-reuse-office",
+        "double-room-rate",
+        "rooms-to-beds"
+      ],
+      "note": "Starting typology (office) differs from the target use (student residence)."
+    },
+    {
+      "id": "PQ-05",
+      "lang": "en",
+      "query": "Looking for a property near Campus Einaudi for a 120-bed student residence; energy class F or G is fine because we plan a deep renovation, and it should be close to parks.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": null,
+        "landmark": "campus einaudi",
+        "surface": null,
+        "energy_classes": [
+          "F",
+          "G"
+        ],
+        "services": [
+          "green"
+        ],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 120
+        }
+      },
+      "expected_agents": [
+        "location",
+        "energy",
+        "proximity",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 1140,
+        "value_max": 2100,
+        "user_values": [],
+        "basis": "DM 1256: N=120, [9.5 N, 17.5 N]"
+      },
+      "mirrors": "DQ-04",
+      "covers": [
+        "large-capacity",
+        "inefficient-on-purpose",
+        "green",
+        "english"
+      ],
+      "note": "Low energy class is wanted (renovation strategy), not a defect."
+    },
+    {
+      "id": "PQ-06",
+      "lang": "it",
+      "query": "Residenza per 60 studenti vicino a Porta Susa, con superficie sopra i 2000 mq.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "porta susa",
+        "surface": {
+          "min": 2000,
+          "max": null
+        },
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 60
+        }
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 570,
+        "value_max": 1050,
+        "user_values": [
+          2000
+        ],
+        "basis": "DM 1256: N=60, [9.5 N, 17.5 N]; the user's 2000 m2 is a preference"
+      },
+      "mirrors": "DQ-18",
+      "covers": [
+        "echo-with-capacity",
+        "user-bound-above-regulation"
+      ],
+      "note": "The regulatory threshold is looser than the user's: it must still be document-based, not 2000."
+    },
+    {
+      "id": "PQ-07",
+      "lang": "it",
+      "query": "Cerca un immobile vicino a Porta Susa con superficie sopra i 1000 mq, finalizzato a residenza per studenti.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "porta susa",
+        "surface": {
+          "min": 1000,
+          "max": null
+        },
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "building"
+      ],
+      "optional_agents": [
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [
+          1000
+        ],
+        "basis": "No capacity: no building-level threshold"
+      },
+      "mirrors": "DQ-20",
+      "covers": [
+        "echo-without-capacity",
+        "old-benchmark-shape"
+      ],
+      "note": "Observed failure 2026-10-04: regulatory echoed the user's 1000 m2."
+    },
+    {
+      "id": "PQ-08",
+      "lang": "en",
+      "query": "Find a building in San Salvario suitable for a co-housing project for 12 people, ideally with a supermarket nearby.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "san salvario",
+        "surface": null,
+        "energy_classes": null,
+        "services": [
+          "commercial"
+        ],
+        "intended_use": "co_housing",
+        "capacity": {
+          "persons": 12
+        }
+      },
+      "expected_agents": [
+        "location",
+        "proximity",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 136,
+        "value_max": 170,
+        "user_values": [],
+        "basis": "DM 1975 Art. 2: H(12) = 136, [H, 1.25 H]"
+      },
+      "mirrors": "DQ-12",
+      "covers": [
+        "co-housing-capacity",
+        "general-rule",
+        "commercial"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-09",
+      "lang": "it",
+      "query": "Cerco un'abitazione per una famiglia di 6 persone in zona Crocetta.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "crocetta",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "dwelling",
+        "capacity": {
+          "persons": 6
+        }
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "regulatory"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 76,
+        "value_max": 95,
+        "user_values": [],
+        "basis": "DM 1975 Art. 2: H(6) = 76, [H, 1.25 H]"
+      },
+      "mirrors": "DQ-13",
+      "covers": [
+        "family-dwelling",
+        "general-rule"
+      ],
+      "note": "Ordinary residential search."
+    },
+    {
+      "id": "PQ-10",
+      "lang": "it",
+      "query": "Monolocale per due persone vicino all'Università degli Studi di Torino, in classe energetica almeno D.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "università degli studi di torino",
+        "surface": null,
+        "energy_classes": [
+          "A4",
+          "A3",
+          "A2",
+          "A1",
+          "B",
+          "C",
+          "D"
+        ],
+        "services": [],
+        "intended_use": "studio",
+        "capacity": {
+          "persons": 2
+        }
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "energy",
+        "regulatory"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 38,
+        "value_max": 48,
+        "user_values": [],
+        "basis": "DM 1975 Art. 3: one-room flat for two >= 38 m2"
+      },
+      "mirrors": "DQ-16",
+      "covers": [
+        "studio",
+        "energy-at-least"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-11",
+      "lang": "en",
+      "query": "Studio flat for two people carved out of an existing building under renovation, near Porta Nuova.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "porta nuova",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "studio",
+        "capacity": {
+          "persons": 2
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 28,
+        "value_max": 38,
+        "user_values": [],
+        "basis": "DPR 380 Art. 24 c.5-bis: existing-building derogation 38 -> 28 m2"
+      },
+      "mirrors": "DQ-17",
+      "covers": [
+        "studio-derogation",
+        "existing-building",
+        "english"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-12",
+      "lang": "it",
+      "query": "Alloggio condiviso per 10 studenti universitari vicino al Politecnico, tra 100 e 200 mq, vicino a scuole e università.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": null,
+        "landmark": "politecnico",
+        "surface": {
+          "min": 100,
+          "max": 200
+        },
+        "energy_classes": null,
+        "services": [
+          "education"
+        ],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 10
+        }
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "proximity",
+        "regulatory"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 95,
+        "value_max": 175,
+        "user_values": [
+          100,
+          200
+        ],
+        "basis": "DM 1256 (lex specialis over DM 1975 Art. 2): N=10, [9.5 N, 17.5 N]"
+      },
+      "mirrors": "DQ-11",
+      "covers": [
+        "lex-specialis",
+        "user-range-overlaps-regulation",
+        "education"
+      ],
+      "note": "The regulatory range overlaps the user's 100-200 m2; the echo guard flags a value equal to 100 or 200."
+    },
+    {
+      "id": "PQ-13",
+      "lang": "en",
+      "query": "Student residence for 60 students near Palazzo Nuovo, between 50 and 80 square metres.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "palazzo nuovo",
+        "surface": {
+          "min": 50,
+          "max": 80
+        },
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 60
+        }
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 570,
+        "value_max": 1050,
+        "user_values": [
+          50,
+          80
+        ],
+        "basis": "DM 1256: N=60, [9.5 N, 17.5 N] — conflicts with the user's 50-80 m2"
+      },
+      "mirrors": null,
+      "covers": [
+        "conflict-user-vs-regulation",
+        "infeasible-request"
+      ],
+      "note": "Stress test: the regulatory minimum exceeds the user's maximum, so no property can satisfy both. Desired behaviour: surface the conflict rather than silently dropping the regulation (inspect sql, relaxation and fallback)."
+    },
+    {
+      "id": "PQ-14",
+      "lang": "it",
+      "query": "Albergo da riconvertire in residenza universitaria per 40 studenti vicino a Piazza Castello.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Edifici adibiti ad albergo, pensione ed attività similari",
+        "landmark": "piazza castello",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 40
+        }
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 380,
+        "value_max": 700,
+        "user_values": [],
+        "basis": "DM 1256: N=40, [9.5 N, 17.5 N]"
+      },
+      "mirrors": null,
+      "covers": [
+        "adaptive-reuse-hotel",
+        "rare-typology"
+      ],
+      "note": "Hotels are rare in the dataset (61 records): tests a small candidate pool."
+    },
+    {
+      "id": "PQ-15",
+      "lang": "en",
+      "query": "Building for a 30-bed student residence with shared double rooms.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "simple",
+      "slots": {
+        "typology": null,
+        "landmark": null,
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 30,
+          "single_beds": 0,
+          "double_beds": 30
+        }
+      },
+      "expected_agents": [
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 285,
+        "value_max": 435,
+        "user_values": [],
+        "basis": "DM 1256: 30 beds in double rooms, [9.5 N, 14.5 N]"
+      },
+      "mirrors": null,
+      "covers": [
+        "double-room-rate",
+        "regulatory-only",
+        "english"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-16",
+      "lang": "it",
+      "query": "Residenza universitaria a nuclei integrati per 24 studenti vicino al Campus Einaudi, in classe C o più efficiente, vicino a palestre.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": null,
+        "landmark": "campus einaudi",
+        "surface": null,
+        "energy_classes": [
+          "A4",
+          "A3",
+          "A2",
+          "A1",
+          "B",
+          "C"
+        ],
+        "services": [
+          "sport"
+        ],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 24
+        }
+      },
+      "expected_agents": [
+        "location",
+        "energy",
+        "proximity",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 228,
+        "value_max": 372,
+        "user_values": [],
+        "basis": "DM 1256 nuclei integrati: service 3.0 m2/bed, [9.5 N, 15.5 N]"
+      },
+      "mirrors": "DQ-08",
+      "covers": [
+        "nuclei-integrati",
+        "sport"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-17",
+      "lang": "en",
+      "query": "Student housing for 100 students with places reserved for students with disabilities, near the Molinette hospital.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "ospedale molinette",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 100
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 950,
+        "value_max": 1760,
+        "user_values": [],
+        "basis": "DM 1256: N=100, [9.5 N, 17.5 N] + 6.1.2 accessibility allowance"
+      },
+      "mirrors": "DQ-10",
+      "covers": [
+        "accessibility",
+        "large-capacity",
+        "english"
+      ],
+      "note": "Near a hospital: proximity may add healthcare."
+    },
+    {
+      "id": "PQ-18",
+      "lang": "it",
+      "query": "Riconversione di un edificio esistente in residenza per 60 studenti in camere singole, zona San Salvario.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "san salvario",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 60,
+          "single_beds": 60,
+          "double_beds": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 750,
+        "value_max": 1050,
+        "user_values": [],
+        "basis": "DM 1256: 60 single beds; Art. 2 c.2 allows -15% on service areas for existing buildings"
+      },
+      "mirrors": "DQ-09",
+      "covers": [
+        "existing-building",
+        "service-derogation"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-19",
+      "lang": "it",
+      "query": "Studentato con 20 camere singole e 10 camere doppie.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "simple",
+      "slots": {
+        "typology": null,
+        "landmark": null,
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 40,
+          "single_beds": 20,
+          "double_beds": 20
+        }
+      },
+      "expected_agents": [
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 440,
+        "value_max": 640,
+        "user_values": [],
+        "basis": "DM 1256: 20 single + 20 double-room beds"
+      },
+      "mirrors": "DQ-07",
+      "covers": [
+        "mixed-rooms",
+        "regulatory-only"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-20",
+      "lang": "en",
+      "query": "Co-housing for 20 people near Parco Valentino, energy class C or better, close to public transport and parks.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": null,
+        "landmark": "parco valentino",
+        "surface": null,
+        "energy_classes": [
+          "A4",
+          "A3",
+          "A2",
+          "A1",
+          "B",
+          "C"
+        ],
+        "services": [
+          "mobility",
+          "green"
+        ],
+        "intended_use": "co_housing",
+        "capacity": {
+          "persons": 20
+        }
+      },
+      "expected_agents": [
+        "location",
+        "energy",
+        "proximity",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 216,
+        "value_max": 270,
+        "user_values": [],
+        "basis": "DM 1975 Art. 2: H(20) = 14*4 + 10*16 = 216, [H, 1.25 H]"
+      },
+      "mirrors": null,
+      "covers": [
+        "co-housing-large",
+        "two-services",
+        "english"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-21",
+      "lang": "it",
+      "query": "Co-housing per 8 anziani autosufficienti vicino all'Ospedale Molinette, vicino a farmacie e ospedali.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "ospedale molinette",
+        "surface": null,
+        "energy_classes": null,
+        "services": [
+          "healthcare"
+        ],
+        "intended_use": "senior_co_housing",
+        "capacity": {
+          "persons": 8
+        }
+      },
+      "expected_agents": [
+        "location",
+        "proximity"
+      ],
+      "optional_agents": [
+        "building",
+        "regulatory"
+      ],
+      "regulatory": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 96,
+        "value_max": 120,
+        "user_values": [],
+        "basis": "No senior standard; if applied, DM 1975 Art. 2: H(8) = 96"
+      },
+      "mirrors": "DQ-19",
+      "covers": [
+        "senior",
+        "healthcare",
+        "general-rule-fallback"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-22",
+      "lang": "it",
+      "query": "Appartamento per 4 studenti vicino a Palazzo Nuovo.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "simple",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "palazzo nuovo",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_flat",
+        "capacity": {
+          "beds": 4,
+          "persons": 4
+        }
+      },
+      "expected_agents": [
+        "location",
+        "building"
+      ],
+      "optional_agents": [
+        "regulatory",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 38,
+        "value_max": 70,
+        "user_values": [],
+        "basis": "Ambiguous: a private flat for 4 students may fall under the dwelling rule (H(4) = 56) rather than DM 1256 ([38, 70]); 56 lies inside the accepted range"
+      },
+      "mirrors": null,
+      "covers": [
+        "ambiguous-use",
+        "student-flat-vs-residence"
+      ],
+      "note": "Is a shared flat a 'residenza universitaria'? Either rule is defensible."
+    },
+    {
+      "id": "PQ-23",
+      "lang": "en",
+      "query": "Apartment for a family of three near Crocetta, at least 60 square metres.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "crocetta",
+        "surface": {
+          "min": 60,
+          "max": null
+        },
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "dwelling",
+        "capacity": {
+          "persons": 3
+        }
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "regulatory"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 42,
+        "value_max": 53,
+        "user_values": [
+          60
+        ],
+        "basis": "DM 1975 Art. 2: H(3) = 42, [H, 1.25 H]; the user's 60 m2 is stricter"
+      },
+      "mirrors": "DQ-14",
+      "covers": [
+        "user-bound-above-regulation",
+        "small-dwelling",
+        "english"
+      ],
+      "note": "The regulation is satisfied whenever the user's own bound is: regulatory adds weight but no extra filtering."
+    },
+    {
+      "id": "PQ-24",
+      "lang": "it",
+      "query": "Cerca un ufficio di almeno 200 mq vicino a Porta Nuova.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Uffici e assimilabili",
+        "landmark": "porta nuova",
+        "surface": {
+          "min": 200,
+          "max": null
+        },
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "office",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "building"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [
+          200
+        ],
+        "basis": "Office use: no regulatory threshold"
+      },
+      "mirrors": "DQ-27",
+      "covers": [
+        "office",
+        "negative-regulatory",
+        "echo-guard"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-25",
+      "lang": "en",
+      "query": "Retail space near Piazza Castello, close to other shops and to public transport.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Attività commerciali e assimilabili",
+        "landmark": "piazza castello",
+        "surface": null,
+        "energy_classes": null,
+        "services": [
+          "commercial",
+          "mobility"
+        ],
+        "intended_use": "retail",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "proximity"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "Retail use: no regulatory threshold"
+      },
+      "mirrors": "DQ-28",
+      "covers": [
+        "retail",
+        "two-services",
+        "english"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-26",
+      "lang": "it",
+      "query": "Capannone industriale da almeno 1000 mq.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "simple",
+      "slots": {
+        "typology": "Attività industriali, artigianali e assimilabili",
+        "landmark": null,
+        "surface": {
+          "min": 1000,
+          "max": null
+        },
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "industrial",
+        "capacity": null
+      },
+      "expected_agents": [
+        "building"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [
+          1000
+        ],
+        "basis": "Industrial use: no regulatory threshold"
+      },
+      "mirrors": "DQ-29",
+      "covers": [
+        "industrial",
+        "building-only"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-27",
+      "lang": "en",
+      "query": "Any property in energy class A.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "simple",
+      "slots": {
+        "typology": null,
+        "landmark": null,
+        "surface": null,
+        "energy_classes": [
+          "A4",
+          "A3",
+          "A2",
+          "A1"
+        ],
+        "services": [],
+        "intended_use": null,
+        "capacity": null
+      },
+      "expected_agents": [
+        "energy"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "Energy-only request"
+      },
+      "mirrors": "DQ-30",
+      "covers": [
+        "energy-only",
+        "english"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-28",
+      "lang": "it",
+      "query": "Immobili vicino alla Mole Antonelliana.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "simple",
+      "slots": {
+        "typology": null,
+        "landmark": "mole antonelliana",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": null,
+        "capacity": null
+      },
+      "expected_agents": [
+        "location"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "Location-only request"
+      },
+      "mirrors": "DQ-31",
+      "covers": [
+        "location-only"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-29",
+      "lang": "it",
+      "query": "Immobile da destinare a centro diurno per anziani in zona San Salvario, vicino a ospedali e farmacie.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "san salvario",
+        "surface": null,
+        "energy_classes": null,
+        "services": [
+          "healthcare"
+        ],
+        "intended_use": "senior_day_centre",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "proximity"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "No day-centre standard in the corpus"
+      },
+      "mirrors": "DQ-23",
+      "covers": [
+        "senior",
+        "out-of-corpus",
+        "healthcare"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-30",
+      "lang": "en",
+      "query": "Building for a nursing home with 40 beds near the Molinette hospital.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "ospedale molinette",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "nursing_home",
+        "capacity": {
+          "beds": 40
+        }
+      },
+      "expected_agents": [
+        "location"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "Healthcare accreditation standards not in the corpus; 40 beds must not trigger the student per-bed rule"
+      },
+      "mirrors": "DQ-24",
+      "covers": [
+        "capacity-without-rule",
+        "healthcare-use",
+        "english"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-31",
+      "lang": "it",
+      "query": "Albergo da 50 camere vicino a Porta Susa.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Edifici adibiti ad albergo, pensione ed attività similari",
+        "landmark": "porta susa",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "hotel",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "building"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "No reachable hotel standard"
+      },
+      "mirrors": "DQ-25",
+      "covers": [
+        "hospitality",
+        "rare-typology"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-32",
+      "lang": "en",
+      "query": "Hostel with dormitories for 30 guests near Porta Nuova.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "porta nuova",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "hostel",
+        "capacity": {
+          "persons": 30
+        }
+      },
+      "expected_agents": [
+        "location"
+      ],
+      "optional_agents": [
+        "building",
+        "regulatory"
+      ],
+      "regulatory": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 333,
+        "value_max": 420,
+        "user_values": [],
+        "basis": "Reg. 30 Art. 123 (30 m3/person, ~11.1 m2/person at 2.70 m) exists but is unreachable under QUANT_ONLY"
+      },
+      "mirrors": "DQ-26",
+      "covers": [
+        "dormitory",
+        "retrieval-probe",
+        "english"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-33",
+      "lang": "it",
+      "query": "Sottotetto da recuperare a fini abitativi in centro.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "simple",
+      "slots": {
+        "typology": null,
+        "landmark": "centro",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "attic_recovery",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "LR 16/2018 Art. 6 sets heights, not surfaces"
+      },
+      "mirrors": "DQ-32",
+      "covers": [
+        "attic",
+        "height-rule"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-34",
+      "lang": "en",
+      "query": "Office building near Porta Susa to be converted to residential use; a change of use will be needed.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Uffici e assimilabili",
+        "landmark": "porta susa",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "residential_conversion",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "building"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "Change of use is procedural (LR 19/1999 Art. 8)"
+      },
+      "mirrors": "DQ-34",
+      "covers": [
+        "change-of-use",
+        "adaptive-reuse-office",
+        "english"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-35",
+      "lang": "it",
+      "query": "Cerca un'abitazione tra 50 e 80 mq vicino a Palazzo Nuovo in classe F o G, finalizzata a co-housing, vicino a palestre.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "palazzo nuovo",
+        "surface": {
+          "min": 50,
+          "max": 80
+        },
+        "energy_classes": [
+          "F",
+          "G"
+        ],
+        "services": [
+          "sport"
+        ],
+        "intended_use": "co_housing",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "energy",
+        "proximity"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [
+          50,
+          80
+        ],
+        "basis": "No number of people: the dwelling rule cannot be applied"
+      },
+      "mirrors": "DQ-21",
+      "covers": [
+        "echo-without-capacity",
+        "old-benchmark-shape",
+        "four-agents"
+      ],
+      "note": "Shape of the old generated queries."
+    },
+    {
+      "id": "PQ-36",
+      "lang": "en",
+      "query": "A property in Turin.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "simple",
+      "slots": {
+        "typology": null,
+        "landmark": null,
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": null,
+        "capacity": null
+      },
+      "expected_agents": [],
+      "optional_agents": [
+        "location",
+        "building",
+        "energy",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "No constraint at all"
+      },
+      "mirrors": null,
+      "covers": [
+        "vague-request",
+        "uniform-weights-fallback"
+      ],
+      "note": "Expected to hit the uniform-weights fallback (no agent finds anything)."
+    },
+    {
+      "id": "PQ-37",
+      "lang": "it",
+      "query": "Un immobile grande vicino alla Biblioteca Civica, in classe C o più efficiente.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "biblioteca civica",
+        "surface": {
+          "min": 106,
+          "max": null
+        },
+        "energy_classes": [
+          "A4",
+          "A3",
+          "A2",
+          "A1",
+          "B",
+          "C"
+        ],
+        "services": [],
+        "intended_use": null,
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "energy"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "No intended use"
+      },
+      "mirrors": null,
+      "covers": [
+        "relative-term-large",
+        "percentile-rule"
+      ],
+      "note": "'grande' should become the 75th-percentile surface (about 106 m2) per the building prompt; slots.surface.min reflects that."
+    },
+    {
+      "id": "PQ-38",
+      "lang": "en",
+      "query": "Listed historic building near the Mole Antonelliana to convert into student flats.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "mole antonelliana",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "No capacity, and heritage rules are not in the corpus"
+      },
+      "mirrors": "DQ-35",
+      "covers": [
+        "heritage",
+        "student-no-capacity",
+        "english"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-39",
+      "lang": "it",
+      "query": "Abitazione entro 1 km da Porta Susa, tra 80 e 120 mq, vicino a scuole, mezzi di trasporto e parchi.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "porta susa",
+        "radius_km": 1.0,
+        "surface": {
+          "min": 80,
+          "max": 120
+        },
+        "energy_classes": null,
+        "services": [
+          "education",
+          "mobility",
+          "green"
+        ],
+        "intended_use": "dwelling",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "proximity"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [
+          80,
+          120
+        ],
+        "basis": "No number of people: the dwelling rule cannot be applied"
+      },
+      "mirrors": null,
+      "covers": [
+        "explicit-radius",
+        "three-services",
+        "echo-guard"
+      ],
+      "note": "Explicit 1 km radius instead of the 3 km default."
+    },
+    {
+      "id": "PQ-40",
+      "lang": "en",
+      "query": "Building for student housing near the Politecnico, energy class C or better, larger than 500 square metres, close to public transport.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": null,
+        "landmark": "politecnico",
+        "surface": {
+          "min": 500,
+          "max": null
+        },
+        "energy_classes": [
+          "A4",
+          "A3",
+          "A2",
+          "A1",
+          "B",
+          "C"
+        ],
+        "services": [
+          "mobility"
+        ],
+        "intended_use": "student_residence",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "energy",
+        "proximity"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [
+          500
+        ],
+        "basis": "No capacity: no building-level threshold"
+      },
+      "mirrors": null,
+      "covers": [
+        "echo-without-capacity",
+        "student-no-capacity",
+        "english"
+      ],
+      "note": "Rich query without capacity: regulatory must decline instead of echoing 500."
+    },
+    {
+      "id": "PQ-41",
+      "lang": "it",
+      "query": "Buongiorno, rappresento un piccolo fondo immobiliare e stiamo cercando a Torino un edificio da convertire in residenza universitaria. Ci interessa la zona vicina al Politecnico, perché i nostri futuri ospiti saranno soprattutto studenti di ingegneria. Pensiamo a circa 45 posti letto in camere singole. L'immobile non deve per forza essere efficiente, va bene anche una classe F o G, perché faremo una ristrutturazione profonda. Sarebbe un plus avere vicino fermate di autobus o della metro.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": null,
+        "landmark": "politecnico",
+        "surface": null,
+        "energy_classes": [
+          "F",
+          "G"
+        ],
+        "services": [
+          "mobility"
+        ],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 45,
+          "single_beds": 45,
+          "double_beds": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "energy",
+        "proximity",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 562.5,
+        "value_max": 787.5,
+        "user_values": [],
+        "basis": "DM 1256: 45 single beds, [12.5 N, 17.5 N]"
+      },
+      "mirrors": "DQ-36",
+      "covers": [
+        "long-query",
+        "investor-context",
+        "inefficient-on-purpose"
+      ],
+      "note": "Realistic multi-sentence request; constraints scattered across sentences."
+    },
+    {
+      "id": "PQ-42",
+      "lang": "en",
+      "query": "Hi, my partner and I are moving to Turin with our three kids and my mother, so we will be six people in total. We would like a home in the Crocetta area, not too far from schools for the kids and with a park nearby where they can play. Energy efficiency matters to us, so class C or better would be great. We don't have a fixed size in mind, as long as it is legally adequate for six people.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "crocetta",
+        "surface": null,
+        "energy_classes": [
+          "A4",
+          "A3",
+          "A2",
+          "A1",
+          "B",
+          "C"
+        ],
+        "services": [
+          "education",
+          "green"
+        ],
+        "intended_use": "dwelling",
+        "capacity": {
+          "persons": 6
+        }
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "energy",
+        "proximity",
+        "regulatory"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 76,
+        "value_max": 95,
+        "user_values": [],
+        "basis": "DM 1975 Art. 2: H(6) = 76, [H, 1.25 H]"
+      },
+      "mirrors": "DQ-13",
+      "covers": [
+        "long-query",
+        "family-context",
+        "count-from-description",
+        "five-agents"
+      ],
+      "note": "Household size must be counted from the description (2 adults + 3 kids + 1 grandmother); the user explicitly asks for legal adequacy."
+    },
+    {
+      "id": "PQ-43",
+      "lang": "it",
+      "query": "Siamo una startup di 25 persone e cerchiamo un nuovo ufficio vicino a Porta Nuova, perché molti di noi arrivano in treno. Ci servirebbero almeno 400 mq, possibilmente su un unico piano, con 3 sale riunioni e una decina di posti auto. Il budget è di circa 3000 euro al mese e la classe energetica per noi non è importante.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Uffici e assimilabili",
+        "landmark": "porta nuova",
+        "surface": {
+          "min": 400,
+          "max": null
+        },
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "office",
+        "capacity": {
+          "persons": 25
+        }
+      },
+      "expected_agents": [
+        "location",
+        "building"
+      ],
+      "optional_agents": [
+        "proximity",
+        "regulatory"
+      ],
+      "regulatory": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 75,
+        "value_max": 94,
+        "user_values": [
+          25,
+          400,
+          3,
+          3000
+        ],
+        "basis": "Reg. 30 Art. 130 c.1: workplaces must ensure at least 3 m2 per person present; 25 persons -> 75 m2 (range [75, 1.25 x 75]). Declining is also acceptable (the user's own 400 m2 makes it non-binding). The per-inhabitant dwelling rule must NOT be used."
+      },
+      "mirrors": "DQ-43",
+      "covers": [
+        "long-query",
+        "number-distractors",
+        "persons-not-residential",
+        "energy-explicitly-irrelevant"
+      ],
+      "note": "Energy is explicitly irrelevant: the energy agent should NOT add a requirement."
+    },
+    {
+      "id": "PQ-44",
+      "lang": "en",
+      "query": "I'm not sure yet what I want to do with the building: maybe student housing, maybe a small hotel. Something around Porta Susa, big enough for a few dozen people.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "porta susa",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "undecided",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "Undecided use and no exact capacity ('a few dozen'): no threshold can be computed"
+      },
+      "mirrors": null,
+      "covers": [
+        "ambiguous-intent",
+        "vague-capacity"
+      ],
+      "note": "Two candidate uses and a vague size: regulatory should not pick one and invent a number."
+    },
+    {
+      "id": "PQ-45",
+      "lang": "it",
+      "query": "Residenza universitaria per sessanta studenti in camere doppie vicino a Porta Susa.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "porta susa",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 60,
+          "single_beds": 0,
+          "double_beds": 60
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 570,
+        "value_max": 870,
+        "user_values": [],
+        "basis": "DM 1256: 60 beds in double rooms, [9.5 N, 14.5 N]"
+      },
+      "mirrors": "DQ-37",
+      "covers": [
+        "number-in-words",
+        "double-room-rate"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-46",
+      "lang": "mixed",
+      "query": "Cerco un building near Palazzo Nuovo per student housing con 30 posti letto in single rooms, classe energetica almeno C.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": null,
+        "landmark": "palazzo nuovo",
+        "surface": null,
+        "energy_classes": [
+          "A4",
+          "A3",
+          "A2",
+          "A1",
+          "B",
+          "C"
+        ],
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 30,
+          "single_beds": 30,
+          "double_beds": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "energy",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 375,
+        "value_max": 525,
+        "user_values": [],
+        "basis": "DM 1256: 30 single beds, [12.5 N, 17.5 N]"
+      },
+      "mirrors": "DQ-39",
+      "covers": [
+        "code-switching",
+        "mixed-language"
+      ],
+      "note": "Italian and English in the same sentence."
+    },
+    {
+      "id": "PQ-47",
+      "lang": "it",
+      "query": "Non voglio un immobile in classe F o G: cerco un'abitazione vicino al Parco del Valentino per 4 persone.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "parco valentino",
+        "surface": null,
+        "energy_classes": [
+          "A4",
+          "A3",
+          "A2",
+          "A1",
+          "B",
+          "C",
+          "D",
+          "E"
+        ],
+        "services": [],
+        "intended_use": "dwelling",
+        "capacity": {
+          "persons": 4
+        }
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "energy",
+        "regulatory"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 56,
+        "value_max": 70,
+        "user_values": [],
+        "basis": "DM 1975 Art. 2: H(4) = 56, [H, 1.25 H]"
+      },
+      "mirrors": null,
+      "covers": [
+        "negation-energy",
+        "exclusion-constraint"
+      ],
+      "note": "Energy constraint expressed as an exclusion (NOT F or G)."
+    },
+    {
+      "id": "PQ-48",
+      "lang": "it",
+      "query": "Mi serve una residenza per 40 studenti vicino al Campus Einaudi... anzi no, facciamo 50 posti letto.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "campus einaudi",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 50
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 475,
+        "value_max": 875,
+        "user_values": [
+          40
+        ],
+        "basis": "DM 1256: final capacity N=50, [9.5 N, 17.5 N]"
+      },
+      "mirrors": "DQ-38",
+      "covers": [
+        "self-correction",
+        "latest-value-wins"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-49",
+      "lang": "it",
+      "query": "cerco palazzina x studentato 70 posti lett zona politecnico classe c o meglio",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "politecnico",
+        "surface": null,
+        "energy_classes": [
+          "A4",
+          "A3",
+          "A2",
+          "A1",
+          "B",
+          "C"
+        ],
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 70
+        }
+      },
+      "expected_agents": [
+        "location",
+        "energy",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 665,
+        "value_max": 1225,
+        "user_values": [],
+        "basis": "DM 1256: N=70, [9.5 N, 17.5 N]"
+      },
+      "mirrors": "DQ-42",
+      "covers": [
+        "typos",
+        "abbreviations",
+        "informal"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-50",
+      "lang": "it",
+      "query": "Immobile tra Porta Nuova e Porta Susa per un co-housing di 10 persone.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "porta nuova",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "co_housing",
+        "capacity": {
+          "persons": 10
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 116,
+        "value_max": 145,
+        "user_values": [],
+        "basis": "DM 1975 Art. 2: H(10) = 14*4 + 10*6 = 116, [H, 1.25 H]"
+      },
+      "mirrors": null,
+      "covers": [
+        "two-landmarks",
+        "co-housing-capacity"
+      ],
+      "note": "Two reference points: the location agent should resolve both (feasibility checked around Porta Nuova)."
+    }
+  ]
+}

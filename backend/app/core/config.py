@@ -94,7 +94,10 @@ class Settings(BaseSettings):
     # The model every MURENA agent runs on unless ``set_llm_model`` selects
     # another for the run. Defaults to the institutional Gemma so the whole
     # pipeline runs on the open model and the hosted one is reserved for judging.
-    AGENT_LLM_MODEL: str = "gemma-4"
+    # TEMPORARY (2026-10-04): gpt-5.4-mini while the institutional Gemma server
+    # refuses connections (cheaper than gpt-5.4). Switch back to "gemma-4"
+    # when http://130.192.163.76:8000/v1 answers again.
+    AGENT_LLM_MODEL: str = "gpt-5.4-mini"
 
     LLMODEL_CONCURRENCY_LIMITS: Dict[str, int] = {
         "gpt-5.4": 2,
