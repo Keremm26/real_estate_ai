@@ -68,6 +68,23 @@ HARD_BUILDING_COLUMNS = {
 }
 
 
+def _with_aliases(columns: set) -> set:
+    """Expand dataset names with every alias of the same column, so the building
+    agent's canonical names (property_type, cadastral_sheet, ...) are graded the
+    same as the dataset names (tipologia_bene_immobile, foglio, ...)."""
+    from app.core.constants import COLUMN_ALIASES
+
+    expanded = set(columns)
+    for canonical, variants in COLUMN_ALIASES.items():
+        group = {canonical} | variants
+        if group & columns:
+            expanded |= group
+    return expanded
+
+
+_HARD_BUILDING_NAMES = _with_aliases(HARD_BUILDING_COLUMNS)
+
+
 def assign_severity(
     source_agent: str,
     target_column: Optional[str],
@@ -101,7 +118,7 @@ def assign_severity(
         return "hard", False
 
     if agent == "building":
-        if target_column in HARD_BUILDING_COLUMNS:
+        if target_column in _HARD_BUILDING_NAMES:
             return "hard", False
         # e.g. surface_area thresholds -> a preference
         return "soft", True

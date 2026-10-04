@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Optional, Set
 
 # Score legend (1-5) for energy and proximity
 SCORE_LEGEND = """SCORE LEGEND (all on 1-5 scale, where 5=excellent):
@@ -104,46 +104,84 @@ PROXIMITY_CATEGORIES: Dict[str, str] = {
     "education": "Schools, universities",
 }
 
-# Column mapping from database to English nomenclature
-COLUMN_MAPPING: Dict[str, str] = {
-    # Proximity pillars
-    "healthcare": "healthcare",
-    "mobility": "mobility",
-    "green": "green",
-    "sport": "sport",
-    "commercial": "commercial",
-    "education": "education",
-    # Energy scores
-    "energy_score_class": "energy_score_class",
-    "energy_score_plant": "energy_score_plant",
-    "energy_score_envelope": "energy_score_envelope",
-    "energy_score_renewables": "energy_score_renewables",
-    "energy_score_total": "energy_score_total",
-    "energy_score": "energy_score",
-    # General attributes
-    "address": "address",
-    "house_number": "house_number",
-    "omi_zone": "omi_zone",
-    "surface_area": "surface_area",
-    "property_type": "property_type",
-    "construction_period": "construction_period",
-    "purpose": "purpose",
-    "energy_class": "energy_class",
-    "latitude": "latitude",
-    "longitude": "longitude",
-    "legal_nature": "legal_nature",
-    "cultural_constraint": "cultural_constraint",
-    "ape_file_list": "ape_file_list",
-    "cadastral_units_count": "cadastral_units_count",
-    "distance_km": "distance_km",
-    "description": "description",
-    "third_party_tenure_type": "third_party_tenure_type",
-    "effective_date": "effective_date",
-    "annual_rent": "annual_rent",
-    "cadastral_sheet": "cadastral_sheet",
-    "cadastral_parcel": "cadastral_parcel",
-    "cadastral_subaltern": "cadastral_subaltern",
+# Agent column vocabulary -> dataset column names.
+#
+# The agents speak canonical English column names (the *_AGENT_COLUMNS lists
+# above), while the estates dataset in use has Italian columns
+# (superficie_di_riferimento_mq, mobilita, ...): the March refactor translated the
+# agent vocabulary and renamed the dataset at load time, the April switch to
+# create_estate_dataset.py (English output) removed that rename, and the parquet
+# in use was never regenerated. Each canonical name maps to the dataset/legacy
+# names it may appear under; ``resolve_column`` picks whichever one the live
+# schema has, so the same code works with the Italian and an English parquet.
+#
+# Single source of truth: TriSQL's SQL repair / validation / renderer use this
+# same object (constraint_validation re-exports it); the rankers and the column
+# statistics resolve through ``resolve_column``.
+#
+# Rules: a name may appear under ONE canonical key only. Never alias computed
+# columns (energy_score, building_score, ...) and never map classe_target_ape to
+# energy_class (achievable vs current class). No dataset column at all:
+# legal_nature, cultural_constraint, purpose, description,
+# third_party_tenure_type, annual_rent.
+COLUMN_ALIASES: Dict[str, Set[str]] = {
+    # Building / cadastral
+    "surface_area": {"superficie_di_riferimento_mq"},
+    "property_type": {"tipologia_bene_immobile"},
+    "construction_period": {"epoca_costruzione"},          # VARCHAR years in the parquet
+    "cadastral_sheet": {"foglio"},
+    "cadastral_parcel": {"particella"},
+    "cadastral_subaltern": {"subalterno"},
+    "cadastral_units_count": {"numero_immobili_per_catasto", "number_immobili_per_catasto"},
+    # Energy
+    "energy_class": {"classe_energetica_ape"},
+    "energy_score_class": {"ape_score_classe"},
+    "energy_score_plant": {"ape_score_impianto"},
+    "energy_score_envelope": {"ape_score_involucro"},
+    "energy_score_renewables": {"ape_score_rinnovabili"},
+    "energy_score_total": {"ape_score_total"},              # 4-20 sum of the four sub-scores
+    # Proximity (0-100 percentile scores)
+    "healthcare": {"sanita", "sanità"},
+    "mobility": {"mobilita", "mobilità"},
+    "green": {"greenery", "verde"},
+    "commercial": {"commerciale", "commerce"},
+    "education": {"educazione"},
+    # Location
+    "address": {"indirizzo"},
+    "house_number": {"numero_civico"},
+    "latitude": {"latitudine"},
+    "longitude": {"longitudine"},
+    "omi_zone": {"zona_omi"},
+    # Record metadata
+    "effective_date": {"data_decorrenza"},
+    "is_meta_estate": {"meta_immobile"},
 }
+
+_ALIAS_TO_CANONICAL: Dict[str, str] = {
+    variant: canonical for canonical, variants in COLUMN_ALIASES.items() for variant in variants
+}
+
+
+def resolve_column(name: Optional[str], available) -> Optional[str]:
+    """Return the column of ``available`` that ``name`` refers to, or None.
+
+    ``name`` may be canonical (``surface_area``) or already a dataset name
+    (``superficie_di_riferimento_mq``). A literal match wins; otherwise the
+    alias group is searched in a fixed order, so the pick is deterministic.
+    """
+    if not name or not isinstance(name, str):
+        return None  # e.g. malformed LLM output with a list of columns
+    if not isinstance(available, (set, frozenset, dict)):
+        available = set(available)
+    if name in available:
+        return name
+    canonical = name if name in COLUMN_ALIASES else _ALIAS_TO_CANONICAL.get(name)
+    if canonical is None:
+        return None
+    for candidate in [canonical, *sorted(COLUMN_ALIASES[canonical])]:
+        if candidate in available:
+            return candidate
+    return None
 
 # Global object containing updated runtime metadata
 DB_METADATA = {
@@ -169,30 +207,34 @@ def update_runtime_metadata(df):
         DB_METADATA["_last_updated"] = datetime.now().strftime("%Y-%m-%d")
         df_columns = set(df.columns)
         
-        # Synchronize filterable columns
-        DB_METADATA["filterable_columns"] = [c for c in SQL_FILTERABLE_COLUMNS if c in df_columns]
-        
+        # Synchronize filterable columns. Names stay in the agents' vocabulary
+        # (what the requirements use); they count as present when they resolve
+        # to a dataset column (COLUMN_ALIASES), not only on a literal match.
+        DB_METADATA["filterable_columns"] = [c for c in SQL_FILTERABLE_COLUMNS if resolve_column(c, df_columns)]
+
         # Lists of columns to analyze
         categorical = ["codice_comune", "property_type", "construction_period", "energy_class"]
         numerical = [
-            "surface_area", "energy_score_total", 
+            "surface_area", "energy_score_total",
             "healthcare", "mobility", "green", "sport", "commercial", "education"
         ]
-        
+        max_values = 100  # keep the SQL prompt bounded (construction years are high-cardinality)
+
         # Reset fields
         DB_METADATA["fields"] = {}
-        
+
         for col in categorical + numerical:
-            if col in df.columns:
+            data_col = resolve_column(col, df_columns)
+            if data_col:
                 meta = {}
                 if col in categorical:
                     # Extract unique values and sort
-                    unique_vals = sorted([str(v) for v in df[col].dropna().unique()])
-                    meta["values"] = unique_vals
-                    meta["is_truncated"] = False
+                    unique_vals = sorted([str(v) for v in df[data_col].dropna().unique()])
+                    meta["values"] = unique_vals[:max_values]
+                    meta["is_truncated"] = len(unique_vals) > max_values
                 else:
                     # Calculate numerical statistics
-                    series = pd.to_numeric(df[col], errors='coerce').dropna()
+                    series = pd.to_numeric(df[data_col], errors='coerce').dropna()
                     if not series.empty:
                         meta.update({
                             "min": round(float(series.min()), 2),

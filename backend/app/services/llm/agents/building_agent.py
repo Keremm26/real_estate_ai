@@ -15,7 +15,18 @@ from app.services.llm.langchain_client import get_llm, invoke_with_langfuse
 from app.services.llm.prompt_loader import get_system_prompt, get_user_template
 from app.utils.decorators import handle_agent_error, log_llm_usage
 from app.utils.json_parser import safe_extract_json
-from app.utils.scoring import calculate_continuous_score, calculate_discrete_score
+from app.utils.scoring import (
+    CONTINUOUS_OPERATORS,
+    calculate_continuous_score,
+    calculate_discrete_score,
+    calculate_equality_score,
+    calculate_range_score,
+    is_numeric_column,
+    normalize_operator,
+    requirement_is_scorable,
+    to_number,
+    to_range,
+)
 
 
 class BuildingAgent(BaseAgent):
@@ -148,39 +159,35 @@ class BuildingAgent(BaseAgent):
             for req in requirements:
                 col = req.get("target_column")
                 target_val = req.get("value")
-                op = str(req.get("operator", "==")).upper()
-                
-                if not col or col not in df_ranked.columns or col in ("property_type", typ_col):
+                op = normalize_operator(req.get("operator", "=="))
+
+                if col in ("property_type", typ_col):
                     continue
-                
+                # Skip what cannot be scored (no value, text on a numeric column,
+                # malformed BETWEEN): counting it would add a constant 0 and
+                # halve building_score for every property.
+                if not requirement_is_scorable(req, df_ranked):
+                    continue
+
                 technical_req_count += 1
                 series = pd.to_numeric(df_ranked[col], errors="coerce").fillna(0)
-                
-                # Use centralized utility for continuous variables
-                try:
-                    T = float(target_val) if target_val is not None else 1.0
-                    is_numeric_req = True
-                except (ValueError, TypeError):
-                    # Se non è convertibile in float (es. codice_comune 'L219'), 
-                    # lo trattiamo come confronto discreto
-                    T = target_val
-                    is_numeric_req = False
+                numeric_col = is_numeric_column(df_ranked[col])
+                T = to_number(target_val)
 
-                if is_numeric_req and op in [">=", ">", "<=", "<"]:
+                if numeric_col and op == "BETWEEN":
+                    low, high = to_range(target_val)
+                    req_score = calculate_range_score(df_ranked[col], low, high)
+                elif numeric_col and op in CONTINUOUS_OPERATORS:
                     exclusive = req.get("exclusive", False)
                     req_score = calculate_continuous_score(series, T, op, exclusive)
-                else: # Equality or Non-numeric
-                    if is_numeric_req:
-                        diff = np.abs(series - T)
-                        stats = global_stats.get(col) if global_stats else None
-                        if stats and "max" in stats and "min" in stats:
-                            range_val = max(1, stats["max"] - stats["min"])
-                            req_score = (100 - (diff / range_val * 100)).clip(0, 100)
-                        else:
-                            req_score = (series == T).astype(float) * 100
-                    else:
-                        # Discrete comparison for strings (e.g., municipality code)
-                        req_score = (df_ranked[col].astype(str) == str(T)).astype(float) * 100
+                elif numeric_col and T is not None:
+                    stats = global_stats.get(col) if global_stats else None
+                    req_score = calculate_equality_score(series, T, stats)
+                elif isinstance(target_val, (list, tuple)):
+                    req_score = calculate_discrete_score(df_ranked[col], list(target_val))
+                else:
+                    # Discrete comparison for strings (e.g., municipality code)
+                    req_score = (df_ranked[col].astype(str) == str(target_val)).astype(float) * 100
                 
                 col_name = f"building_partial_score_{col}"
                 # Handle duplicate names if multiple requirements exist for the same column

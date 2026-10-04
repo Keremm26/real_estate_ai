@@ -15,7 +15,18 @@ from app.services.llm.langchain_client import get_llm, invoke_with_langfuse, is_
 from app.services.llm.prompt_loader import get_system_prompt, get_user_template
 from app.utils.decorators import log_llm_usage
 from app.utils.json_parser import safe_extract_json
-from app.utils.scoring import calculate_continuous_score, calculate_discrete_score
+from app.utils.scoring import (
+    CONTINUOUS_OPERATORS,
+    calculate_continuous_score,
+    calculate_discrete_score,
+    calculate_equality_score,
+    calculate_range_score,
+    is_numeric_column,
+    normalize_operator,
+    requirement_is_scorable,
+    to_number,
+    to_range,
+)
 
 
 class EnergyAgentOutput(EnergyResponse):
@@ -155,9 +166,10 @@ class EnergyAgent(BaseAgent):
             for req in requirements:
                 col = req.get("target_column")
                 target_val = req.get("value")
-                op = str(req.get("operator", "==")).upper()
+                op = normalize_operator(req.get("operator", "=="))
 
-                if not col or col not in df_ranked.columns or target_val is None:
+                # Same rule as the orchestrator's "found" predicate.
+                if not requirement_is_scorable(req, df_ranked):
                     continue
 
                 valid_req_count += 1
@@ -209,26 +221,17 @@ class EnergyAgent(BaseAgent):
                     is_missing = vals_raw.isna()
                     
                     # Use centralized utility for continuous variables
-                    if op in [">=", ">", "<=", "<"]:
+                    if op in CONTINUOUS_OPERATORS:
                         exclusive = req.get("exclusive", False)
-                        req_score = calculate_continuous_score(vals_raw, target_val, op, exclusive)
+                        req_score = calculate_continuous_score(vals_raw, to_number(target_val), op, exclusive)
+                    elif op == "BETWEEN" and to_range(target_val) is not None:
+                        low, high = to_range(target_val)
+                        req_score = calculate_range_score(vals_raw, low, high)
                     else: # == or IN (fallback) logic using distance
                         vals = vals_raw.fillna(0)
-                        target_num = 0.0
-                        try:
-                            target_num = float(target_val[0]) if isinstance(target_val, list) else float(target_val)
-                        except: pass
-                        diff = np.abs(vals - target_num)
-                        
+                        target_num = to_number(target_val[0] if isinstance(target_val, list) and target_val else target_val)
                         col_stats = global_stats.get(col) if global_stats else None
-                        range_val = 0
-                        if col_stats:
-                            range_val = float(col_stats.get("max", 0)) - float(col_stats.get("min", 0))
-                        
-                        if range_val > 0:
-                            req_score = (100 - (diff / range_val * 100)).clip(0, 100)
-                        else:
-                            req_score = (vals == target_num).astype(float) * 100
+                        req_score = calculate_equality_score(vals, target_num if target_num is not None else 0.0, col_stats)
                     
                     # Ensure 0 for missing values
                     req_score = req_score.where(~is_missing, 0)

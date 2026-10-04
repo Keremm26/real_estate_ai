@@ -21,7 +21,18 @@ from app.services.llm.rag import config as rag_config
 from app.services.llm.rag.retriever import retrieve_with_trace
 from app.utils.decorators import handle_agent_error, log_llm_usage
 from app.utils.json_parser import safe_extract_json
-from app.utils.scoring import calculate_continuous_score, calculate_discrete_score
+from app.utils.scoring import (
+    CONTINUOUS_OPERATORS,
+    calculate_continuous_score,
+    calculate_discrete_score,
+    calculate_equality_score,
+    calculate_range_score,
+    is_numeric_column,
+    normalize_operator,
+    requirement_is_scorable,
+    to_number,
+    to_range,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -138,6 +149,16 @@ def load_regulatory_documents() -> tuple[str, list[str], List[Dict[str, Any]]]:
         return "No regulatory documents available.", [], []
     
     return "\n\n".join(documents), sources, images
+
+
+def _rank_position(mask: pd.Series) -> pd.Series:
+    """1 where the requirement matches, "N/A" elsewhere (object dtype).
+
+    np.where(mask, 1, "N/A") mixes int and str, which numpy >= 2 rejects
+    (DTypePromotionError) — that silently zeroed the whole regulatory score."""
+    pos = pd.Series("N/A", index=mask.index, dtype=object)
+    pos[mask.astype(bool)] = 1
+    return pos
 
 
 class RegulatoryAgent(BaseAgent):
@@ -288,42 +309,35 @@ class RegulatoryAgent(BaseAgent):
         for req in requirements:
             col = req.get("target_column")
             target_val = req.get("value")
-            op = str(req.get("operator", ">=")).upper()
+            op = normalize_operator(req.get("operator", ">="))
 
-            # Strict filter on allowed columns for score CALCULATION
-            if not col or col not in df_ranked.columns or target_val is None:
-                continue
-            
-            if available_columns and col not in available_columns:
+            # Strict filter for score CALCULATION: allowed column, a value, and a
+            # value shape the column can be scored against (same rule as the
+            # orchestrator's "found" predicate, so no constant-0 requirement).
+            if not requirement_is_scorable(req, df_ranked, allowed_columns=available_columns or None):
                 continue
 
             valid_req_count += 1
             used_columns.add(col)
-            # Attempt numerical conversion to distinguish logic (numerical vs categorical)
-            try:
-                target_num = float(target_val)
-                is_numeric = True
-            except (ValueError, TypeError):
-                is_numeric = False
-            
-            if is_numeric and op in [">=", ">", "<=", "<", "=="]:
+            numeric_col = is_numeric_column(df_ranked[col])
+            target_num = to_number(target_val)
+            is_numeric = numeric_col and (
+                target_num is not None or (op == "BETWEEN" and to_range(target_val) is not None)
+            )
+
+            if is_numeric and op in CONTINUOUS_OPERATORS | {"==", "BETWEEN"}:
                 vals = pd.to_numeric(df_ranked[col], errors="coerce").fillna(0)
-                
+
                 # Use centralized utility for continuous variables
-                if op in [">=", ">", "<=", "<"]:
+                if op in CONTINUOUS_OPERATORS:
                     exclusive = req.get("exclusive", False)
                     req_score = calculate_continuous_score(vals, target_num, op, exclusive)
-                else: # ==
-                    # Relative normalization via dataset range (preferably global)
-                    range_val = 0
-                    if col_stats:
-                        range_val = float(col_stats.get("max", 0)) - float(col_stats.get("min", 0))
-                        
-                    if range_val > 0:
-                        req_score = (100 - (diff / range_val * 100)).clip(0, 100)
-                    else:
-                        req_score = (vals == target_num).astype(float) * 100.0
-            
+                elif op == "BETWEEN":
+                    low, high = to_range(target_val)
+                    req_score = calculate_range_score(df_ranked[col], low, high)
+                else:  # ==  (robust spread from global stats, see calculate_equality_score)
+                    req_score = calculate_equality_score(vals, target_num, (global_stats or {}).get(col))
+
                 col_name = f"regulatory_partial_score_{col}"
                 # Handle duplicate names if multiple requirements exist for the same column
                 if col_name in df_ranked.columns:
@@ -352,7 +366,7 @@ class RegulatoryAgent(BaseAgent):
 
                     # Use centralized utility for discrete variables
                     req_score = calculate_discrete_score(df_ranked[col], target_list)
-                    rank_pos = np.where(req_score > 0, 1, "N/A") # Placeholder for positionality
+                    rank_pos = _rank_position(req_score > 0)  # Placeholder for positionality
                 else:
                     # Determine match (boolean series)
                     if op == "==":
@@ -372,7 +386,7 @@ class RegulatoryAgent(BaseAgent):
                         req_score = (vals == target_str).astype(float) * 100.0
                     
                     is_match = req_score > 0
-                    rank_pos = np.where(is_match, 1, "N/A")
+                    rank_pos = _rank_position(is_match)
                 
                 # Transparency Metadata for Categorical
                 

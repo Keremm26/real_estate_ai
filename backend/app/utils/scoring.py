@@ -1,6 +1,110 @@
 import pandas as pd
 import numpy as np
-from typing import List, Union, Any
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
+
+# Operators the rankers score numerically (after normalize_operator).
+CONTINUOUS_OPERATORS = {">=", ">", "<=", "<"}
+NUMERIC_OPERATORS = CONTINUOUS_OPERATORS | {"==", "BETWEEN"}
+
+
+def normalize_operator(operator: Any) -> str:
+    """Upper-cased operator with the SQL-style '=' folded into '=='."""
+    op = str(operator or "").strip().upper()
+    return "==" if op == "=" else op
+
+
+def to_number(value: Any) -> Optional[float]:
+    """float(value) for scalars that are numbers (or numeric strings), else None."""
+    if value is None or isinstance(value, (bool, list, tuple, dict, set)):
+        return None
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    return None if np.isnan(number) else number
+
+
+def to_range(value: Any) -> Optional[Tuple[float, float]]:
+    """(low, high) for a two-element numeric list/tuple (BETWEEN), else None."""
+    if isinstance(value, (list, tuple)) and len(value) == 2:
+        lo, hi = to_number(value[0]), to_number(value[1])
+        if lo is not None and hi is not None:
+            return (min(lo, hi), max(lo, hi))
+    return None
+
+
+def is_numeric_column(series: pd.Series, sample_size: int = 500) -> bool:
+    """True for numeric dtypes and for text columns holding numbers
+    (e.g. epoca_costruzione: years stored as VARCHAR)."""
+    if pd.api.types.is_bool_dtype(series):
+        return False
+    if pd.api.types.is_numeric_dtype(series):
+        return True
+    sample = series.dropna().head(sample_size)
+    if sample.empty:
+        return False
+    return bool(pd.to_numeric(sample, errors="coerce").notna().mean() >= 0.95)
+
+
+def requirement_is_scorable(
+    requirement: Dict[str, Any],
+    df: pd.DataFrame,
+    allowed_columns: Optional[Iterable[str]] = None,
+    require_value: bool = True,
+) -> bool:
+    """Would a ranker actually score this requirement against ``df``?
+
+    Shared by the rankers (to skip what they cannot score) and by the
+    orchestrator's "found" predicate, so an agent never keeps ranking weight
+    for requirements that score a constant 0. Expects ``target_column`` already
+    resolved to a dataframe column.
+    """
+    col = requirement.get("target_column")
+    if not isinstance(col, str) or col not in df.columns:
+        return False
+    if allowed_columns is not None and col not in set(allowed_columns):
+        return False
+    value = requirement.get("value")
+    if value is None:
+        return not require_value
+    op = normalize_operator(requirement.get("operator"))
+    if op in NUMERIC_OPERATORS and is_numeric_column(df[col]):
+        # A numeric column only scores numeric targets; text like 'D' on a
+        # year column, or a malformed BETWEEN, would score 0 for everyone.
+        return to_range(value) is not None if op == "BETWEEN" else to_number(value) is not None
+    return True
+
+
+def calculate_range_score(series: pd.Series, low: float, high: float) -> pd.Series:
+    """BETWEEN: 100 inside [low, high], decaying linearly to 0 at one range
+    width outside it (a 85 m2 property scores 83 for 'tra 50 e 80 mq')."""
+    vals = pd.to_numeric(series, errors="coerce")
+    width = max(float(high) - float(low), 1.0)
+    distance = (float(low) - vals).clip(lower=0) + (vals - float(high)).clip(lower=0)
+    return (100.0 - distance / width * 100.0).clip(0, 100).fillna(0.0).round(1)
+
+
+def calculate_equality_score(
+    series: pd.Series, target: float, col_stats: Optional[Dict[str, Any]] = None
+) -> pd.Series:
+    """'==' on a numeric column: 100 at the target, decaying with distance
+    relative to the column's interquartile range (robust to outliers such as
+    the 15.9M m2 surface record that made a min-max range score everyone ~100).
+    Falls back to the min-max range, then to exact match."""
+    vals = pd.to_numeric(series, errors="coerce")
+    spread = 0.0
+    if isinstance(col_stats, dict):
+        pct = col_stats.get("percentiles") or {}
+        p25, p75 = to_number(pct.get("25%")), to_number(pct.get("75%"))
+        if p25 is not None and p75 is not None and p75 > p25:
+            spread = p75 - p25
+        elif to_number(col_stats.get("max")) is not None and to_number(col_stats.get("min")) is not None:
+            spread = float(col_stats["max"]) - float(col_stats["min"])
+    if spread > 0:
+        score = (100.0 - (vals - float(target)).abs() / spread * 100.0).clip(0, 100)
+    else:
+        score = (vals == float(target)).astype(float) * 100.0
+    return score.fillna(0.0).round(1)
 
 def calculate_continuous_score(
     series: pd.Series, 

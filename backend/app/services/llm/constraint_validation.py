@@ -42,19 +42,10 @@ KNOWN_FUNCTIONS = {"haversine_km"}
 # and the SQL (dataset space) can name the SAME column differently. We compare in
 # a shared "canonical" space so that mismatch is not flagged as an error.
 #
-# Sourced from the repo's own alias lists (real_estate_service.py safe_get
-# alternatives). Each key is the canonical name; the set holds dataset variants.
-COLUMN_ALIASES: Dict[str, Set[str]] = {
-    "surface_area": {"superficie_di_riferimento_mq"},
-    "energy_class": {"classe_energetica_ape"},
-    "mobility": {"mobilita", "mobilità"},
-    "commercial": {"commerciale"},
-    "healthcare": {"sanita", "sanità"},
-    "green": {"greenery", "verde"},
-    "education": {"educazione"},
-    "property_type": {"tipologia_bene_immobile"},
-    "cadastral_units_count": {"numero_immobili_per_catasto"},
-}
+# The map itself lives in app.core.constants (single source of truth shared with
+# the rankers and column statistics); re-exported here as the SAME object so the
+# importers below (repair, renderer, gold, graph_agent) keep working unchanged.
+from app.core.constants import COLUMN_ALIASES  # noqa: E402  (Dict[str, Set[str]])
 
 
 def _build_reverse(aliases: Dict[str, Set[str]]) -> Dict[str, str]:
@@ -89,7 +80,13 @@ class ValidationReport(BaseModel):
     is_valid: bool = True
     sql_parse_ok: bool = True
 
+    # SQL columns DuckDB would reject (not literally in the schema). Includes the
+    # alias mismatches below: an agent-vocabulary name in SQL still fails to bind.
     invalid_columns: List[str] = Field(default_factory=list)
+    # Subset of invalid_columns that resolve to a real column through
+    # COLUMN_ALIASES (e.g. surface_area -> superficie_di_riferimento_mq): the
+    # LLM leaked agent vocabulary into SQL. These are what alias repair fixes.
+    alias_mismatch_columns: List[str] = Field(default_factory=list)
     invalid_categorical_values: List[Dict[str, Any]] = Field(default_factory=list)
 
     missing_constraints: List[str] = Field(default_factory=list)
@@ -129,9 +126,20 @@ def _parse_sql(sql: str) -> Optional[exp.Expression]:
     return None
 
 
-def _referenced_columns(expr: exp.Expression) -> Set[str]:
-    """Every column name referenced anywhere in the statement."""
-    return {c.name for c in expr.find_all(exp.Column)}
+def query_local_names(expr: exp.Expression) -> tuple[Set[str], Set[str]]:
+    """Names the query defines itself, which are not dataset columns:
+    (SELECT-list aliases, CTE / derived-table / VALUES aliases)."""
+    select_aliases = {a.alias for a in expr.find_all(exp.Alias) if a.alias}
+    derived_tables = {n.alias for n in expr.find_all(exp.CTE, exp.Subquery, exp.Values) if n.alias}
+    return select_aliases, derived_tables
+
+
+def is_query_local(column: exp.Column, select_aliases: Set[str], derived_tables: Set[str]) -> bool:
+    """True if ``column`` refers to a name defined inside the query (an output
+    alias, or a column of a CTE / derived table) rather than a dataset column."""
+    if column.table:
+        return column.table in derived_tables
+    return column.name in select_aliases
 
 
 def _where_columns(expr: exp.Expression) -> Set[str]:
@@ -193,10 +201,19 @@ def validate_schema_grounding(
         report.is_valid = False
         report.warnings.append("SQL could not be parsed; column checks skipped.")
     else:
-        # Columns used in the SQL that do not exist in the schema (alias-aware).
-        referenced = _referenced_columns(expr)
+        # SQL columns are grounded LITERALLY: DuckDB binds names as written, so an
+        # agent-vocabulary name (surface_area) fails even though an alias exists.
+        # Alias-resolvable ones are also listed separately (alias_mismatch).
+        # Names the query defines itself (output aliases, CTE columns) are skipped.
+        select_aliases, derived_tables = query_local_names(expr)
+        referenced = {
+            c.name for c in expr.find_all(exp.Column)
+            if not is_query_local(c, select_aliases, derived_tables)
+        }
         if valid_cols:
-            report.invalid_columns = sorted(c for c in referenced if not _exists_in_schema(c))
+            invalid = sorted(c for c in referenced if c not in valid_cols)
+            report.invalid_columns = invalid
+            report.alias_mismatch_columns = [c for c in invalid if _exists_in_schema(c)]
 
     # IR predicate columns that do not exist in the schema (warning, not fatal).
     if valid_cols:

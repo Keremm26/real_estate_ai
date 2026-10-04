@@ -40,7 +40,13 @@ from pydantic import BaseModel, Field
 import sqlglot
 from sqlglot import exp
 
-from app.services.llm.constraint_validation import COLUMN_ALIASES, _build_reverse
+from app.services.llm.constraint_validation import (
+    COLUMN_ALIASES,
+    _build_reverse,
+    is_query_local,
+    query_local_names,
+)
+from app.services.llm.ir_sql_renderer import is_text_type
 
 
 class RepairResult(BaseModel):
@@ -124,10 +130,16 @@ def repair_column_aliases(
     seen_repairs: Dict[str, str] = {}
     unresolved: Set[str] = set()
 
+    # Names the query defines itself are not dataset columns and must never be
+    # renamed: SELECT-list aliases (``... AS energy_score_total ORDER BY
+    # energy_score_total``) and columns of CTEs / derived tables / VALUES lists
+    # (``p.latitude`` where p is a CTE).
+    select_aliases, derived_tables = query_local_names(expr)
+
     def _rename(node: exp.Expression) -> exp.Expression:
         if isinstance(node, exp.Column):
             name = node.name
-            if name and name not in valid_cols:
+            if name and name not in valid_cols and not is_query_local(node, select_aliases, derived_tables):
                 target = _resolve_to_schema(name, valid_cols, aliases, reverse)
                 if target is not None and target != name:
                     seen_repairs[name] = target
@@ -139,10 +151,53 @@ def repair_column_aliases(
 
     new_expr = expr.transform(_rename)
 
+    # Type repair: a text column compared with a number fails in DuckDB
+    # ("Cannot compare VARCHAR and INTEGER_LITERAL"), e.g. epoca_costruzione
+    # (years stored as VARCHAR) >= 1990. Cast the column, never the literal.
+    text_cols = {c for c, t in _schema_types(db_schema).items() if is_text_type(t)}
+    casts: Set[str] = set()
+
+    def _try_cast(col: exp.Column) -> exp.Expression:
+        casts.add(col.name)
+        return exp.TryCast(this=col.copy(), to=exp.DataType.build("DOUBLE"))
+
+    def _cast(node: exp.Expression) -> exp.Expression:
+        if isinstance(node, (exp.GT, exp.GTE, exp.LT, exp.LTE, exp.EQ, exp.NEQ)):
+            left, right = node.this, node.expression
+            if _is_text_column(left, text_cols) and _is_number_literal(right):
+                node.set("this", _try_cast(left))
+            elif _is_text_column(right, text_cols) and _is_number_literal(left):
+                node.set("expression", _try_cast(right))
+        elif isinstance(node, exp.Between):
+            if (_is_text_column(node.this, text_cols)
+                    and _is_number_literal(node.args.get("low"))
+                    and _is_number_literal(node.args.get("high"))):
+                node.set("this", _try_cast(node.this))
+        return node
+
+    if text_cols:
+        new_expr = new_expr.transform(_cast)
+
     result.unresolved_columns = sorted(unresolved)
-    if seen_repairs:
+    if seen_repairs or casts:
         result.sql = new_expr.sql(dialect="duckdb")
         result.changed = True
         result.repairs = [{"from": k, "to": v} for k, v in sorted(seen_repairs.items())]
+        result.repairs += [{"from": c, "to": f"TRY_CAST({c} AS DOUBLE)"} for c in sorted(casts)]
 
     return result
+
+
+def _schema_types(db_schema: Dict[str, Any]) -> Dict[str, Any]:
+    types = db_schema.get("types") if isinstance(db_schema, dict) else None
+    return types if isinstance(types, dict) else {}
+
+
+def _is_text_column(node: Optional[exp.Expression], text_cols: Set[str]) -> bool:
+    return isinstance(node, exp.Column) and node.name in text_cols
+
+
+def _is_number_literal(node: Optional[exp.Expression]) -> bool:
+    if isinstance(node, exp.Neg):
+        node = node.this
+    return isinstance(node, exp.Literal) and node.is_number

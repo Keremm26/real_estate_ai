@@ -122,7 +122,39 @@ def make_column_resolver(
         # 3. Unknown -> cannot ground it.
         return None
 
+    # Expose column types so render_predicate can cast text columns compared
+    # with numbers (e.g. epoca_costruzione, years stored as VARCHAR).
+    resolve.types = dict(types) if isinstance(types, dict) else {}
     return resolve
+
+
+_TEXT_TYPES = {"str", "object", "string", "varchar", "text", "char"}
+
+
+def is_text_type(dtype: Any) -> bool:
+    """True for text column types (pandas dtype strings or SQL names)."""
+    name = str(dtype or "").strip().lower()
+    return name in _TEXT_TYPES or name.startswith(("varchar", "string", "char"))
+
+
+def _is_number(value: Any) -> bool:
+    if isinstance(value, bool):
+        return False
+    if isinstance(value, (int, float)):
+        return True
+    try:
+        float(value)
+        return not isinstance(value, str) or value.strip() != ""
+    except (TypeError, ValueError):
+        return False
+
+
+def _cast_if_text(col: str, values: list, types: Dict[str, Any]) -> str:
+    """``TRY_CAST(col AS DOUBLE)`` when a text column meets numeric values;
+    DuckDB rejects VARCHAR vs integer comparisons (Binder Error)."""
+    if values and all(_is_number(v) for v in values) and is_text_type(types.get(col)):
+        return f"TRY_CAST({col} AS DOUBLE)"
+    return col
 
 
 # ---------------------------------------------------------------------------
@@ -160,6 +192,7 @@ def render_predicate(
 
     op = (entry.operator or "").strip().upper()
     value = entry.value
+    types = getattr(resolve_column, "types", None) or {}
 
     # IN: needs a non-empty list of values.
     if op == "IN":
@@ -176,7 +209,10 @@ def render_predicate(
             v is not None for v in value
         ):
             lo, hi = value
-            return f"{col} BETWEEN {_quote(lo)} AND {_quote(hi)}", None
+            lhs = _cast_if_text(col, [lo, hi], types)
+            if lhs != col:
+                lo, hi = float(lo), float(hi)
+            return f"{lhs} BETWEEN {_quote(lo)} AND {_quote(hi)}", None
         return None, "BETWEEN without a [low, high] value"
 
     # Plain comparison.
@@ -185,7 +221,10 @@ def render_predicate(
             # e.g. a regulatory min-surface whose threshold is pending docs.
             return None, "comparison with no value"
         sql_op = "=" if op == "==" else op
-        return f"{col} {sql_op} {_quote(value)}", None
+        lhs = _cast_if_text(col, [value], types)
+        if lhs != col:
+            value = float(value)
+        return f"{lhs} {sql_op} {_quote(value)}", None
 
     return None, f"unsupported operator '{entry.operator}'"
 

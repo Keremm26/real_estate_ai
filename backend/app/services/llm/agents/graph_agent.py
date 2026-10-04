@@ -15,7 +15,8 @@ from sqlglot import exp, parse_one
 from app.services.analysis.ranking import calculate_ranking_score
 from app.core.config import settings
 from app.core.constants import (
-    SCORE_LEGEND, 
+    resolve_column,
+    SCORE_LEGEND,
     ENERGY_SCORE_LEGEND, 
     ENERGY_AGENT_COLUMNS, 
     REGULATORY_AGENT_COLUMNS, 
@@ -60,6 +61,7 @@ from app.services.llm.agents.relaxation_agent import RelaxationAgent
 from app.utils.logger import logger
 from app.utils.json_parser import safe_extract_json
 from app.utils.run_json_logger import get_run_logger
+from app.utils.scoring import requirement_is_scorable
 from dataclasses import dataclass, field
 import sqlparse
 
@@ -143,6 +145,50 @@ class GraphState(TypedDict):
     relaxation_count: int
     use_data_knowledge: bool  # Whether data statistics are passed to agents
     use_relaxation: bool  # Whether to use query relaxation if 0 results found
+
+
+def _resolve_requirements(requirements, columns) -> List[Dict[str, Any]]:
+    """Copies of the agents' requirement dicts, ready for the rankers.
+
+    Agents name columns in their canonical (English) vocabulary; the rankers
+    compare ``target_column`` with the dataframe columns literally. Resolve each
+    name to the dataframe column it refers to (COLUMN_ALIASES); names that do not
+    resolve are kept as-is, and the rankers skip them as before. Legacy Italian
+    keys (colonna_target / operatore / valore) are mapped too. Never mutates the
+    agent output."""
+    out: List[Dict[str, Any]] = []
+    for req in requirements or []:
+        if not isinstance(req, dict):
+            req = req.model_dump() if hasattr(req, "model_dump") else {}
+        req = dict(req)
+        for new_key, legacy_key in (("target_column", "colonna_target"), ("operator", "operatore"), ("value", "valore")):
+            if req.get(new_key) is None and req.get(legacy_key) is not None:
+                req[new_key] = req[legacy_key]
+        col = req.get("target_column")
+        if not isinstance(col, str):
+            # Malformed LLM output (e.g. a list of columns): unscorable, and
+            # must not crash the ranking node — rankers skip a missing column.
+            req["target_column"] = None
+        elif col:
+            req["target_column"] = resolve_column(col, columns) or col
+        out.append(req)
+    return out
+
+
+def _count_scorable(requirements, df: pd.DataFrame, exclude=(), allowed_columns=None, require_value: bool = True) -> int:
+    """How many requirements the target ranker would actually score.
+
+    Uses the rankers' own rule (requirement_is_scorable): the column resolves,
+    is allowed for that ranker, has a value, and the value fits the column type.
+    This is the "found" predicate: an agent with zero scorable requirements is
+    excluded and its weight redistributed, instead of adding a constant 0."""
+    count = 0
+    for req in _resolve_requirements(requirements, set(df.columns)):
+        if req.get("target_column") in exclude:
+            continue
+        if requirement_is_scorable(req, df, allowed_columns=allowed_columns, require_value=require_value):
+            count += 1
+    return count
 
 
 class GraphOrchestratorAgent(BaseAgent):
@@ -911,32 +957,60 @@ class GraphOrchestratorAgent(BaseAgent):
             state["set_progress"]((percent, state["steps_state"]))
 
     def _get_column_statistics(self, columns: List[str], dataset_path: str = None, dataset_df: pd.DataFrame = None, target_not_na_col: str = None, db_metadata: dict = None) -> dict:
-        """Estrae statistiche per un set di colonne per gli agenti LLM."""
+        """Estrae statistiche per un set di colonne per gli agenti LLM.
+
+        Requested names may be agent (canonical English) names: each is resolved
+        to the dataset column it refers to (COLUMN_ALIASES), the statistics are
+        computed on that column and reported under the REQUESTED name, i.e. the
+        name the agent must emit and the rankers look up."""
         try:
             if dataset_df is not None:
-                # Filtraggio colonne presenti
-                available_cols = [c for c in columns if c in dataset_df.columns]
-                df = dataset_df[available_cols] if available_cols else pd.DataFrame()
+                schema_cols = set(dataset_df.columns)
             elif dataset_path and os.path.exists(dataset_path):
-                available_cols = [c for c in columns] # Initial list
-                if dataset_path.endswith('.parquet'):
-                    df = pd.read_parquet(dataset_path, columns=available_cols)
-                elif dataset_path.endswith('.csv'):
-                    df = pd.read_csv(dataset_path, usecols=lambda col: col in available_cols)
+                if dataset_path.endswith('.csv'):
+                    schema_cols = set(pd.read_csv(dataset_path, nrows=0).columns)
                 else:
-                    try:
-                        df = pd.read_parquet(dataset_path, columns=available_cols)
-                    except:
-                        df = pd.read_csv(dataset_path, usecols=lambda col: col in available_cols)
+                    import pyarrow.parquet as pq
+                    schema_cols = set(pq.read_schema(dataset_path).names)
             else:
                 return {}
 
+            # requested name -> dataset column (only names that resolve)
+            resolved = {c: r for c in columns if (r := resolve_column(c, schema_cols))}
+            not_na_col = resolve_column(target_not_na_col, schema_cols) if target_not_na_col else None
+            read_cols = list(dict.fromkeys([*resolved.values(), *([not_na_col] if not_na_col else [])]))
+
+            if dataset_df is not None:
+                df = dataset_df[read_cols] if read_cols else pd.DataFrame()
+            elif not read_cols:
+                df = pd.DataFrame()
+            elif dataset_path.endswith('.csv'):
+                df = pd.read_csv(dataset_path, usecols=read_cols)
+            else:
+                df = pd.read_parquet(dataset_path, columns=read_cols)
+
+            if read_cols:
+                total_records = len(df)
+            elif dataset_df is not None:
+                total_records = len(dataset_df)
+            elif dataset_path.endswith('.csv'):
+                total_records = sum(1 for _ in open(dataset_path, encoding="utf-8", errors="ignore")) - 1
+            else:
+                import pyarrow.parquet as pq
+                total_records = pq.ParquetFile(dataset_path).metadata.num_rows
             stats = {
-                "total_records": len(df),
+                "total_records": total_records,
             }
-            
-            if target_not_na_col and target_not_na_col in df.columns:
-                stats[f"with_{target_not_na_col}_data"] = int(df[target_not_na_col].notna().sum())
+
+            if not_na_col and not_na_col in df.columns:
+                stats[f"with_{target_not_na_col}_data"] = int(df[not_na_col].notna().sum())
+
+            # Compute on the resolved dataset column, report under the requested name.
+            if read_cols:
+                df = df.copy()  # never write into the cached base_dataset
+            for req_name, data_col in resolved.items():
+                if req_name != data_col:
+                    df[req_name] = df[data_col]
 
             for col in columns:
                 if col not in df.columns:
@@ -1460,6 +1534,7 @@ class GraphOrchestratorAgent(BaseAgent):
             "typology_preserved": report.typology_preserved,
             "location_filter_preserved": report.location_filter_preserved,
             "invalid_columns_count": len(report.invalid_columns),
+            "alias_mismatch_columns_count": len(report.alias_mismatch_columns),
             "invalid_categorical_values_count": len(report.invalid_categorical_values),
             "missing_constraints_count": len(report.missing_constraints),
             "zero_addition_count": len(report.zero_addition_violations),
@@ -2353,34 +2428,41 @@ class GraphOrchestratorAgent(BaseAgent):
 
         # Identify agents that actually found something during filtering phase
         # to exclude those that returned nothing from final ranking determination.
+        # "Found" = at least one requirement the rankers can score, i.e. whose
+        # column resolves to a dataframe column. An agent whose requirements are
+        # all unscorable (e.g. legal_nature: no such column) would otherwise keep
+        # its weight while contributing a constant 0 to every building.
         really_found_agents = []
-        
+        df_cols = set(df.columns)
+        typology_cols = {"property_type", "tipologia_bene_immobile"}  # scored via typologies
+        regulatory_columns = [resolve_column(c, df_cols) or c for c in REGULATORY_AGENT_COLUMNS]
+
         # 1. Location
         if state["context"].locations and len(state["context"].locations) > 0:
             really_found_agents.append("location")
-            
+
         # 2. Building
         if state.get("building_result"):
             t_data = safe_extract_json(state["building_result"].raw_text, schema=BuildingResponse)
-            if t_data and (len(t_data.typologies) > 0 or len(t_data.requirements) > 0):
+            if t_data and (len(t_data.typologies) > 0 or _count_scorable(t_data.requirements, df, exclude=typology_cols) > 0):
                 really_found_agents.append("building")
-                
+
         # 3. Energy
         if state.get("energy_result"):
             a_data = safe_extract_json(state["energy_result"].raw_text, schema=EnergyResponse)
-            if a_data and len(a_data.requirements) > 0:
+            if a_data and _count_scorable(a_data.requirements, df) > 0:
                 really_found_agents.append("energy")
-                
+
         # 4. Proximity
         if state.get("proximity_result"):
             p_data = safe_extract_json(state["proximity_result"].raw_text)
-            if p_data and p_data.get("requirements") and len(p_data["requirements"]) > 0:
+            if p_data and _count_scorable(p_data.get("requirements"), df, require_value=False) > 0:
                 really_found_agents.append("proximity")
-                
+
         # 5. Regulatory
         if state.get("regulatory_result"):
             n_data = safe_extract_json(state["regulatory_result"].raw_text, schema=RegulatoryResponse)
-            if n_data and n_data.requirements and len(n_data.requirements) > 0:
+            if n_data and _count_scorable(n_data.requirements, df, allowed_columns=regulatory_columns) > 0:
                 really_found_agents.append("regulatory")
 
         logger.info("Agents with found requirements in filtering phase: {}", really_found_agents)
@@ -2448,6 +2530,13 @@ class GraphOrchestratorAgent(BaseAgent):
             dataset_df=state.get("base_dataset"),
             db_metadata=state.get("db_metadata")
         )
+        # The rankers receive requirements resolved to dataframe columns and look
+        # global_stats up by that name: expose every entry under its dataset
+        # column too (stats are keyed by the agent name requested above).
+        for stat_name in list(global_stats):
+            data_col = resolve_column(stat_name, df_cols)
+            if data_col and data_col != stat_name and data_col not in global_stats:
+                global_stats[data_col] = global_stats[stat_name]
 
         # Define ranking tasks for parallel execution
         def rank_building():
@@ -2458,10 +2547,10 @@ class GraphOrchestratorAgent(BaseAgent):
                 if data and (data.typologies or data.requirements):
                     # For ranking, typologies is the main driver, but we pass requirements for numerical scoring
                     tmp = self.building_agent.run(
-                        mode="ranking", 
-                        df=df.copy(), 
+                        mode="ranking",
+                        df=df.copy(),
                         ranked_typologies=data.typologies,
-                        requirements=data.requirements,
+                        requirements=_resolve_requirements(data.requirements, df_cols),
                         global_stats=global_stats
                     )
                     return tmp, (time.time() - start_t) * 1000
@@ -2484,9 +2573,10 @@ class GraphOrchestratorAgent(BaseAgent):
             requirements = None
             if res:
                 data = safe_extract_json(res.raw_text, schema=EnergyResponse)
-                if data and data.found:
-                    requirements = data.requirements
-            
+                # Same predicate as the "found" check above: scorable requirements.
+                if data and _count_scorable(data.requirements, df) > 0:
+                    requirements = _resolve_requirements(data.requirements, df_cols)
+
             tmp = self.energy_agent.run(mode="ranking", df=df.copy(), requirements=requirements, global_stats=global_stats)
             return tmp, (time.time() - start_t) * 1000
 
@@ -2495,8 +2585,8 @@ class GraphOrchestratorAgent(BaseAgent):
             res = state.get("regulatory_result")
             if res:
                 data = safe_extract_json(res.raw_text, schema=RegulatoryResponse)
-                if data and data.found:
-                    tmp = self.regulatory_agent.run(mode="ranking", df=df.copy(), requirements=data.requirements, available_columns=REGULATORY_AGENT_COLUMNS, global_stats=global_stats)
+                if data and _count_scorable(data.requirements, df, allowed_columns=regulatory_columns) > 0:
+                    tmp = self.regulatory_agent.run(mode="ranking", df=df.copy(), requirements=_resolve_requirements(data.requirements, df_cols), available_columns=regulatory_columns, global_stats=global_stats)
                     return tmp, (time.time() - start_t) * 1000
             tmp = df.copy()
             tmp["regulatory_score"] = 0.0
@@ -2508,7 +2598,7 @@ class GraphOrchestratorAgent(BaseAgent):
             if res:
                 proximity_data = safe_extract_json(res.raw_text)
                 if proximity_data and proximity_data.get("requirements"):
-                    tmp = self.proximity_agent.run(mode="ranking", df=df.copy(), requirements=proximity_data.get("requirements"), global_stats=global_stats)
+                    tmp = self.proximity_agent.run(mode="ranking", df=df.copy(), requirements=_resolve_requirements(proximity_data.get("requirements"), df_cols), global_stats=global_stats)
                     return tmp, (time.time() - start_t) * 1000
             tmp = df.copy()
             tmp["proximity_score"] = 0.0
