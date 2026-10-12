@@ -1,0 +1,626 @@
+{
+  "decisions": [
+    {
+      "city": "Amsterdam",
+      "source_column": "Energiebehoefte",
+      "suggested_label": "energy_need_intensity",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "energy_need_intensity",
+      "reason": "Appears to be a core EPC metric distinct from final and primary energy, and likely reusable across methodologies that report useful/needed energy per area."
+    },
+    {
+      "city": "Amsterdam",
+      "source_column": "PrimaireFossieleEnergie",
+      "suggested_label": "fossil_primary_energy_intensity",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "fossil_primary_energy_intensity",
+      "reason": "Non-renewable/fossil primary energy intensity is a common EPC indicator distinct from total primary energy and likely to recur beyond Amsterdam."
+    },
+    {
+      "city": "Amsterdam",
+      "source_column": "Warmtebehoefte",
+      "suggested_label": "space_heating_demand_intensity",
+      "decision": "map_to_existing",
+      "target_concept_id": "space_heating_demand_intensity",
+      "proposed_concept_id": null,
+      "reason": "Warmtebehoefte is heating demand/need and fits the existing space_heating_demand_intensity concept."
+    },
+    {
+      "city": "Amsterdam",
+      "source_column": "Temperatuuroverschrijding",
+      "suggested_label": "overheating_indicator",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "overheating_indicator",
+      "reason": "Summer overheating/thermal comfort indicators appear in multiple national EPC schemes and are not covered by existing concepts."
+    },
+    {
+      "city": "Amsterdam",
+      "source_column": "SoortOpname",
+      "suggested_label": "survey_detail_level",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "survey_detail_level",
+      "reason": "Methodological distinction such as basic vs detailed survey is meaningful for comparability and may recur in other EPC datasets."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "vehicle_electric",
+      "suggested_label": "electric_vehicle_charging_present",
+      "decision": "city_specific",
+      "target_concept_id": null,
+      "proposed_concept_id": null,
+      "reason": "Likely a building feature related to EV charging, but currently too dataset-specific and not yet established as a recurring EPC core concept."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "sistema_biomassa",
+      "suggested_label": "biomass_system_present",
+      "decision": "city_specific",
+      "target_concept_id": null,
+      "proposed_concept_id": null,
+      "reason": "Represents a technology-specific boolean that is too granular relative to the current vocabulary and can often be inferred from system/fuel fields."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "xarxa_districte",
+      "suggested_label": "district_network_present",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "district_network_present",
+      "reason": "Connection to district heating/cooling is a meaningful supply characteristic likely to recur across cities and not captured by current concepts."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "energia_geotermica",
+      "suggested_label": "geothermal_system_present",
+      "decision": "city_specific",
+      "target_concept_id": null,
+      "proposed_concept_id": null,
+      "reason": "Technology-specific presence flag is too granular for promotion at this stage."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "emissions_calefacci",
+      "suggested_label": "space_heating_co2_intensity",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "space_heating_co2_intensity",
+      "reason": "Service-level emissions intensity is a coherent counterpart to existing service-level totals and likely useful across EPC datasets."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "emissions_refrigeraci",
+      "suggested_label": "cooling_co2_intensity",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "cooling_co2_intensity",
+      "reason": "Service-level emissions intensity is a coherent missing concept parallel to cooling_co2_total."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "emissions_acs",
+      "suggested_label": "domestic_hot_water_co2_intensity",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "domestic_hot_water_co2_intensity",
+      "reason": "Service-level emissions intensity is a useful recurring metric parallel to domestic_hot_water_co2_total."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "emissions_enllumenament",
+      "suggested_label": "lighting_co2_intensity",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "lighting_co2_intensity",
+      "reason": "Service-level emissions intensity is a useful recurring metric parallel to lighting_co2_total."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "energia_calefacci",
+      "suggested_label": "space_heating_final_energy_intensity",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "space_heating_final_energy_intensity",
+      "reason": "End-use final energy intensity is a natural missing counterpart to existing end-use totals."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "energia_refrigeraci",
+      "suggested_label": "cooling_final_energy_intensity",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "cooling_final_energy_intensity",
+      "reason": "End-use final energy intensity is a natural missing counterpart to existing end-use totals."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "energia_acs",
+      "suggested_label": "domestic_hot_water_final_energy_intensity",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "domestic_hot_water_final_energy_intensity",
+      "reason": "End-use final energy intensity is a natural missing counterpart to existing end-use totals."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "energia_enllumenament",
+      "suggested_label": "lighting_final_energy_intensity",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "lighting_final_energy_intensity",
+      "reason": "End-use final energy intensity is a natural missing counterpart to existing end-use totals."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "qualificaci_emissions_1",
+      "suggested_label": "end_use_emissions_class",
+      "decision": "city_specific",
+      "target_concept_id": null,
+      "proposed_concept_id": null,
+      "reason": "Label is ambiguous and seems tied to a specific subcomponent coding in this dataset; not stable enough for promotion."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "qualificaci_emissions_acs",
+      "suggested_label": "domestic_hot_water_emissions_class",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "domestic_hot_water_co2_class",
+      "reason": "Service-specific CO2/emissions class is a meaningful recurring EPC concept and should align naming with existing co2_class convention."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "qualificaci_energia_calefacci",
+      "suggested_label": "space_heating_energy_class",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "space_heating_energy_class",
+      "reason": "Service-specific energy class is a reusable EPC concept not covered by overall energy_class."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "qualificaci_energia_acs",
+      "suggested_label": "domestic_hot_water_energy_class",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "domestic_hot_water_energy_class",
+      "reason": "Service-specific energy class is a reusable EPC concept not covered by overall energy_class."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "rehabilitacio_energetica",
+      "suggested_label": "energy_rehabilitation_present",
+      "decision": "city_specific",
+      "target_concept_id": null,
+      "proposed_concept_id": null,
+      "reason": "Retrofit-status indicator is meaningful but definitions likely vary strongly across datasets and may reflect local program metadata more than EPC core semantics."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "actuacions_rehabilitacio",
+      "suggested_label": "rehabilitation_actions",
+      "decision": "city_specific",
+      "target_concept_id": null,
+      "proposed_concept_id": null,
+      "reason": "Free-text or detailed action listings are too granular and heterogeneous for canonical EPC vocabulary."
+    },
+    {
+      "city": "Dublin",
+      "source_column": "PrimaryEnergyLighting",
+      "suggested_label": "lighting_primary_energy_total",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "lighting_primary_energy_total",
+      "reason": "End-use primary energy total is a clear recurring concept and complements existing end-use final energy and CO2 totals."
+    },
+    {
+      "city": "Dublin",
+      "source_column": "PrimaryEnergyPumpsFans",
+      "suggested_label": "auxiliary_primary_energy_total",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "auxiliary_primary_energy_total",
+      "reason": "Auxiliaries primary energy total is a clear recurring concept and complements auxiliary_final_energy_total and auxiliary_co2_total."
+    },
+    {
+      "city": "Dublin",
+      "source_column": "PrimaryEnergyMainWater",
+      "suggested_label": "domestic_hot_water_primary_energy_total",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "domestic_hot_water_primary_energy_total",
+      "reason": "End-use primary energy total for DHW is a clear recurring concept."
+    },
+    {
+      "city": "Dublin",
+      "source_column": "PrimaryEnergyMainSpace",
+      "suggested_label": "space_heating_primary_energy_total",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "space_heating_primary_energy_total",
+      "reason": "End-use primary energy total for space heating is a clear recurring concept."
+    },
+    {
+      "city": "Dublin",
+      "source_column": "DeliveredEnergySecondarySpace",
+      "suggested_label": "secondary_space_heating_final_or_delivered_energy_total",
+      "decision": "city_specific",
+      "target_concept_id": null,
+      "proposed_concept_id": null,
+      "reason": "Main vs secondary service splits are plausible but too scheme-specific and would proliferate highly granular concepts."
+    },
+    {
+      "city": "Dublin",
+      "source_column": "DeliveredEnergySupplementaryWater",
+      "suggested_label": "supplementary_domestic_hot_water_final_or_delivered_energy_total",
+      "decision": "city_specific",
+      "target_concept_id": null,
+      "proposed_concept_id": null,
+      "reason": "Supplementary DHW split is too granular and not clearly recurring enough for canonical promotion."
+    },
+    {
+      "city": "Dublin",
+      "source_column": "CO2SecondarySpace",
+      "suggested_label": "secondary_space_heating_co2_total",
+      "decision": "city_specific",
+      "target_concept_id": null,
+      "proposed_concept_id": null,
+      "reason": "Secondary service split is too granular for the cross-city core vocabulary."
+    },
+    {
+      "city": "Dublin",
+      "source_column": "CO2SupplementaryWater",
+      "suggested_label": "supplementary_domestic_hot_water_co2_total",
+      "decision": "city_specific",
+      "target_concept_id": null,
+      "proposed_concept_id": null,
+      "reason": "Supplementary service split is too granular for the cross-city core vocabulary."
+    },
+    {
+      "city": "Dublin",
+      "source_column": "RER",
+      "suggested_label": "renewable_energy_ratio",
+      "decision": "map_to_existing",
+      "target_concept_id": "renewable_energy_share",
+      "proposed_concept_id": null,
+      "reason": "This is the same underlying concept as renewable_energy_share; ratio vs percent is a representation issue, not a new concept."
+    },
+    {
+      "city": "Liège",
+      "source_column": "free_facade",
+      "suggested_label": "building_detachment_type",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "building_detachment_type",
+      "reason": "Detached/semi-detached/terraced morphology is broadly useful across cities and more specific than building_type."
+    },
+    {
+      "city": "London",
+      "source_column": "environment_impact_current",
+      "suggested_label": "environmental_impact_rating_score_current",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "environmental_impact_rating_score_current",
+      "reason": "A distinct environmental impact score is a real EPC metric not captured by energy_efficiency_score or co2_class."
+    },
+    {
+      "city": "London",
+      "source_column": "environment_impact_potential",
+      "suggested_label": "environmental_impact_rating_score_potential",
+      "decision": "city_specific",
+      "target_concept_id": null,
+      "proposed_concept_id": null,
+      "reason": "Potential/improved-state metrics are valuable but introduce a parallel future-state vocabulary not otherwise represented in the canon."
+    },
+    {
+      "city": "London",
+      "source_column": "energy_consumption_current",
+      "suggested_label": "energy_consumption_metric_current",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "energy_consumption_intensity",
+      "reason": "This UK EPC field is a standard asset metric, typically kWh/m2/year, and is distinct from primary/final energy totals already in the vocabulary."
+    },
+    {
+      "city": "London",
+      "source_column": "energy_consumption_potential",
+      "suggested_label": "energy_consumption_metric_potential",
+      "decision": "city_specific",
+      "target_concept_id": null,
+      "proposed_concept_id": null,
+      "reason": "Potential/improved-state variant would require a broader pattern for future-state concepts not currently present."
+    },
+    {
+      "city": "London",
+      "source_column": "built_form",
+      "suggested_label": "built_form",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "built_form",
+      "reason": "Mid-terrace/end-terrace/semi-detached form is a common building morphology concept distinct from generic building_type."
+    },
+    {
+      "city": "London",
+      "source_column": "main_heating_controls",
+      "suggested_label": "heating_controls_type",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "heating_controls_type",
+      "reason": "Heating controls are a meaningful, recurring system characteristic in EPC data."
+    },
+    {
+      "city": "London",
+      "source_column": "multi_glaze_proportion",
+      "suggested_label": "multi_glazed_window_share",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "multi_glazed_window_share",
+      "reason": "Quantitative share of multiple-glazed windows is a reusable envelope-performance attribute distinct from window_u_value."
+    },
+    {
+      "city": "London",
+      "source_column": "flat_top_storey",
+      "suggested_label": "top_storey_flag",
+      "decision": "city_specific",
+      "target_concept_id": null,
+      "proposed_concept_id": null,
+      "reason": "Dwelling-position detail is mainly relevant to some apartment records and too specific for the core cross-city vocabulary."
+    },
+    {
+      "city": "London",
+      "source_column": "floor_level",
+      "suggested_label": "dwelling_floor_level",
+      "decision": "city_specific",
+      "target_concept_id": null,
+      "proposed_concept_id": null,
+      "reason": "Useful but mainly dwelling-position metadata rather than a broadly recurring EPC core concept."
+    },
+    {
+      "city": "London",
+      "source_column": "wind_turbine_count",
+      "suggested_label": "wind_turbine_present_or_count",
+      "decision": "city_specific",
+      "target_concept_id": null,
+      "proposed_concept_id": null,
+      "reason": "Technology-specific renewable equipment count is too granular for the current core vocabulary."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "refrig_rendim",
+      "suggested_label": "cooling_system_efficiency",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "cooling_system_efficiency",
+      "reason": "Cooling system efficiency is a natural counterpart to existing heating and hot water system efficiency concepts."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "refrig_vector",
+      "suggested_label": "main_cooling_fuel",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "main_cooling_fuel",
+      "reason": "Cooling energy carrier is a meaningful system attribute likely to recur across datasets."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "elec_demglobal",
+      "suggested_label": "total_energy_demand_intensity",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "total_energy_demand_intensity",
+      "reason": "Overall energy demand intensity is distinct from final and primary energy intensity and useful across methodologies."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "elec_demacs",
+      "suggested_label": "domestic_hot_water_demand_intensity",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "domestic_hot_water_demand_intensity",
+      "reason": "Service-level demand intensity for DHW is a coherent counterpart to existing demand concepts."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "cal_calefdem",
+      "suggested_label": "space_heating_demand_class",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "space_heating_demand_class",
+      "reason": "Service-specific demand class is a meaningful recurring EPC classification concept."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "cal_refrigdem",
+      "suggested_label": "cooling_demand_class",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "cooling_demand_class",
+      "reason": "Service-specific demand class is a meaningful recurring EPC classification concept."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "cal_norenovcalef",
+      "suggested_label": "space_heating_primary_energy_class",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "space_heating_primary_energy_class",
+      "reason": "Service-specific primary energy class is a reusable concept across EPC schemes with end-use grades."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "cal_norenovrefrig",
+      "suggested_label": "cooling_primary_energy_class",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "cooling_primary_energy_class",
+      "reason": "Service-specific primary energy class is a reusable concept across EPC schemes with end-use grades."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "cal_norenovacs",
+      "suggested_label": "domestic_hot_water_primary_energy_class",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "domestic_hot_water_primary_energy_class",
+      "reason": "Service-specific primary energy class is a reusable concept across EPC schemes with end-use grades."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "cal_co2calef",
+      "suggested_label": "space_heating_co2_class",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "space_heating_co2_class",
+      "reason": "Service-specific CO2 class is a reusable EPC concept not captured by overall co2_class."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "cal_co2refrig",
+      "suggested_label": "cooling_co2_class",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "cooling_co2_class",
+      "reason": "Service-specific CO2 class is a reusable EPC concept not captured by overall co2_class."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "cal_co2acs",
+      "suggested_label": "domestic_hot_water_co2_class",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "domestic_hot_water_co2_class",
+      "reason": "Service-specific CO2 class is a reusable EPC concept not captured by overall co2_class."
+    },
+    {
+      "city": "Paris",
+      "source_column": "typologie_logement",
+      "suggested_label": "dwelling_typology",
+      "decision": "city_specific",
+      "target_concept_id": null,
+      "proposed_concept_id": null,
+      "reason": "T1/T2/T3 style dwelling typologies are common locally but definitions vary and are less central to EPC interoperability than broader morphology fields."
+    },
+    {
+      "city": "Paris",
+      "source_column": "indicateur_confort_ete",
+      "suggested_label": "summer_comfort_indicator",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "summer_comfort_indicator",
+      "reason": "Summer comfort is a recurring EPC outcome concept across schemes and complements overheating-related metrics."
+    },
+    {
+      "city": "Paris",
+      "source_column": "conso_chauffage_ep",
+      "suggested_label": "space_heating_primary_energy_total",
+      "decision": "map_to_existing",
+      "target_concept_id": "space_heating_primary_energy_total",
+      "proposed_concept_id": null,
+      "reason": "This directly matches the promoted end-use primary energy total concept for space heating."
+    },
+    {
+      "city": "Paris",
+      "source_column": "conso_ecs_ep",
+      "suggested_label": "domestic_hot_water_primary_energy_total",
+      "decision": "map_to_existing",
+      "target_concept_id": "domestic_hot_water_primary_energy_total",
+      "proposed_concept_id": null,
+      "reason": "This directly matches the promoted end-use primary energy total concept for DHW."
+    },
+    {
+      "city": "Paris",
+      "source_column": "conso_refroidissement_ep",
+      "suggested_label": "cooling_primary_energy_total",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "cooling_primary_energy_total",
+      "reason": "End-use primary energy total for cooling is a clear recurring concept missing from the current vocabulary."
+    },
+    {
+      "city": "Paris",
+      "source_column": "conso_eclairage_ep",
+      "suggested_label": "lighting_primary_energy_total",
+      "decision": "map_to_existing",
+      "target_concept_id": "lighting_primary_energy_total",
+      "proposed_concept_id": null,
+      "reason": "This directly matches the promoted end-use primary energy total concept for lighting."
+    },
+    {
+      "city": "Paris",
+      "source_column": "conso_auxiliaires_ep",
+      "suggested_label": "auxiliary_primary_energy_total",
+      "decision": "map_to_existing",
+      "target_concept_id": "auxiliary_primary_energy_total",
+      "proposed_concept_id": null,
+      "reason": "This directly matches the promoted end-use primary energy total concept for auxiliaries."
+    },
+    {
+      "city": "Paris",
+      "source_column": "cout_refroidissement",
+      "suggested_label": "cooling_cost_total",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "cooling_cost_total",
+      "reason": "Cooling cost is a clear analogue to existing heating, DHW, and lighting cost concepts."
+    },
+    {
+      "city": "Paris",
+      "source_column": "cout_auxiliaires",
+      "suggested_label": "auxiliary_cost_total",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "auxiliary_cost_total",
+      "reason": "Auxiliaries cost is a clear analogue to existing end-use cost concepts."
+    },
+    {
+      "city": "Paris",
+      "source_column": "type_emetteur_installation_chauffage_n1",
+      "suggested_label": "heating_emitter_type",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "heating_emitter_type",
+      "reason": "Emitter type is a meaningful and reusable heating system characteristic not represented by heating_system_type alone."
+    },
+    {
+      "city": "Paris",
+      "source_column": "production_ecs_solaire_installation_n1",
+      "suggested_label": "solar_hot_water_production_total",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "solar_hot_water_production_total",
+      "reason": "Explicit solar thermal production for DHW is a real recurring renewable-output concept not covered by a presence flag."
+    },
+    {
+      "city": "Paris",
+      "source_column": "facteur_couverture_solaire_n1",
+      "suggested_label": "solar_hot_water_coverage_share",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "solar_hot_water_coverage_share",
+      "reason": "Solar coverage share is a meaningful renewable contribution metric likely to recur where solar thermal is modeled."
+    },
+    {
+      "city": "Paris",
+      "source_column": "type_energie_climatisation",
+      "suggested_label": "main_cooling_fuel",
+      "decision": "map_to_existing",
+      "target_concept_id": "main_cooling_fuel",
+      "proposed_concept_id": null,
+      "reason": "This directly matches the promoted concept for cooling energy carrier."
+    },
+    {
+      "city": "Paris",
+      "source_column": "surface_totale_capteurs_pv",
+      "suggested_label": "pv_collector_area",
+      "decision": "promote_new",
+      "target_concept_id": null,
+      "proposed_concept_id": "pv_collector_area",
+      "reason": "PV collector area is a concrete renewable-system characteristic likely to recur and not represented by solar_pv_present alone."
+    }
+  ],
+  "summary": "Promoted recurring gaps mainly in five areas: end-use primary energy totals, end-use intensity metrics, service-specific classes, cooling-system attributes, and additional system/comfort descriptors. Mapped clear semantic matches to existing concepts (e.g. Warmtebehoefte, RER) or to concepts promoted elsewhere in this batch. Marked highly granular technology flags, supplementary/main service splits, future-state UK metrics, and local dwelling-position or free-text rehabilitation fields as city_specific rather than core vocabulary concepts."
+}

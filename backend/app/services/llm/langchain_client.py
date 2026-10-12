@@ -52,9 +52,14 @@ def _get_llm_internal(
         base_url=openai_api_base,
     )
 
-    include_chat_template = bool(openai_api_base) and (
+    lower_base = (openai_api_base or "").lower()
+    # Ollama exposes an OpenAI-compatible API but does not understand vLLM's
+    # `chat_template_kwargs`. It ignores the unknown field today, but it is not a
+    # supported parameter there, so skip it for Ollama endpoints.
+    is_ollama = "ollama" in lower_base or ":11434" in lower_base
+    include_chat_template = bool(openai_api_base) and not is_ollama and (
         openai_api_base == settings.INSTITUTIONAL_LLM_API_BASE
-        or any(tok in openai_api_base.lower() for tok in ("localhost", "127.0.0.1"))
+        or any(tok in lower_base for tok in ("localhost", "127.0.0.1"))
     )
 
     if include_chat_template:

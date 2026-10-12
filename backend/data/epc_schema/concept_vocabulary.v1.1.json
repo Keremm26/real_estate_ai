@@ -1,0 +1,3383 @@
+{
+  "vocab_version": "1.1",
+  "generated_at": "2026-07-01T17:19:05",
+  "model": "gpt-5.4",
+  "n_cities": 8,
+  "concepts": [
+    {
+      "id": "assessment_date",
+      "label": "Assessment date",
+      "definition": "Date when the EPC/APE assessment or diagnostic visit was carried out.",
+      "group": "temporal",
+      "value_kind": "date",
+      "canonical_unit": "date",
+      "expected_range": null,
+      "expected_min_year": 2000,
+      "comparability_risk": "low",
+      "comparability_note": "Administrative semantics vary slightly by country, but all mapped fields refer to the date of assessment/inspection/visit rather than validity end.",
+      "sources": [
+        {
+          "city": "Amsterdam",
+          "column": "Opnamedatum",
+          "match": "direct",
+          "qualifier": "recorded as numeric yyyymmdd",
+          "note": "Inspection/recording date."
+        },
+        {
+          "city": "Dublin",
+          "column": "DateOfAssessment",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Liège",
+          "column": "certificate_date",
+          "match": "partial",
+          "qualifier": "certificate issue/assessment date merged in source",
+          "note": "Could reflect issuance rather than visit date."
+        },
+        {
+          "city": "London",
+          "column": "inspection_date",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "edif_fecha",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "date_visite_diagnostiqueur",
+          "match": "direct",
+          "qualifier": "diagnostician visit date",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 6,
+      "coverage_level": "cross_city",
+      "confidence": "high",
+      "notes": "Barcelona data_entrada appears more like entry/registration date and is left out."
+    },
+    {
+      "id": "registration_date",
+      "label": "Certificate registration date",
+      "definition": "Date when the certificate was lodged, registered, received, or established in the administrative system.",
+      "group": "temporal",
+      "value_kind": "date",
+      "canonical_unit": "date",
+      "expected_range": null,
+      "expected_min_year": 2000,
+      "comparability_risk": "low",
+      "comparability_note": "Different systems use establishment, reception, lodgement, or registration dates; these are administratively related and often close in time but not always identical.",
+      "sources": [
+        {
+          "city": "Amsterdam",
+          "column": "Registratiedatum",
+          "match": "direct",
+          "qualifier": "numeric yyyymmdd",
+          "note": null
+        },
+        {
+          "city": "Barcelona",
+          "column": "data_entrada",
+          "match": "partial",
+          "qualifier": "entry date",
+          "note": "Likely intake/entry date."
+        },
+        {
+          "city": "London",
+          "column": "lodgement_date",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "London",
+          "column": "lodgement_datetime",
+          "match": "direct",
+          "qualifier": "datetime version",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "date_etablissement_dpe",
+          "match": "partial",
+          "qualifier": "certificate establishment date",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "date_reception_dpe",
+          "match": "partial",
+          "qualifier": "certificate reception date",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 4,
+      "coverage_level": "cross_city",
+      "confidence": "medium",
+      "notes": "Administrative date fields are common but not perfectly equivalent."
+    },
+    {
+      "id": "certificate_valid_until",
+      "label": "Certificate valid until",
+      "definition": "Date until which the certificate remains valid.",
+      "group": "temporal",
+      "value_kind": "date",
+      "canonical_unit": "date",
+      "expected_range": null,
+      "expected_min_year": 2010,
+      "comparability_risk": "low",
+      "comparability_note": "Validity periods are policy-defined and comparable as dates, though the underlying legal duration differs by country and period.",
+      "sources": [
+        {
+          "city": "Amsterdam",
+          "column": "GeldigTot",
+          "match": "direct",
+          "qualifier": "numeric yyyymmdd",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "date_fin_validite_dpe",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "high",
+      "notes": null
+    },
+    {
+      "id": "construction_year",
+      "label": "Construction year",
+      "definition": "Reported year of original building construction.",
+      "group": "temporal",
+      "value_kind": "numeric",
+      "canonical_unit": "year",
+      "expected_range": [
+        1000.0,
+        2030.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "low",
+      "comparability_note": "Some sources record exact year, others may contain placeholders, implausible values, or year of main construction only. Renovation is not consistently reflected.",
+      "sources": [
+        {
+          "city": "Amsterdam",
+          "column": "Bouwjaar",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Barcelona",
+          "column": "any_construccio",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "Year_of_Construction",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Liège",
+          "column": "build_year",
+          "match": "direct",
+          "qualifier": null,
+          "note": "High missingness."
+        },
+        {
+          "city": "Madrid",
+          "column": "edif_año",
+          "match": "direct",
+          "qualifier": null,
+          "note": "Contains some implausible values."
+        },
+        {
+          "city": "Paris",
+          "column": "annee_construction",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 6,
+      "coverage_level": "cross_city",
+      "confidence": "high",
+      "notes": "London and Lisbon expose construction period/age band rather than exact year."
+    },
+    {
+      "id": "construction_period",
+      "label": "Construction period",
+      "definition": "Reported construction age band or period category for the building.",
+      "group": "temporal",
+      "value_kind": "categorical",
+      "canonical_unit": "category",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Period boundaries are country-specific and policy-specific; categories should not be compared as identical bins without recoding.",
+      "sources": [
+        {
+          "city": "Liège",
+          "column": "build_period",
+          "match": "direct",
+          "qualifier": "coarse 3-band period",
+          "note": null
+        },
+        {
+          "city": "Liège",
+          "column": "build_period_v2",
+          "match": "direct",
+          "qualifier": "finer multi-band period",
+          "note": null
+        },
+        {
+          "city": "Lisbon",
+          "column": "Período_Construcao_Geral",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "London",
+          "column": "construction_age_band",
+          "match": "direct",
+          "qualifier": "England and Wales age band",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "periode_construction",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Barcelona",
+          "column": "normativa_construcci",
+          "match": "partial",
+          "qualifier": "regulatory era rather than pure construction period",
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "edif_norma",
+          "match": "partial",
+          "qualifier": "regulatory era rather than pure construction period",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 6,
+      "coverage_level": "cross_city",
+      "confidence": "high",
+      "notes": null
+    },
+    {
+      "id": "building_type",
+      "label": "Building or dwelling type",
+      "definition": "Reported typology of the certified residential asset, such as apartment, house, flat, fraction, or whole building.",
+      "group": "building_identity",
+      "value_kind": "categorical",
+      "canonical_unit": "category",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Cities mix dwelling-level and building-level typologies, and category systems differ substantially. Comparison requires harmonizing apartment/house/building distinctions.",
+      "sources": [
+        {
+          "city": "Amsterdam",
+          "column": "Gebouwtype",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Barcelona",
+          "column": "us_edifici",
+          "match": "partial",
+          "qualifier": "use/type combined",
+          "note": "Mostly residential dwelling type in building context."
+        },
+        {
+          "city": "Dublin",
+          "column": "DwellingTypeDescr",
+          "match": "direct",
+          "qualifier": "dwelling type",
+          "note": null
+        },
+        {
+          "city": "Liège",
+          "column": "destination",
+          "match": "partial",
+          "qualifier": "destination/use class",
+          "note": "Contains apartment vs single-family house."
+        },
+        {
+          "city": "Lisbon",
+          "column": "Tipo_Edificio",
+          "match": "direct",
+          "qualifier": "fraction vs building",
+          "note": null
+        },
+        {
+          "city": "London",
+          "column": "property_type",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "edif_tipo",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "type_batiment",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 8,
+      "coverage_level": "cross_city",
+      "confidence": "high",
+      "notes": "Amsterdam Gebouwsubtype and London built_form are related but more specific form descriptors."
+    },
+    {
+      "id": "certificate_context",
+      "label": "Certificate context or status",
+      "definition": "Administrative context of the certificate such as existing building, new building, final, provisional, or project/completed state.",
+      "group": "other",
+      "value_kind": "categorical",
+      "canonical_unit": "category",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Administrative status labels vary strongly across national registries and should not be treated as a common rating outcome.",
+      "sources": [
+        {
+          "city": "Amsterdam",
+          "column": "Status",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "TypeofRating",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Barcelona",
+          "column": "tipus_tramit",
+          "match": "partial",
+          "qualifier": "processing/building completion context",
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "edif_tiporeg",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 4,
+      "coverage_level": "cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "certification_method",
+      "label": "Certification method or software",
+      "definition": "Methodology, calculation engine, or software used to produce the certificate.",
+      "group": "other",
+      "value_kind": "categorical",
+      "canonical_unit": "category",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "This concept is itself about methodology; it is useful for stratification and crosswalks, not for substantive comparison.",
+      "sources": [
+        {
+          "city": "Amsterdam",
+          "column": "Berekeningstype",
+          "match": "direct",
+          "qualifier": "calculation method/version",
+          "note": null
+        },
+        {
+          "city": "Barcelona",
+          "column": "eina_de_certificacio",
+          "match": "direct",
+          "qualifier": "certification software",
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "edif_proced",
+          "match": "direct",
+          "qualifier": "software/procedure",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "modele_dpe",
+          "match": "partial",
+          "qualifier": "method family",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "version_dpe",
+          "match": "partial",
+          "qualifier": "method version only",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 4,
+      "coverage_level": "cross_city",
+      "confidence": "high",
+      "notes": null
+    },
+    {
+      "id": "postal_code",
+      "label": "Postal code",
+      "definition": "Postal code for the certified property address.",
+      "group": "location",
+      "value_kind": "categorical",
+      "canonical_unit": "postal_code",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "low",
+      "comparability_note": "Postal code formats differ by country but the concept is straightforward.",
+      "sources": [
+        {
+          "city": "Amsterdam",
+          "column": "Postcode",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "code_postal_ban",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "code_postal_brut",
+          "match": "partial",
+          "qualifier": "raw postal code before geocoding",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "high",
+      "notes": "Other cities provide municipality/district but not clear postal code fields in the digest."
+    },
+    {
+      "id": "street_name",
+      "label": "Street name",
+      "definition": "Street name component of the property address.",
+      "group": "location",
+      "value_kind": "categorical",
+      "canonical_unit": "text",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "low",
+      "comparability_note": "Address normalization varies but the concept is standard.",
+      "sources": [
+        {
+          "city": "Barcelona",
+          "column": "adre_a",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "nom_rue_ban",
+          "match": "direct",
+          "qualifier": "BAN-normalized street name",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "house_number",
+      "label": "House number",
+      "definition": "Primary house or street number of the property address.",
+      "group": "location",
+      "value_kind": "categorical",
+      "canonical_unit": "text",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "low",
+      "comparability_note": "Some systems split house number and suffixes; only the main number is captured here.",
+      "sources": [
+        {
+          "city": "Amsterdam",
+          "column": "Huisnummer",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "numero_voie_ban",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "high",
+      "notes": "Amsterdam Huisletter and Huisnummertoevoeging are related address suffixes and left unmatched."
+    },
+    {
+      "id": "municipality",
+      "label": "Municipality or commune",
+      "definition": "Municipality, commune, or city name/code associated with the property.",
+      "group": "location",
+      "value_kind": "categorical",
+      "canonical_unit": "category",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "low",
+      "comparability_note": "Administrative levels differ, but all mapped fields identify the municipality/local authority area around the property.",
+      "sources": [
+        {
+          "city": "Barcelona",
+          "column": "poblacio",
+          "match": "direct",
+          "qualifier": "municipality name",
+          "note": null
+        },
+        {
+          "city": "Barcelona",
+          "column": "codi_poblacio",
+          "match": "partial",
+          "qualifier": "municipality code",
+          "note": null
+        },
+        {
+          "city": "London",
+          "column": "local_authority_label",
+          "match": "partial",
+          "qualifier": "local authority rather than municipality",
+          "note": null
+        },
+        {
+          "city": "London",
+          "column": "local_authority",
+          "match": "partial",
+          "qualifier": "local authority code",
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "edif_muni",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "nom_commune_ban",
+          "match": "direct",
+          "qualifier": "normalized commune",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "nom_commune_brut",
+          "match": "partial",
+          "qualifier": "raw commune text",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 4,
+      "coverage_level": "cross_city",
+      "confidence": "medium",
+      "notes": "Liège city field includes sub-municipal variants/postcodes; not mapped here."
+    },
+    {
+      "id": "climate_zone",
+      "label": "Climate zone",
+      "definition": "Climate zone classification used in the EPC methodology.",
+      "group": "location",
+      "value_kind": "categorical",
+      "canonical_unit": "category",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Climate zone taxonomies differ by country and season; values are not directly comparable without country-specific decoding.",
+      "sources": [
+        {
+          "city": "Barcelona",
+          "column": "zona_climatica",
+          "match": "direct",
+          "qualifier": "single climate zone code",
+          "note": null
+        },
+        {
+          "city": "Lisbon",
+          "column": "Zona Climática de Inverno",
+          "match": "partial",
+          "qualifier": "winter climate zone",
+          "note": null
+        },
+        {
+          "city": "Lisbon",
+          "column": "Zona Climática de Verão",
+          "match": "partial",
+          "qualifier": "summer climate zone",
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "edif_zonaclim",
+          "match": "direct",
+          "qualifier": "single climate zone code",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "zone_climatique",
+          "match": "direct",
+          "qualifier": "French climate zone",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 4,
+      "coverage_level": "cross_city",
+      "confidence": "high",
+      "notes": null
+    },
+    {
+      "id": "longitude",
+      "label": "Longitude",
+      "definition": "Longitude coordinate of the property location in geographic CRS.",
+      "group": "location",
+      "value_kind": "numeric",
+      "canonical_unit": "degrees",
+      "expected_range": [
+        -180.0,
+        180.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "low",
+      "comparability_note": "Comparable when provided in geographic coordinates only.",
+      "sources": [
+        {
+          "city": "Barcelona",
+          "column": "longitud",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 1,
+      "coverage_level": "single_city",
+      "confidence": "high",
+      "notes": "Core location concept present in only one city within this digest."
+    },
+    {
+      "id": "latitude",
+      "label": "Latitude",
+      "definition": "Latitude coordinate of the property location in geographic CRS.",
+      "group": "location",
+      "value_kind": "numeric",
+      "canonical_unit": "degrees",
+      "expected_range": [
+        -90.0,
+        90.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "low",
+      "comparability_note": "Comparable when provided in geographic coordinates only.",
+      "sources": [
+        {
+          "city": "Barcelona",
+          "column": "latitud",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 1,
+      "coverage_level": "single_city",
+      "confidence": "high",
+      "notes": "Core location concept present in only one city within this digest."
+    },
+    {
+      "id": "projected_x_coordinate",
+      "label": "Projected X coordinate",
+      "definition": "Projected planar X/easting coordinate of the property location.",
+      "group": "location",
+      "value_kind": "numeric",
+      "canonical_unit": "m",
+      "expected_range": [
+        0.0,
+        10000000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Projected CRS differs across countries and sources; numeric values are not directly comparable without CRS metadata.",
+      "sources": [
+        {
+          "city": "Barcelona",
+          "column": "utm_x",
+          "match": "direct",
+          "qualifier": "UTM/projection-specific",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "coordonnee_cartographique_x_ban",
+          "match": "direct",
+          "qualifier": "BAN projected coordinate",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "projected_y_coordinate",
+      "label": "Projected Y coordinate",
+      "definition": "Projected planar Y/northing coordinate of the property location.",
+      "group": "location",
+      "value_kind": "numeric",
+      "canonical_unit": "m",
+      "expected_range": [
+        0.0,
+        10000000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Projected CRS differs across countries and sources; numeric values are not directly comparable without CRS metadata.",
+      "sources": [
+        {
+          "city": "Barcelona",
+          "column": "utm_y",
+          "match": "direct",
+          "qualifier": "UTM/projection-specific",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "coordonnee_cartographique_y_ban",
+          "match": "direct",
+          "qualifier": "BAN projected coordinate",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "floor_area",
+      "label": "Floor area",
+      "definition": "Reported area of the certified asset, usually dwelling/building usable, habitable, heated, thermal-zone, or cadastral area.",
+      "group": "geometry",
+      "value_kind": "numeric",
+      "canonical_unit": "m2",
+      "expected_range": [
+        1.0,
+        50000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Area definitions differ materially across registries: thermal-zone area, habitable area, ground floor area, total floor area, cadastral area, and heated floor area are not equivalent. They are grouped here only because they share unit and represent the main size measure of the certified asset.",
+      "sources": [
+        {
+          "city": "Amsterdam",
+          "column": "GebruiksoppervlakteThermischeZone",
+          "match": "direct",
+          "qualifier": "thermal zone usable area",
+          "note": null
+        },
+        {
+          "city": "Barcelona",
+          "column": "metres_cadastre",
+          "match": "partial",
+          "qualifier": "cadastral area",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "GroundFloorArea(sq m)",
+          "match": "partial",
+          "qualifier": "ground floor area label used as main size field",
+          "note": "Likely principal area field though naming is ambiguous versus total dwelling area."
+        },
+        {
+          "city": "Liège",
+          "column": "total_heated_floor",
+          "match": "direct",
+          "qualifier": "total heated floor area",
+          "note": null
+        },
+        {
+          "city": "London",
+          "column": "total_floor_area",
+          "match": "direct",
+          "qualifier": "total floor area",
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "edif_superf",
+          "match": "direct",
+          "qualifier": "building surface area",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "surface_habitable_logement",
+          "match": "direct",
+          "qualifier": "dwelling habitable area",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "surface_habitable_immeuble",
+          "match": "partial",
+          "qualifier": "building habitable area",
+          "note": "At building certificate level rather than dwelling."
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 7,
+      "coverage_level": "cross_city",
+      "confidence": "high",
+      "notes": "methodology_sensitive=true due to substantial definitional variation."
+    },
+    {
+      "id": "number_of_storeys",
+      "label": "Number of storeys",
+      "definition": "Reported number of storeys or levels for the dwelling/building.",
+      "group": "geometry",
+      "value_kind": "numeric",
+      "canonical_unit": "count",
+      "expected_range": [
+        0.0,
+        200.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Some sources refer to building storeys, others to flat storeys or dwelling levels; values are related but not identical.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "NoStoreys",
+          "match": "direct",
+          "qualifier": "dwelling/building storeys",
+          "note": null
+        },
+        {
+          "city": "Lisbon",
+          "column": "Nr de pisos",
+          "match": "direct",
+          "qualifier": "building floors",
+          "note": null
+        },
+        {
+          "city": "London",
+          "column": "flat_storey_count",
+          "match": "partial",
+          "qualifier": "flat storey count",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "nombre_niveau_immeuble",
+          "match": "partial",
+          "qualifier": "building levels",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "nombre_niveau_logement",
+          "match": "partial",
+          "qualifier": "dwelling levels",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 4,
+      "coverage_level": "cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "floor_height",
+      "label": "Floor-to-ceiling or floor height",
+      "definition": "Reported interior height or representative floor height for the certified asset.",
+      "group": "geometry",
+      "value_kind": "numeric",
+      "canonical_unit": "m",
+      "expected_range": [
+        0.5,
+        30.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Paris reports ceiling height, while London and Dublin report floor heights that may represent different geometric constructs.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "GroundFloorHeight",
+          "match": "partial",
+          "qualifier": "ground floor height",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "FirstFloorHeight",
+          "match": "partial",
+          "qualifier": "first floor height",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "SecondFloorHeight",
+          "match": "partial",
+          "qualifier": "second floor height",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "ThirdFloorHeight",
+          "match": "partial",
+          "qualifier": "third floor height",
+          "note": null
+        },
+        {
+          "city": "London",
+          "column": "floor_height",
+          "match": "partial",
+          "qualifier": "general floor height",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "hauteur_sous_plafond",
+          "match": "direct",
+          "qualifier": "ceiling height",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 3,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "wall_area",
+      "label": "Wall area",
+      "definition": "Reported total area of walls in the envelope or geometry model.",
+      "group": "envelope",
+      "value_kind": "numeric",
+      "canonical_unit": "m2",
+      "expected_range": [
+        0.0,
+        5000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Envelope segmentation and whether areas are exposed, all walls, or modeled wall types differ by methodology.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "WallArea",
+          "match": "direct",
+          "qualifier": "aggregate wall area",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "FirstWallArea",
+          "match": "partial",
+          "qualifier": "first wall type area",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "SecondWallArea",
+          "match": "partial",
+          "qualifier": "second wall type area",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "ThirdWallArea",
+          "match": "partial",
+          "qualifier": "third wall type area",
+          "note": null
+        },
+        {
+          "city": "Lisbon",
+          "column": "parede_area_total",
+          "match": "direct",
+          "qualifier": "total wall area",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "high",
+      "notes": null
+    },
+    {
+      "id": "roof_area",
+      "label": "Roof area",
+      "definition": "Reported total area of roof elements in the envelope or geometry model.",
+      "group": "envelope",
+      "value_kind": "numeric",
+      "canonical_unit": "m2",
+      "expected_range": [
+        0.0,
+        5000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "May represent exposed roof only, predominant roof type, or aggregated modeled roof elements.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "RoofArea",
+          "match": "direct",
+          "qualifier": "aggregate roof area",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "PredominantRoofTypeArea",
+          "match": "partial",
+          "qualifier": "predominant roof type area",
+          "note": null
+        },
+        {
+          "city": "Lisbon",
+          "column": "cobertura_area_total",
+          "match": "direct",
+          "qualifier": "total roof area",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "high",
+      "notes": null
+    },
+    {
+      "id": "floor_element_area",
+      "label": "Floor element area",
+      "definition": "Reported area of floor elements in the building envelope or geometry model.",
+      "group": "envelope",
+      "value_kind": "numeric",
+      "canonical_unit": "m2",
+      "expected_range": [
+        0.0,
+        5000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Can refer to exposed floors, intermediate floors, or specific floor elements rather than total internal floor area.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "FloorArea",
+          "match": "direct",
+          "qualifier": "envelope/model floor element area",
+          "note": "Distinct from total dwelling floor area in this schema."
+        },
+        {
+          "city": "Lisbon",
+          "column": "pavimento_area_total",
+          "match": "direct",
+          "qualifier": "total floor element area",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "window_area",
+      "label": "Window or glazed area",
+      "definition": "Reported total glazed/window area in the envelope or geometry model.",
+      "group": "envelope",
+      "value_kind": "numeric",
+      "canonical_unit": "m2",
+      "expected_range": [
+        0.0,
+        2000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Sources may include windows only or all glazed openings; exposed-area conventions differ.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "WindowArea",
+          "match": "direct",
+          "qualifier": "window area",
+          "note": null
+        },
+        {
+          "city": "Lisbon",
+          "column": "envidracado_area_total",
+          "match": "direct",
+          "qualifier": "total glazed area",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "high",
+      "notes": null
+    },
+    {
+      "id": "door_area",
+      "label": "Door area",
+      "definition": "Reported total door area in the envelope or geometry model.",
+      "group": "envelope",
+      "value_kind": "numeric",
+      "canonical_unit": "m2",
+      "expected_range": [
+        0.0,
+        500.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Door definitions and whether internal/external doors are included vary.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "DoorArea",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        }
+      ],
+      "rejected_sources": [
+        {
+          "city": "Paris",
+          "column": "deperditions_portes",
+          "match": "uncertain",
+          "qualifier": "door loss rather than area",
+          "note": "Not a genuine area match; retained? No."
+        }
+      ],
+      "accepted_city_count": 1,
+      "coverage_level": "single_city",
+      "confidence": "high",
+      "notes": "Only Dublin has a clean door area field; kept as a core envelope concept with n_cities effectively 1."
+    },
+    {
+      "id": "wall_u_value",
+      "label": "Wall U-value",
+      "definition": "Thermal transmittance of wall elements.",
+      "group": "envelope",
+      "value_kind": "numeric",
+      "canonical_unit": "W/m2K",
+      "expected_range": [
+        0.0,
+        5.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Sources may report representative, modeled, or type-specific wall U-values. Aggregation conventions differ.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "UValueWall",
+          "match": "direct",
+          "qualifier": "aggregate/representative wall U-value",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "FirstWallUValue",
+          "match": "partial",
+          "qualifier": "first wall type U-value",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "SecondWallUValue",
+          "match": "partial",
+          "qualifier": "second wall type U-value",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "ThirdWallUValue",
+          "match": "partial",
+          "qualifier": "third wall type U-value",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 1,
+      "coverage_level": "single_city",
+      "confidence": "medium",
+      "notes": "London walls_description mentions U-value context in text but is not a numeric field."
+    },
+    {
+      "id": "roof_u_value",
+      "label": "Roof U-value",
+      "definition": "Thermal transmittance of roof elements.",
+      "group": "envelope",
+      "value_kind": "numeric",
+      "canonical_unit": "W/m2K",
+      "expected_range": [
+        0.0,
+        5.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Representative or modeled values may differ by methodology.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "UValueRoof",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 1,
+      "coverage_level": "single_city",
+      "confidence": "high",
+      "notes": "Core EPC concept present in one city only."
+    },
+    {
+      "id": "floor_u_value",
+      "label": "Floor U-value",
+      "definition": "Thermal transmittance of floor elements.",
+      "group": "envelope",
+      "value_kind": "numeric",
+      "canonical_unit": "W/m2K",
+      "expected_range": [
+        0.0,
+        5.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Representative or modeled values may differ by methodology.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "UValueFloor",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "GroundFloorUValue",
+          "match": "partial",
+          "qualifier": "ground floor-specific U-value",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 1,
+      "coverage_level": "single_city",
+      "confidence": "high",
+      "notes": "Core EPC concept present in one city only."
+    },
+    {
+      "id": "window_u_value",
+      "label": "Window U-value",
+      "definition": "Thermal transmittance of windows/glazing.",
+      "group": "envelope",
+      "value_kind": "numeric",
+      "canonical_unit": "W/m2K",
+      "expected_range": [
+        0.0,
+        10.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "May represent whole-window or glazing-system values; methodologies differ.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "UValueWindow",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 1,
+      "coverage_level": "single_city",
+      "confidence": "high",
+      "notes": "Barcelona valor_finestres likely related to window performance but unit/meaning is too uncertain for unification."
+    },
+    {
+      "id": "door_u_value",
+      "label": "Door U-value",
+      "definition": "Thermal transmittance of doors.",
+      "group": "envelope",
+      "value_kind": "numeric",
+      "canonical_unit": "W/m2K",
+      "expected_range": [
+        0.0,
+        10.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Representative or modeled values may differ by methodology.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "UvalueDoor",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 1,
+      "coverage_level": "single_city",
+      "confidence": "high",
+      "notes": "Core EPC concept present in one city only."
+    },
+    {
+      "id": "building_compactness",
+      "label": "Building compactness",
+      "definition": "Compactness indicator reported by the EPC model, typically reflecting form factor such as envelope-to-volume relation.",
+      "group": "geometry",
+      "value_kind": "numeric",
+      "canonical_unit": "ratio",
+      "expected_range": [
+        0.0,
+        1000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Definition is methodology-specific and not clearly identical across countries, but both mapped fields appear to represent the same modeling construct.",
+      "sources": [
+        {
+          "city": "Amsterdam",
+          "column": "Compactheid",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "edif_compac",
+          "match": "direct",
+          "qualifier": null,
+          "note": "Contains extreme outliers/placeholders."
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "energy_class",
+      "label": "Energy performance class",
+      "definition": "Ordinal energy label/class assigned by the national EPC methodology.",
+      "group": "rating",
+      "value_kind": "categorical",
+      "canonical_unit": "class",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Energy class scales and thresholds differ by country and over time. Some countries use A-G, others use sub-classes like A2/C1, and the underlying metric varies.",
+      "sources": [
+        {
+          "city": "Amsterdam",
+          "column": "Energieklasse",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Barcelona",
+          "column": "qualificaci_de_consum_d",
+          "match": "direct",
+          "qualifier": "consumption-based energy class",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "EnergyRating",
+          "match": "direct",
+          "qualifier": "Irish BER class with subclasses",
+          "note": null
+        },
+        {
+          "city": "Liège",
+          "column": "e_spec_label",
+          "match": "direct",
+          "qualifier": "specific energy label",
+          "note": null
+        },
+        {
+          "city": "London",
+          "column": "current_energy_rating",
+          "match": "direct",
+          "qualifier": "current rating",
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "cal_norenovglobal",
+          "match": "direct",
+          "qualifier": "non-renewable primary energy class",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "etiquette_dpe",
+          "match": "direct",
+          "qualifier": "French DPE label",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 7,
+      "coverage_level": "cross_city",
+      "confidence": "high",
+      "notes": "Potential ratings are excluded from the canonical current-state concept."
+    },
+    {
+      "id": "co2_class",
+      "label": "CO2 emissions class",
+      "definition": "Ordinal class/label assigned to greenhouse gas emissions performance.",
+      "group": "rating",
+      "value_kind": "categorical",
+      "canonical_unit": "class",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "CO2 class scales are country-specific and can reflect different scopes and thresholds.",
+      "sources": [
+        {
+          "city": "Barcelona",
+          "column": "qualificacio_d_emissions",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Barcelona",
+          "column": "qualificaci_emissions",
+          "match": "direct",
+          "qualifier": "duplicate/variant emission class field",
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "cal_co2global",
+          "match": "direct",
+          "qualifier": "global CO2 class",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "etiquette_ges",
+          "match": "direct",
+          "qualifier": "GHG label",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 3,
+      "coverage_level": "limited_cross_city",
+      "confidence": "high",
+      "notes": null
+    },
+    {
+      "id": "energy_efficiency_score",
+      "label": "Energy efficiency score or index",
+      "definition": "Numeric score/index used by the national EPC system to summarize energy efficiency or rating position.",
+      "group": "rating",
+      "value_kind": "numeric",
+      "canonical_unit": "score",
+      "expected_range": [
+        -5.0,
+        7000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "These numeric scores are highly country-specific: Dutch EnergieIndex, Irish BER kWh/m2-equivalent score, UK SAP-derived efficiency score, and similar constructs are not directly comparable.",
+      "sources": [
+        {
+          "city": "Amsterdam",
+          "column": "EnergieIndex",
+          "match": "direct",
+          "qualifier": "Dutch energy index",
+          "note": null
+        },
+        {
+          "city": "Amsterdam",
+          "column": "EnergieIndexEMGForfaitair",
+          "match": "partial",
+          "qualifier": "forfaitary EMG variant",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "BerRating",
+          "match": "direct",
+          "qualifier": "Irish BER numeric score",
+          "note": null
+        },
+        {
+          "city": "London",
+          "column": "current_energy_efficiency",
+          "match": "direct",
+          "qualifier": "UK current efficiency score",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 3,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": "Potential scores are left unmatched rather than merged with current-state score."
+    },
+    {
+      "id": "primary_energy_intensity",
+      "label": "Primary energy intensity",
+      "definition": "Primary energy use per unit floor area, as reported by the certificate methodology.",
+      "group": "energy",
+      "value_kind": "numeric",
+      "canonical_unit": "kWh/m2.year",
+      "expected_range": [
+        0.0,
+        4000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Primary energy scope differs across countries: total primary, fossil primary, or non-renewable primary. These are related but not equivalent; source qualifier must be respected.",
+      "sources": [
+        {
+          "city": "Amsterdam",
+          "column": "PrimaireFossieleEnergie",
+          "match": "partial",
+          "qualifier": "fossil primary energy intensity",
+          "note": null
+        },
+        {
+          "city": "Amsterdam",
+          "column": "PrimaireFossieleEnergieEMGForfaitair",
+          "match": "partial",
+          "qualifier": "fossil primary energy intensity, forfaitary variant",
+          "note": null
+        },
+        {
+          "city": "Barcelona",
+          "column": "energia_prim_ria_no_renovable",
+          "match": "partial",
+          "qualifier": "non-renewable primary energy intensity",
+          "note": null
+        },
+        {
+          "city": "London",
+          "column": "energy_consumption_current",
+          "match": "partial",
+          "qualifier": "UK EPC energy consumption indicator",
+          "note": "Commonly an intensity-like indicator, but exact scope differs."
+        },
+        {
+          "city": "Paris",
+          "column": "conso_5_usages_par_m2_ep",
+          "match": "direct",
+          "qualifier": "5 uses primary energy intensity",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 4,
+      "coverage_level": "cross_city",
+      "confidence": "high",
+      "notes": "A cross-city comparable intensity concept is essential, but qualifier differences are substantive."
+    },
+    {
+      "id": "primary_energy_total",
+      "label": "Primary energy total",
+      "definition": "Total primary energy consumption of the certified asset over a year.",
+      "group": "energy",
+      "value_kind": "numeric",
+      "canonical_unit": "kWh/year",
+      "expected_range": [
+        0.0,
+        10000000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Scope differs by country and by end-use coverage. Some fields are non-renewable primary only or specific subsets of end uses.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "PrimaryEnergyLighting",
+          "match": "partial",
+          "qualifier": "lighting only",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "PrimaryEnergyPumpsFans",
+          "match": "partial",
+          "qualifier": "pumps and fans only",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "PrimaryEnergyMainWater",
+          "match": "partial",
+          "qualifier": "main water heating only",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "PrimaryEnergyMainSpace",
+          "match": "partial",
+          "qualifier": "main space heating only",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "PrimaryEnergySecondarySpace",
+          "match": "partial",
+          "qualifier": "secondary space heating only",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "PrimaryEnergySupplementaryWater",
+          "match": "partial",
+          "qualifier": "supplementary water heating only",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "conso_5_usages_ep",
+          "match": "direct",
+          "qualifier": "5 uses total primary energy",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": "No clean all-end-use total is available in Dublin except some less-complete TotalDeliveredEnergy-like fields for delivered, not primary."
+    },
+    {
+      "id": "final_energy_intensity",
+      "label": "Final energy intensity",
+      "definition": "Final energy use per unit floor area, as reported by the certificate methodology.",
+      "group": "energy",
+      "value_kind": "numeric",
+      "canonical_unit": "kWh/m2.year",
+      "expected_range": [
+        0.0,
+        4000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "End-use coverage differs; some sources cover 5 uses, others broader/narrower scopes. Still, final energy intensity is often more interpretable than totals.",
+      "sources": [
+        {
+          "city": "Amsterdam",
+          "column": "BerekendeEnergieverbruik",
+          "match": "partial",
+          "qualifier": "calculated energy use intensity",
+          "note": "Magnitude suggests intensity-like metric."
+        },
+        {
+          "city": "Barcelona",
+          "column": "consum_d_energia_final",
+          "match": "direct",
+          "qualifier": "final energy consumption intensity",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "conso_5_usages_par_m2_ef",
+          "match": "direct",
+          "qualifier": "5 uses final energy intensity",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 3,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": "Madrid final_* fields appear likely intensities but unit evidence is weak, so not forced."
+    },
+    {
+      "id": "final_energy_total",
+      "label": "Final energy total",
+      "definition": "Total final energy consumption of the certified asset over a year.",
+      "group": "energy",
+      "value_kind": "numeric",
+      "canonical_unit": "kWh/year",
+      "expected_range": [
+        0.0,
+        10000000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Coverage varies by end uses and treatment of renewable/self-generation. Dublin fields are end-use totals; Paris provides 5-use total.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "TotalDeliveredEnergy",
+          "match": "partial",
+          "qualifier": "delivered energy total rather than final energy total",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "conso_5_usages_ef",
+          "match": "direct",
+          "qualifier": "5 uses final energy total",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": "Delivered and final are not strictly identical; mapped conservatively as partial."
+    },
+    {
+      "id": "delivered_energy_total",
+      "label": "Delivered energy total",
+      "definition": "Total delivered energy to the asset over a year.",
+      "group": "energy",
+      "value_kind": "numeric",
+      "canonical_unit": "kWh/year",
+      "expected_range": [
+        0.0,
+        10000000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Delivered energy is distinct from final or primary energy and may exclude/export on-site generation depending on methodology.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "TotalDeliveredEnergy",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "conso_5_usages_ef",
+          "match": "partial",
+          "qualifier": "final energy rather than delivered energy",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "low",
+      "notes": "Weak cross-city evidence; retained because delivered energy is a core energy accounting concept."
+    },
+    {
+      "id": "space_heating_demand_intensity",
+      "label": "Space heating demand intensity",
+      "definition": "Heating demand per unit floor area.",
+      "group": "energy",
+      "value_kind": "numeric",
+      "canonical_unit": "kWh/m2.year",
+      "expected_range": [
+        0.0,
+        1000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Demand definitions and climate normalization differ across methodologies.",
+      "sources": [
+        {
+          "city": "Amsterdam",
+          "column": "Warmtebehoefte",
+          "match": "direct",
+          "qualifier": "heat demand intensity",
+          "note": null
+        },
+        {
+          "city": "Barcelona",
+          "column": "energia_calefacci_demanda",
+          "match": "direct",
+          "qualifier": "heating demand intensity",
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "elec_demcalef",
+          "match": "direct",
+          "qualifier": "heating demand indicator",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 3,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": "Paris besoin_chauffage is an absolute total and is kept separate by unit rule."
+    },
+    {
+      "id": "space_heating_demand_total",
+      "label": "Space heating demand total",
+      "definition": "Annual heating demand of the certified asset.",
+      "group": "energy",
+      "value_kind": "numeric",
+      "canonical_unit": "kWh/year",
+      "expected_range": [
+        0.0,
+        10000000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Demand scope and modeling conventions differ by country.",
+      "sources": [
+        {
+          "city": "Paris",
+          "column": "besoin_chauffage",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 1,
+      "coverage_level": "single_city",
+      "confidence": "high",
+      "notes": "Core EPC concept present in one city only."
+    },
+    {
+      "id": "cooling_demand_intensity",
+      "label": "Cooling demand intensity",
+      "definition": "Cooling demand per unit floor area.",
+      "group": "energy",
+      "value_kind": "numeric",
+      "canonical_unit": "kWh/m2.year",
+      "expected_range": [
+        0.0,
+        500.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Cooling demand definitions differ and may be zero for many dwellings or climates.",
+      "sources": [
+        {
+          "city": "Barcelona",
+          "column": "energia_refrigeraci_demanda",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "elec_demrefrig",
+          "match": "direct",
+          "qualifier": "cooling demand indicator",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "cooling_demand_total",
+      "label": "Cooling demand total",
+      "definition": "Annual cooling demand of the certified asset.",
+      "group": "energy",
+      "value_kind": "numeric",
+      "canonical_unit": "kWh/year",
+      "expected_range": [
+        0.0,
+        1000000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Demand scope and modeling conventions differ by country.",
+      "sources": [
+        {
+          "city": "Paris",
+          "column": "besoin_refroidissement",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 1,
+      "coverage_level": "single_city",
+      "confidence": "high",
+      "notes": "Core EPC concept present in one city only."
+    },
+    {
+      "id": "domestic_hot_water_demand_total",
+      "label": "Domestic hot water demand total",
+      "definition": "Annual domestic hot water demand of the certified asset.",
+      "group": "energy",
+      "value_kind": "numeric",
+      "canonical_unit": "kWh/year",
+      "expected_range": [
+        0.0,
+        1000000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Demand scope and standard use assumptions differ by methodology.",
+      "sources": [
+        {
+          "city": "Paris",
+          "column": "besoin_ecs",
+          "match": "direct",
+          "qualifier": "ECS = domestic hot water",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 1,
+      "coverage_level": "single_city",
+      "confidence": "high",
+      "notes": "Core EPC concept present in one city only."
+    },
+    {
+      "id": "space_heating_final_energy_total",
+      "label": "Space heating final energy total",
+      "definition": "Annual final energy consumption for space heating.",
+      "group": "energy",
+      "value_kind": "numeric",
+      "canonical_unit": "kWh/year",
+      "expected_range": [
+        0.0,
+        10000000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Coverage of main vs supplementary systems differs. Some sources use delivered energy rather than final energy; these are mapped only partially.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "DeliveredEnergyMainSpace",
+          "match": "partial",
+          "qualifier": "main space heating delivered energy",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "DeliveredEnergySecondarySpace",
+          "match": "partial",
+          "qualifier": "secondary space heating delivered energy",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "conso_chauffage_ef",
+          "match": "direct",
+          "qualifier": "space heating final energy",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "conso_chauffage_ef_energie_n1",
+          "match": "partial",
+          "qualifier": "carrier n1 contribution only",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "conso_chauffage_ef_energie_n2",
+          "match": "partial",
+          "qualifier": "carrier n2 contribution only",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "domestic_hot_water_final_energy_total",
+      "label": "Domestic hot water final energy total",
+      "definition": "Annual final energy consumption for domestic hot water.",
+      "group": "energy",
+      "value_kind": "numeric",
+      "canonical_unit": "kWh/year",
+      "expected_range": [
+        0.0,
+        5000000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Coverage of main vs supplementary systems differs. Delivered energy fields are only partial matches.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "DeliveredEnergyMainWater",
+          "match": "partial",
+          "qualifier": "main water heating delivered energy",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "DeliveredEnergySupplementaryWater",
+          "match": "partial",
+          "qualifier": "supplementary water heating delivered energy",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "conso_ecs_ef",
+          "match": "direct",
+          "qualifier": "domestic hot water final energy",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "conso_ecs_ef_energie_n1",
+          "match": "partial",
+          "qualifier": "carrier n1 contribution only",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "conso_ecs_ef_energie_n2",
+          "match": "partial",
+          "qualifier": "carrier n2 contribution only",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "cooling_final_energy_total",
+      "label": "Cooling final energy total",
+      "definition": "Annual final energy consumption for cooling.",
+      "group": "energy",
+      "value_kind": "numeric",
+      "canonical_unit": "kWh/year",
+      "expected_range": [
+        0.0,
+        1000000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Cooling coverage differs and is often absent for many dwellings.",
+      "sources": [
+        {
+          "city": "Paris",
+          "column": "conso_refroidissement_ef",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 1,
+      "coverage_level": "single_city",
+      "confidence": "high",
+      "notes": "Core EPC concept present in one city only."
+    },
+    {
+      "id": "lighting_final_energy_total",
+      "label": "Lighting final energy total",
+      "definition": "Annual final energy consumption for lighting.",
+      "group": "energy",
+      "value_kind": "numeric",
+      "canonical_unit": "kWh/year",
+      "expected_range": [
+        0.0,
+        500000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Residential lighting treatment differs and may be zero or excluded in some dwelling schemes.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "DeliveredLightingEnergy",
+          "match": "partial",
+          "qualifier": "delivered lighting energy",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "conso_eclairage_ef",
+          "match": "direct",
+          "qualifier": "lighting final energy",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "auxiliary_final_energy_total",
+      "label": "Auxiliary final energy total",
+      "definition": "Annual final energy consumption for auxiliaries such as pumps and fans.",
+      "group": "energy",
+      "value_kind": "numeric",
+      "canonical_unit": "kWh/year",
+      "expected_range": [
+        0.0,
+        500000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Auxiliary end-use definitions vary; Dublin field is delivered pumps/fans only.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "DeliveredEnergyPumpsFans",
+          "match": "partial",
+          "qualifier": "pumps and fans delivered energy",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "conso_auxiliaires_ef",
+          "match": "direct",
+          "qualifier": "auxiliaries final energy",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "co2_emissions_intensity",
+      "label": "CO2 emissions intensity",
+      "definition": "Annual CO2 or greenhouse-gas emissions per unit floor area.",
+      "group": "emissions",
+      "value_kind": "numeric",
+      "canonical_unit": "kgCO2e/m2.year",
+      "expected_range": [
+        0.0,
+        1000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Emission factors, scope, and gas accounting differ by country and over time. Some sources may report CO2 only, others GES/CO2e.",
+      "sources": [
+        {
+          "city": "Amsterdam",
+          "column": "BerekendeCO2Emissie",
+          "match": "partial",
+          "qualifier": "calculated CO2 emission intensity",
+          "note": "Magnitude suggests intensity-like field."
+        },
+        {
+          "city": "Barcelona",
+          "column": "emissions_de_co2",
+          "match": "direct",
+          "qualifier": "CO2 emissions intensity",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "CO2Rating",
+          "match": "direct",
+          "qualifier": "Irish CO2 rating intensity",
+          "note": null
+        },
+        {
+          "city": "London",
+          "column": "co2_emiss_curr_per_floor_area",
+          "match": "direct",
+          "qualifier": "current CO2 per floor area",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "emission_ges_5_usages_par_m2",
+          "match": "direct",
+          "qualifier": "5 uses GHG intensity",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 5,
+      "coverage_level": "cross_city",
+      "confidence": "high",
+      "notes": "Primary cross-city comparable emissions form."
+    },
+    {
+      "id": "co2_emissions_total",
+      "label": "CO2 emissions total",
+      "definition": "Annual total CO2 or greenhouse-gas emissions of the certified asset.",
+      "group": "emissions",
+      "value_kind": "numeric",
+      "canonical_unit": "kgCO2e/year",
+      "expected_range": [
+        0.0,
+        5000000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Scope and emission factors differ. Some fields are current/potential or subset-specific. Totals are less comparable than intensities unless floor-area basis and end-use coverage are harmonized.",
+      "sources": [
+        {
+          "city": "London",
+          "column": "co2_emissions_current",
+          "match": "direct",
+          "qualifier": "current total emissions",
+          "note": null
+        },
+        {
+          "city": "London",
+          "column": "co2_emissions_potential",
+          "match": "partial",
+          "qualifier": "potential total emissions",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "emission_ges_5_usages",
+          "match": "direct",
+          "qualifier": "5 uses total GHG emissions",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "space_heating_co2_total",
+      "label": "Space heating CO2 emissions total",
+      "definition": "Annual CO2 or GHG emissions attributable to space heating.",
+      "group": "emissions",
+      "value_kind": "numeric",
+      "canonical_unit": "kgCO2e/year",
+      "expected_range": [
+        0.0,
+        2000000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Heating-system scope and emission factors differ. Dublin reports main and secondary space separately.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "CO2MainSpace",
+          "match": "partial",
+          "qualifier": "main space heating only",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "CO2SecondarySpace",
+          "match": "partial",
+          "qualifier": "secondary space heating only",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "emission_ges_chauffage",
+          "match": "direct",
+          "qualifier": "space heating GHG emissions",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "domestic_hot_water_co2_total",
+      "label": "Domestic hot water CO2 emissions total",
+      "definition": "Annual CO2 or GHG emissions attributable to domestic hot water.",
+      "group": "emissions",
+      "value_kind": "numeric",
+      "canonical_unit": "kgCO2e/year",
+      "expected_range": [
+        0.0,
+        500000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Water-heating scope and emission factors differ. Dublin reports main and supplementary components.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "CO2MainWater",
+          "match": "partial",
+          "qualifier": "main water heating only",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "CO2SupplementaryWater",
+          "match": "partial",
+          "qualifier": "supplementary water heating only",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "emission_ges_ecs",
+          "match": "direct",
+          "qualifier": "domestic hot water GHG emissions",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "cooling_co2_total",
+      "label": "Cooling CO2 emissions total",
+      "definition": "Annual CO2 or GHG emissions attributable to cooling.",
+      "group": "emissions",
+      "value_kind": "numeric",
+      "canonical_unit": "kgCO2e/year",
+      "expected_range": [
+        0.0,
+        10000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Cooling is absent or negligible for many certificates; emission factors vary.",
+      "sources": [
+        {
+          "city": "Paris",
+          "column": "emission_ges_refroidissement",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 1,
+      "coverage_level": "single_city",
+      "confidence": "high",
+      "notes": "Core EPC concept present in one city only."
+    },
+    {
+      "id": "lighting_co2_total",
+      "label": "Lighting CO2 emissions total",
+      "definition": "Annual CO2 or GHG emissions attributable to lighting.",
+      "group": "emissions",
+      "value_kind": "numeric",
+      "canonical_unit": "kgCO2e/year",
+      "expected_range": [
+        0.0,
+        50000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Residential lighting treatment differs by methodology.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "CO2Lighting",
+          "match": "partial",
+          "qualifier": "lighting CO2",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "emission_ges_eclairage",
+          "match": "direct",
+          "qualifier": "lighting GHG emissions",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "auxiliary_co2_total",
+      "label": "Auxiliary CO2 emissions total",
+      "definition": "Annual CO2 or GHG emissions attributable to auxiliaries such as pumps and fans.",
+      "group": "emissions",
+      "value_kind": "numeric",
+      "canonical_unit": "kgCO2e/year",
+      "expected_range": [
+        0.0,
+        100000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "high",
+      "comparability_note": "Auxiliary scope differs by methodology.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "CO2PumpsFans",
+          "match": "partial",
+          "qualifier": "pumps and fans CO2",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "emission_ges_auxiliaires",
+          "match": "direct",
+          "qualifier": "auxiliary GHG emissions",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "renewable_energy_share",
+      "label": "Renewable energy share",
+      "definition": "Share of energy demand or supply covered by renewable energy.",
+      "group": "energy",
+      "value_kind": "numeric",
+      "canonical_unit": "%",
+      "expected_range": [
+        0.0,
+        100.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Countries define renewable contribution differently; some fields may be percentages, fractions, or capped indicators. Source cleaning is required.",
+      "sources": [
+        {
+          "city": "Amsterdam",
+          "column": "AandeelHernieuwbareEnergie",
+          "match": "direct",
+          "qualifier": "renewable share",
+          "note": null
+        },
+        {
+          "city": "Amsterdam",
+          "column": "AandeelHernieuwbareEnergieEMGForfaitair",
+          "match": "partial",
+          "qualifier": "forfaitary variant",
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "RER",
+          "match": "partial",
+          "qualifier": "renewable energy ratio as fraction",
+          "note": "Requires conversion from fraction to percent."
+        },
+        {
+          "city": "Dublin",
+          "column": "SolarHeatFraction",
+          "match": "partial",
+          "qualifier": "solar-only share",
+          "note": "Narrower than total renewable share."
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "main_heating_fuel",
+      "label": "Main heating fuel or energy carrier",
+      "definition": "Primary fuel or energy carrier used for space heating.",
+      "group": "systems",
+      "value_kind": "categorical",
+      "canonical_unit": "category",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Some fields indicate fuel, others broader carrier or generator energy. Community/district systems and mixed systems complicate direct comparison.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "MainSpaceHeatingFuel",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "London",
+          "column": "main_fuel",
+          "match": "direct",
+          "qualifier": "main fuel including community supply distinctions",
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "calefac_vector",
+          "match": "direct",
+          "qualifier": "heating energy vector",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "type_energie_principale_chauffage",
+          "match": "direct",
+          "qualifier": "principal heating energy",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 4,
+      "coverage_level": "cross_city",
+      "confidence": "high",
+      "notes": null
+    },
+    {
+      "id": "main_hot_water_fuel",
+      "label": "Main hot water fuel or energy carrier",
+      "definition": "Primary fuel or energy carrier used for domestic hot water.",
+      "group": "systems",
+      "value_kind": "categorical",
+      "canonical_unit": "category",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Some fields indicate fuel, others broader carrier or generator energy.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "MainWaterHeatingFuel",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "acs_vector",
+          "match": "direct",
+          "qualifier": "DHW energy vector",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "type_energie_principale_ecs",
+          "match": "direct",
+          "qualifier": "principal DHW energy",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 3,
+      "coverage_level": "limited_cross_city",
+      "confidence": "high",
+      "notes": null
+    },
+    {
+      "id": "heating_system_type",
+      "label": "Heating system or generator type",
+      "definition": "Type of main space-heating system or generator.",
+      "group": "systems",
+      "value_kind": "categorical",
+      "canonical_unit": "category",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Fields may describe generator type, distribution-emitter package, or overall heating system. They should be harmonized into broad classes only.",
+      "sources": [
+        {
+          "city": "Liège",
+          "column": "device",
+          "match": "direct",
+          "qualifier": "main heating device",
+          "note": null
+        },
+        {
+          "city": "London",
+          "column": "mainheat_description",
+          "match": "partial",
+          "qualifier": "system description combining generator and distribution",
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "calefac_tipo",
+          "match": "direct",
+          "qualifier": "heating generator type",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "type_generateur_chauffage_principal",
+          "match": "direct",
+          "qualifier": "principal heating generator",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 4,
+      "coverage_level": "cross_city",
+      "confidence": "high",
+      "notes": null
+    },
+    {
+      "id": "hot_water_system_type",
+      "label": "Hot water system or generator type",
+      "definition": "Type of domestic hot water system or generator.",
+      "group": "systems",
+      "value_kind": "categorical",
+      "canonical_unit": "category",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Fields may describe generator type or full installation configuration.",
+      "sources": [
+        {
+          "city": "London",
+          "column": "hotwater_description",
+          "match": "partial",
+          "qualifier": "system description",
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "acs_tipo",
+          "match": "direct",
+          "qualifier": "DHW generator type",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "type_generateur_chauffage_principal_ecs",
+          "match": "direct",
+          "qualifier": "principal DHW generator",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 3,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "cooling_system_type",
+      "label": "Cooling system or generator type",
+      "definition": "Type of cooling system or generator.",
+      "group": "systems",
+      "value_kind": "categorical",
+      "canonical_unit": "category",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Cooling descriptions can mix generator type and system configuration.",
+      "sources": [
+        {
+          "city": "Madrid",
+          "column": "refrig_tipo",
+          "match": "direct",
+          "qualifier": "cooling generator/system type",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "type_generateur_froid",
+          "match": "direct",
+          "qualifier": "cooling generator type",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "high",
+      "notes": null
+    },
+    {
+      "id": "heating_installation_scope",
+      "label": "Heating installation scope",
+      "definition": "Whether the heating installation is individual, collective/community, or mixed.",
+      "group": "systems",
+      "value_kind": "categorical",
+      "canonical_unit": "category",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Community, collective, and mixed typologies differ by registry but broad grouping is usually possible.",
+      "sources": [
+        {
+          "city": "Paris",
+          "column": "type_installation_chauffage",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "type_installation_chauffage_n1",
+          "match": "partial",
+          "qualifier": "installation n1 detailed field",
+          "note": null
+        }
+      ],
+      "rejected_sources": [
+        {
+          "city": "London",
+          "column": "main_fuel",
+          "match": "uncertain",
+          "qualifier": "contains community distinction in fuel text",
+          "note": "Not mapped as a source due to weak directness."
+        }
+      ],
+      "accepted_city_count": 1,
+      "coverage_level": "single_city",
+      "confidence": "medium",
+      "notes": "Only Paris has a clean dedicated field; still useful as a core systems concept."
+    },
+    {
+      "id": "hot_water_installation_scope",
+      "label": "Hot water installation scope",
+      "definition": "Whether the domestic hot water installation is individual, collective/community, or mixed.",
+      "group": "systems",
+      "value_kind": "categorical",
+      "canonical_unit": "category",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Community, collective, and mixed typologies differ by registry but broad grouping is usually possible.",
+      "sources": [
+        {
+          "city": "Paris",
+          "column": "type_installation_ecs",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "type_installation_ecs_n1",
+          "match": "partial",
+          "qualifier": "installation n1 detailed field",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 1,
+      "coverage_level": "single_city",
+      "confidence": "high",
+      "notes": "Core EPC concept present in one city only."
+    },
+    {
+      "id": "ventilation_type",
+      "label": "Ventilation type",
+      "definition": "Type of ventilation system or method.",
+      "group": "systems",
+      "value_kind": "categorical",
+      "canonical_unit": "category",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "System taxonomies differ, but broad categories are comparable.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "VentilationMethod",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "London",
+          "column": "mechanical_ventilation",
+          "match": "direct",
+          "qualifier": "includes natural as category",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "type_ventilation",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 3,
+      "coverage_level": "limited_cross_city",
+      "confidence": "high",
+      "notes": null
+    },
+    {
+      "id": "heating_system_efficiency",
+      "label": "Heating system efficiency",
+      "definition": "Reported efficiency of the main space-heating system or generator.",
+      "group": "systems",
+      "value_kind": "numeric",
+      "canonical_unit": "%",
+      "expected_range": [
+        0.0,
+        1000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Some sources report seasonal/system efficiency, others generator efficiency or COP-like values; placeholder and outlier values occur.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "HSMainSystemEfficiency",
+          "match": "direct",
+          "qualifier": "main heating system efficiency",
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "calefac_rendim",
+          "match": "partial",
+          "qualifier": "heating performance/efficiency",
+          "note": "Contains placeholder values."
+        }
+      ],
+      "rejected_sources": [
+        {
+          "city": "Paris",
+          "column": "cop_generateur_n1_ecs_n1",
+          "match": "uncertain",
+          "qualifier": "DHW generator COP, not heating",
+          "note": "Not mapped."
+        }
+      ],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "hot_water_system_efficiency",
+      "label": "Hot water system efficiency",
+      "definition": "Reported efficiency of the domestic hot water system or generator.",
+      "group": "systems",
+      "value_kind": "numeric",
+      "canonical_unit": "%",
+      "expected_range": [
+        0.0,
+        1000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Some sources report seasonal/system efficiency, others generator efficiency or placeholder values.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "WHMainSystemEff",
+          "match": "direct",
+          "qualifier": "main DHW system efficiency",
+          "note": null
+        },
+        {
+          "city": "Madrid",
+          "column": "acs_rendim",
+          "match": "partial",
+          "qualifier": "DHW performance/efficiency",
+          "note": "Contains placeholder values."
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "solar_hot_water_present",
+      "label": "Solar hot water present",
+      "definition": "Whether solar thermal contributes to domestic hot water or hot water production.",
+      "group": "systems",
+      "value_kind": "boolean",
+      "canonical_unit": "boolean",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "low",
+      "comparability_note": "Some sources indicate any solar thermal presence, others a specific ECS solar installation. Contribution magnitude is not captured here.",
+      "sources": [
+        {
+          "city": "Barcelona",
+          "column": "solar_termica",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Dublin",
+          "column": "SolarHotWaterHeating",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "London",
+          "column": "solar_water_heating_flag",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "type_installation_solaire_n1",
+          "match": "partial",
+          "qualifier": "categorical installation type including solar ECS",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 4,
+      "coverage_level": "cross_city",
+      "confidence": "high",
+      "notes": null
+    },
+    {
+      "id": "solar_pv_present",
+      "label": "Solar PV present",
+      "definition": "Whether on-site photovoltaic electricity generation is present.",
+      "group": "systems",
+      "value_kind": "boolean",
+      "canonical_unit": "boolean",
+      "expected_range": null,
+      "expected_min_year": null,
+      "comparability_risk": "low",
+      "comparability_note": "Presence is broadly comparable even though production accounting differs.",
+      "sources": [
+        {
+          "city": "Barcelona",
+          "column": "solar_fotovoltaica",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "presence_production_pv",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "high",
+      "notes": null
+    },
+    {
+      "id": "pv_electricity_production_total",
+      "label": "PV electricity production total",
+      "definition": "Annual on-site photovoltaic electricity production.",
+      "group": "energy",
+      "value_kind": "numeric",
+      "canonical_unit": "kWh/year",
+      "expected_range": [
+        0.0,
+        500000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Some systems may report generated, credited, or self-consumed electricity differently.",
+      "sources": [
+        {
+          "city": "Madrid",
+          "column": "elec_energia",
+          "match": "partial",
+          "qualifier": "electric contribution energy, often PV-related",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "production_electricite_pv_kwhep_par_an",
+          "match": "direct",
+          "qualifier": "PV electricity production",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "medium",
+      "notes": null
+    },
+    {
+      "id": "low_energy_lighting_share",
+      "label": "Low-energy lighting share",
+      "definition": "Share of fixed lighting that is low-energy/efficient.",
+      "group": "systems",
+      "value_kind": "numeric",
+      "canonical_unit": "%",
+      "expected_range": [
+        0.0,
+        100.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Comparable as a share, though what qualifies as low-energy lighting may vary somewhat by methodology period.",
+      "sources": [
+        {
+          "city": "Dublin",
+          "column": "LowEnergyLightingPercent",
+          "match": "direct",
+          "qualifier": null,
+          "note": null
+        },
+        {
+          "city": "London",
+          "column": "low_energy_lighting",
+          "match": "direct",
+          "qualifier": "share of low energy lighting",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "high",
+      "notes": null
+    },
+    {
+      "id": "heating_cost_total",
+      "label": "Heating cost total",
+      "definition": "Estimated annual energy cost for space heating.",
+      "group": "other",
+      "value_kind": "numeric",
+      "canonical_unit": "currency/year",
+      "expected_range": [
+        0.0,
+        1000000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Cost estimates depend on national price assumptions, reference year, taxes, and tariffs. Cross-country comparison is weak without price normalization.",
+      "sources": [
+        {
+          "city": "London",
+          "column": "heating_cost_current",
+          "match": "direct",
+          "qualifier": "current estimated annual cost",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "cout_chauffage",
+          "match": "direct",
+          "qualifier": "annual heating cost",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "high",
+      "notes": "Currency differs, so canonical unit remains generic currency/year."
+    },
+    {
+      "id": "domestic_hot_water_cost_total",
+      "label": "Domestic hot water cost total",
+      "definition": "Estimated annual energy cost for domestic hot water.",
+      "group": "other",
+      "value_kind": "numeric",
+      "canonical_unit": "currency/year",
+      "expected_range": [
+        0.0,
+        1000000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Cost estimates depend on national price assumptions, reference year, taxes, and tariffs.",
+      "sources": [
+        {
+          "city": "London",
+          "column": "hot_water_cost_current",
+          "match": "direct",
+          "qualifier": "current estimated annual cost",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "cout_ecs",
+          "match": "direct",
+          "qualifier": "annual DHW cost",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "high",
+      "notes": null
+    },
+    {
+      "id": "lighting_cost_total",
+      "label": "Lighting cost total",
+      "definition": "Estimated annual energy cost for lighting.",
+      "group": "other",
+      "value_kind": "numeric",
+      "canonical_unit": "currency/year",
+      "expected_range": [
+        0.0,
+        100000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Cost estimates depend on national price assumptions, reference year, taxes, and tariffs.",
+      "sources": [
+        {
+          "city": "London",
+          "column": "lighting_cost_current",
+          "match": "direct",
+          "qualifier": "current estimated annual cost",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "cout_eclairage",
+          "match": "direct",
+          "qualifier": "annual lighting cost",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "high",
+      "notes": null
+    },
+    {
+      "id": "total_energy_cost",
+      "label": "Total annual energy cost",
+      "definition": "Estimated total annual energy cost for the certificate's covered end uses.",
+      "group": "other",
+      "value_kind": "numeric",
+      "canonical_unit": "currency/year",
+      "expected_range": [
+        0.0,
+        1000000.0
+      ],
+      "expected_min_year": null,
+      "comparability_risk": "medium",
+      "comparability_note": "Coverage and pricing assumptions differ substantially by country. This is useful within-country more than cross-country.",
+      "sources": [
+        {
+          "city": "Barcelona",
+          "column": "cost_anual_aproximat_d_energia",
+          "match": "direct",
+          "qualifier": "approximate annual energy cost",
+          "note": null
+        },
+        {
+          "city": "Paris",
+          "column": "cout_total_5_usages",
+          "match": "direct",
+          "qualifier": "5 uses total cost",
+          "note": null
+        }
+      ],
+      "rejected_sources": [],
+      "accepted_city_count": 2,
+      "coverage_level": "limited_cross_city",
+      "confidence": "high",
+      "notes": null
+    }
+  ],
+  "unmatched": [
+    {
+      "theme": "potential or improved ratings/metrics",
+      "cities": [
+        "London",
+        "Barcelona",
+        "Madrid"
+      ],
+      "reason": "Several cities report potential/future ratings or parallel subsystem classes, but semantics vary and they are not consistently present enough to define a clean cross-city current-state concept pair."
+    },
+    {
+      "theme": "subsystem-specific energy and emissions classes",
+      "cities": [
+        "Barcelona",
+        "Madrid"
+      ],
+      "reason": "Heating, cooling, ACS/DHW, and lighting class labels recur, but category meaning depends on local methodology and subsystem definitions; unification would produce many low-coverage concepts."
+    },
+    {
+      "theme": "building envelope qualitative descriptors",
+      "cities": [
+        "London",
+        "Paris"
+      ],
+      "reason": "Both cities contain wall/roof/floor/window quality descriptions or efficiency grades, but one is free-text/ordinal component assessment and the other is modeled insulation quality; not confidently equivalent."
+    },
+    {
+      "theme": "heating and cooling demand limit/reference thresholds",
+      "cities": [
+        "Amsterdam",
+        "Madrid"
+      ],
+      "reason": "Threshold/limit fields such as Eis* and cal_*limite are regulatory reference values rather than measured/certified property outcomes, and definitions differ too much."
+    },
+    {
+      "theme": "renewable technology flags beyond solar",
+      "cities": [
+        "Barcelona",
+        "Dublin",
+        "Paris"
+      ],
+      "reason": "Biomass, geothermal, district network, CHP, wind turbine, and broader ENR categories recur, but each appears in different structure and specificity, preventing conservative unification."
+    },
+    {
+      "theme": "air tightness and infiltration",
+      "cities": [
+        "Dublin",
+        "Paris",
+        "London"
+      ],
+      "reason": "Dublin has permeability test results and leakage proxies, Paris has air-renewal losses, and London has corridor/ventilation context; related theme but not the same measurable quantity."
+    },
+    {
+      "theme": "address subcomponents like apartment unit, staircase, floor level",
+      "cities": [
+        "Amsterdam",
+        "Barcelona",
+        "London",
+        "Paris"
+      ],
+      "reason": "Fields such as escala, pis, porta, floor_level, numero_etage_appartement, huisletter, and house-number suffixes recur but represent heterogeneous addressing conventions and vertical position, not a single stable concept."
+    },
+    {
+      "theme": "administrative assessor or provenance fields",
+      "cities": [
+        "Amsterdam",
+        "Paris",
+        "London"
+      ],
+      "reason": "Fields for certificate holder, geocoding provenance, UPRN source, or RNB provenance are administrative metadata with no robust common underlying quantity."
+    },
+    {
+      "theme": "building identity codes",
+      "cities": [
+        "Amsterdam",
+        "Dublin",
+        "Paris",
+        "London"
+      ],
+      "reason": "BAG IDs, SA codes, commune codes, UPRN-related provenance, and similar identifiers recur, but they are jurisdiction-specific identifiers rather than a unified cross-city concept."
+    },
+    {
+      "theme": "thermal comfort and summer overheating indicators",
+      "cities": [
+        "Amsterdam",
+        "Paris"
+      ],
+      "reason": "Temperatuuroverschrijding and indicateur_confort_ete are related to summer comfort/overheating but use different scales and constructs."
+    },
+    {
+      "theme": "orientation-specific glazed area",
+      "cities": [
+        "Lisbon",
+        "Paris"
+      ],
+      "reason": "Lisbon provides façade glazing areas by orientation, while Paris has crossing-dwelling and solar protection indicators; not enough direct overlap for a unified concept."
+    },
+    {
+      "theme": "detailed generator/installations hierarchies",
+      "cities": [
+        "Madrid",
+        "Paris",
+        "Dublin"
+      ],
+      "reason": "These datasets expose rich multi-generator, multi-installation hierarchies, but field structures are too source-specific to canonically align conservatively without inventing a complex nested schema."
+    }
+  ],
+  "summary": "The draft vocabulary captures the strongest recurring EPC concepts across the eight cities: dates, construction period/year, asset type, floor area, climate zone, major energy and emissions indicators, ratings, and core building systems. The main caveats are methodological: area definitions differ sharply, rating classes and numeric scores are country-specific, and energy/emissions metrics vary in scope between primary/final/delivered and total versus intensity forms.",
+  "frozen_at": "2026-07-01T17:57:54",
+  "coverage_thresholds": {
+    "single_city": 1,
+    "limited_cross_city": "2-3",
+    "cross_city": ">=4"
+  }
+}

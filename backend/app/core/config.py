@@ -83,6 +83,11 @@ class Settings(BaseSettings):
     INSTITUTIONAL_LLM_MODEL: str = "gemma-4"
     INSTITUTIONAL_LLM_API_KEY: str = ""
 
+    # Local Ollama (schema-alignment Gemma ablation): Gemma 4 E4B on this
+    # machine. Override the host with OLLAMA_API_BASE if it runs elsewhere.
+    OLLAMA_API_BASE: str = "http://localhost:11434/v1"
+    OLLAMA_LLM_MODEL: str = "gemma4:e4b"
+
     # LLM Provider: "openai" or "gemini" - controls which provider to use by default
     DEFAULT_LLM_PROVIDER: str = "openai"
 
@@ -104,6 +109,8 @@ class Settings(BaseSettings):
         "gpt-oss-120b": 48,
         "gemma3-27b": 48,
         "qwen3-8b": 48,
+        "gemma4-local": 1,  # single local GPU (Ollama) — keep requests serial
+        "gemma4-31b": 8,    # institutional vLLM endpoint — shared, moderate concurrency
     }
 
     # Run-selector aliases accepted by set_llm_model (server --model, API
@@ -115,6 +122,8 @@ class Settings(BaseSettings):
         "gpt-oss-120b": "gemma-4",
         "gemma3-27b": "gemma-4",
         "qwen3-8b": "gemma-4",
+        "gemma4-31b": "gemma-4",          # same institutional model (schema-alignment name)
+        "gemma4-local": "gemma4:e4b",     # local Ollama
     }
 
     def set_llm_model(self, model_type: str):
@@ -128,10 +137,13 @@ class Settings(BaseSettings):
     def endpoint_for(self, model: str) -> tuple:
         """(base_url, api_key) for a model name. The institutional model goes to
         the institutional endpoint with its own key (or a dummy — vLLM does not
-        check it); everything else goes to OpenAI with the OpenAI key. The
-        OpenAI secret is therefore never sent to another host."""
+        check it), the local Ollama model to Ollama (no key); everything else
+        goes to OpenAI with the OpenAI key. The OpenAI secret is therefore never
+        sent to another host."""
         if model == self.INSTITUTIONAL_LLM_MODEL:
             return self.INSTITUTIONAL_LLM_API_BASE, (self.INSTITUTIONAL_LLM_API_KEY or "vllm")
+        if model == self.OLLAMA_LLM_MODEL:
+            return self.OLLAMA_API_BASE, "ollama"
         return self.OPENAI_API_BASE, self.OPENAI_API_KEY
 
 

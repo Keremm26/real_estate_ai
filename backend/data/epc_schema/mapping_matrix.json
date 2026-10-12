@@ -1,0 +1,3908 @@
+{
+  "vocab_version": "1.1",
+  "generated_at": "2026-07-02T18:00:32",
+  "cities": [
+    "Amsterdam",
+    "Barcelona",
+    "Copenhagen",
+    "Dublin",
+    "Liège",
+    "Lisbon",
+    "London",
+    "Madrid",
+    "Paris",
+    "Turin"
+  ],
+  "rows": [
+    {
+      "concept_id": "building_type",
+      "group": "building_identity",
+      "comparability_risk": "medium",
+      "canonical_unit": "category",
+      "cells": {
+        "Amsterdam": {
+          "source_columns": [
+            "Gebouwtype"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "reported residential typology at dwelling/unit type level",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Barcelona": {
+          "source_columns": [
+            "us_edifici"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "residential_asset_typology",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Dublin": {
+          "source_columns": [
+            "DwellingTypeDescr"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "dwelling typology",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Liège": {
+          "source_columns": [
+            "destination"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "asset typology with apartment / single-family house / communal variants",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Lisbon": {
+          "source_columns": [
+            "Tipo_Edificio"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "certificate asset scope: fraction vs whole building",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "London": {
+          "source_columns": [
+            "property_type"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "dwelling typology",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "edif_tipo"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "residential/non-residential asset typology; includes dwelling in block, single-family, whole residential block, and some tertiary premises",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "type_batiment"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "appartement / immeuble / maison",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Turin": {
+          "source_columns": [
+            "tipologia_bene_immobile"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "property/asset typology broader than residential building typology",
+          "transform_needed": "recategorization",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        }
+      },
+      "n_cells_any": 9,
+      "n_direct_cells": 8,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "auxiliary_co2_total",
+      "group": "emissions",
+      "comparability_risk": "high",
+      "canonical_unit": "kgCO2e/year",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "CO2PumpsFans"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "annual pumps/fans CO2 emissions total",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "emission_ges_auxiliaires"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "auxiliaries GHG/CO2 total",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 2,
+      "n_direct_cells": 2,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "co2_emissions_intensity",
+      "group": "emissions",
+      "comparability_risk": "high",
+      "canonical_unit": "kgCO2e/m2.year",
+      "cells": {
+        "Amsterdam": {
+          "source_columns": [
+            "BerekendeCO2Emissie"
+          ],
+          "semantic_match": "uncertain",
+          "qualifier": "likely calculated CO2 per m2.year rather than total annual emissions",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Barcelona": {
+          "source_columns": [
+            "emissions_de_co2"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "total_co2_intensity",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Dublin": {
+          "source_columns": [
+            "CO2Rating"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "kgCO2/m2.year style BER emissions intensity",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "London": {
+          "source_columns": [
+            "co2_emiss_curr_per_floor_area"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "current rating stage; per total floor area basis",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "emission_ges_5_usages_par_m2"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "5 uses GHG/CO2 emissions per m2",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Turin": {
+          "source_columns": [
+            "emissioni_co2"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "intensity; likely kgCO2/m2.year",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        }
+      },
+      "n_cells_any": 6,
+      "n_direct_cells": 5,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "co2_emissions_total",
+      "group": "emissions",
+      "comparability_risk": "high",
+      "canonical_unit": "kgCO2e/year",
+      "cells": {
+        "Copenhagen": {
+          "source_columns": [
+            "CalculatedEmission"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "total",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "London": {
+          "source_columns": [
+            "co2_emissions_current"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "current rating stage; likely annual total CO2 emissions as reported by EPC",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "norenov_co2global"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "annual total CO2 emissions, likely total kgCO2/year rather than intensity",
+          "transform_needed": "unit_conversion",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "emission_ges_5_usages"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "5 uses total GHG/CO2 emissions",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 4,
+      "n_direct_cells": 4,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "cooling_co2_total",
+      "group": "emissions",
+      "comparability_risk": "high",
+      "canonical_unit": "kgCO2e/year",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "emissions_refrigeraci"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "cooling_co2_intensity",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Madrid": {
+          "source_columns": [
+            "norenov_co2refrig"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "annual cooling CO2 emissions total",
+          "transform_needed": "unit_conversion",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "emission_ges_refroidissement"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "cooling GHG/CO2 total",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 3,
+      "n_direct_cells": 2,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "domestic_hot_water_co2_total",
+      "group": "emissions",
+      "comparability_risk": "high",
+      "canonical_unit": "kgCO2e/year",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "emissions_acs"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "domestic_hot_water_co2_intensity",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Dublin": {
+          "source_columns": [
+            "CO2MainWater"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "main domestic hot water CO2 only",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "norenov_co2acs"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "annual DHW CO2 emissions total",
+          "transform_needed": "unit_conversion",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "emission_ges_ecs"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "domestic hot water GHG/CO2 total",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 4,
+      "n_direct_cells": 2,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "lighting_co2_total",
+      "group": "emissions",
+      "comparability_risk": "high",
+      "canonical_unit": "kgCO2e/year",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "emissions_enllumenament"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "lighting_co2_intensity",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Dublin": {
+          "source_columns": [
+            "CO2Lighting"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "annual lighting CO2 emissions total",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "norenov_co2ilu"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "annual lighting CO2 emissions total",
+          "transform_needed": "unit_conversion",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "emission_ges_eclairage"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "lighting GHG/CO2 total",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 4,
+      "n_direct_cells": 3,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "space_heating_co2_total",
+      "group": "emissions",
+      "comparability_risk": "high",
+      "canonical_unit": "kgCO2e/year",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "emissions_calefacci"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "space_heating_co2_intensity",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Dublin": {
+          "source_columns": [
+            "CO2MainSpace"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "main space-heating CO2 only",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "norenov_co2calef"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "annual space-heating CO2 emissions total",
+          "transform_needed": "unit_conversion",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "emission_ges_chauffage"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "space heating GHG/CO2 total",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 4,
+      "n_direct_cells": 2,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "auxiliary_final_energy_total",
+      "group": "energy",
+      "comparability_risk": "high",
+      "canonical_unit": "kWh/year",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "DeliveredEnergyPumpsFans"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "delivered energy for pumps and fans, used as final-energy proxy",
+          "transform_needed": "value_normalization",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "conso_auxiliaires_ef"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "auxiliaries final energy total",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 2,
+      "n_direct_cells": 1,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "cooling_demand_intensity",
+      "group": "energy",
+      "comparability_risk": "high",
+      "canonical_unit": "kWh/m2.year",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "energia_refrigeraci_demanda"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "cooling_demand_intensity",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "elec_demrefrig"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "cooling demand intensity",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 2,
+      "n_direct_cells": 2,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "cooling_demand_total",
+      "group": "energy",
+      "comparability_risk": "high",
+      "canonical_unit": "kWh/year",
+      "cells": {
+        "Paris": {
+          "source_columns": [
+            "besoin_refroidissement"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "modeled annual cooling demand total",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 1,
+      "n_direct_cells": 1,
+      "coverage_level": "single_city"
+    },
+    {
+      "concept_id": "cooling_final_energy_total",
+      "group": "energy",
+      "comparability_risk": "high",
+      "canonical_unit": "kWh/year",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "energia_refrigeraci"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "cooling_final_energy_intensity",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Madrid": {
+          "source_columns": [
+            "final_refrig",
+            "edif_superf"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "cooling final energy derived from intensity times reported floor area",
+          "transform_needed": "derivation",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "conso_refroidissement_ef"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "cooling final energy total",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 3,
+      "n_direct_cells": 1,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "delivered_energy_total",
+      "group": "energy",
+      "comparability_risk": "high",
+      "canonical_unit": "kWh/year",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "TotalDeliveredEnergy"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "total delivered energy annual",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 1,
+      "n_direct_cells": 1,
+      "coverage_level": "single_city"
+    },
+    {
+      "concept_id": "domestic_hot_water_demand_total",
+      "group": "energy",
+      "comparability_risk": "high",
+      "canonical_unit": "kWh/year",
+      "cells": {
+        "Paris": {
+          "source_columns": [
+            "besoin_ecs"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "modeled annual domestic hot water demand total",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 1,
+      "n_direct_cells": 1,
+      "coverage_level": "single_city"
+    },
+    {
+      "concept_id": "domestic_hot_water_final_energy_total",
+      "group": "energy",
+      "comparability_risk": "high",
+      "canonical_unit": "kWh/year",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "energia_acs"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "domestic_hot_water_final_energy_intensity",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Dublin": {
+          "source_columns": [
+            "DeliveredEnergyMainWater"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "delivered main water-heating energy, used as final-energy proxy",
+          "transform_needed": "value_normalization",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "final_acs",
+            "edif_superf"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "DHW final energy derived from intensity times reported floor area",
+          "transform_needed": "derivation",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "conso_ecs_ef"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "domestic hot water final energy total",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 4,
+      "n_direct_cells": 1,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "final_energy_intensity",
+      "group": "energy",
+      "comparability_risk": "high",
+      "canonical_unit": "kWh/m2.year",
+      "cells": {
+        "Amsterdam": {
+          "source_columns": [
+            "BerekendeEnergieverbruik"
+          ],
+          "semantic_match": "uncertain",
+          "qualifier": "likely calculated final/delivered energy intensity per m2.year",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Barcelona": {
+          "source_columns": [
+            "consum_d_energia_final"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "final_energy_intensity",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "final_global"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "global final energy intensity as reported by EPC methodology",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "conso_5_usages_par_m2_ef"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "5 uses final energy per m2",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 4,
+      "n_direct_cells": 3,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "final_energy_total",
+      "group": "energy",
+      "comparability_risk": "high",
+      "canonical_unit": "kWh/year",
+      "cells": {
+        "Copenhagen": {
+          "source_columns": [
+            "CalculatedConsumption"
+          ],
+          "semantic_match": "uncertain",
+          "qualifier": "likely_total_consumption_scope_unspecified",
+          "transform_needed": "none",
+          "confidence": "low",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "conso_5_usages_ef"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "5 uses final energy total",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 2,
+      "n_direct_cells": 1,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "lighting_final_energy_total",
+      "group": "energy",
+      "comparability_risk": "high",
+      "canonical_unit": "kWh/year",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "energia_enllumenament"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "lighting_final_energy_intensity",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Dublin": {
+          "source_columns": [
+            "DeliveredLightingEnergy"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "delivered energy for lighting, used as final-energy proxy",
+          "transform_needed": "value_normalization",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "final_ilu",
+            "edif_superf"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "lighting final energy derived from intensity times reported floor area",
+          "transform_needed": "derivation",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "conso_eclairage_ef"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "lighting final energy total",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 4,
+      "n_direct_cells": 1,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "primary_energy_intensity",
+      "group": "energy",
+      "comparability_risk": "high",
+      "canonical_unit": "kWh/m2.year",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "energia_prim_ria_no_renovable"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "non_renewable_primary_energy_intensity",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Liège": {
+          "source_columns": [
+            "e_spec"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "specific energy performance indicator; likely per-heated-floor-area intensity used for EPC rating basis, exact energy scope not explicit in column name",
+          "transform_needed": "value_normalization",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "conso_5_usages_par_m2_ep"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "5 uses primary energy per m2",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Turin": {
+          "source_columns": [
+            "epglnren_ape"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "non-renewable primary energy intensity",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        }
+      },
+      "n_cells_any": 4,
+      "n_direct_cells": 2,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "primary_energy_total",
+      "group": "energy",
+      "comparability_risk": "high",
+      "canonical_unit": "kWh/year",
+      "cells": {
+        "Copenhagen": {
+          "source_columns": [
+            "CalculatedEnergyConsumption"
+          ],
+          "semantic_match": "uncertain",
+          "qualifier": "likely_total_energy_scope_unspecified",
+          "transform_needed": "none",
+          "confidence": "low",
+          "agrees_with_discovery": null
+        },
+        "Madrid": {
+          "source_columns": [
+            "norenov_global"
+          ],
+          "semantic_match": "uncertain",
+          "qualifier": "non-renewable primary energy total or intensity; exact area basis/total basis unclear from profiling",
+          "transform_needed": "unit_conversion",
+          "confidence": "low",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "conso_5_usages_ep"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "5 uses primary energy total",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 3,
+      "n_direct_cells": 1,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "pv_electricity_production_total",
+      "group": "energy",
+      "comparability_risk": "medium",
+      "canonical_unit": "kWh/year",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "FirstEnerProdDelivered"
+          ],
+          "semantic_match": "uncertain",
+          "qualifier": "renewable production in first slot; photovoltaic only if first energy type is renewable electrical",
+          "transform_needed": "derivation",
+          "confidence": "low",
+          "agrees_with_discovery": null
+        },
+        "Madrid": {
+          "source_columns": [
+            "elec_energia"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "annual on-site PV electricity production",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "production_electricite_pv_kwhep_par_an"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "annual PV electricity production reported in kWhep/an (primary-energy-equivalent labeling in column name)",
+          "transform_needed": "unit_conversion",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 3,
+      "n_direct_cells": 1,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "renewable_energy_share",
+      "group": "energy",
+      "comparability_risk": "medium",
+      "canonical_unit": "%",
+      "cells": {
+        "Amsterdam": {
+          "source_columns": [
+            "AandeelHernieuwbareEnergie"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "reported renewable share percentage",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Dublin": {
+          "source_columns": [
+            "RER"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "renewable energy ratio/fraction",
+          "transform_needed": "unit_conversion",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "termica_acscons"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "share of DHW consumption covered by thermal renewable contribution, not whole-building energy share",
+          "transform_needed": "recategorization",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Turin": {
+          "source_columns": [
+            "epglren_ape"
+          ],
+          "semantic_match": "uncertain",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "low",
+          "agrees_with_discovery": null
+        }
+      },
+      "n_cells_any": 4,
+      "n_direct_cells": 2,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "space_heating_demand_intensity",
+      "group": "energy",
+      "comparability_risk": "high",
+      "canonical_unit": "kWh/m2.year",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "energia_calefacci_demanda"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "space_heating_demand_intensity",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "elec_demcalef"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "heating demand intensity",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 2,
+      "n_direct_cells": 2,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "space_heating_demand_total",
+      "group": "energy",
+      "comparability_risk": "high",
+      "canonical_unit": "kWh/year",
+      "cells": {
+        "Paris": {
+          "source_columns": [
+            "besoin_chauffage"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "modeled annual heating demand total",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 1,
+      "n_direct_cells": 1,
+      "coverage_level": "single_city"
+    },
+    {
+      "concept_id": "space_heating_final_energy_total",
+      "group": "energy",
+      "comparability_risk": "high",
+      "canonical_unit": "kWh/year",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "energia_calefacci"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "space_heating_final_energy_intensity",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Dublin": {
+          "source_columns": [
+            "DeliveredEnergyMainSpace"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "delivered main space-heating energy, used as final-energy proxy",
+          "transform_needed": "value_normalization",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "final_calef",
+            "edif_superf"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "space-heating final energy derived from intensity times reported floor area",
+          "transform_needed": "derivation",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "conso_chauffage_ef"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "space heating final energy total",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 4,
+      "n_direct_cells": 1,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "door_area",
+      "group": "envelope",
+      "comparability_risk": "medium",
+      "canonical_unit": "m2",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "DoorArea"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "total door area",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 1,
+      "n_direct_cells": 1,
+      "coverage_level": "single_city"
+    },
+    {
+      "concept_id": "door_u_value",
+      "group": "envelope",
+      "comparability_risk": "medium",
+      "canonical_unit": "W/m2K",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "UvalueDoor"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "aggregate/representative door U-value",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 1,
+      "n_direct_cells": 1,
+      "coverage_level": "single_city"
+    },
+    {
+      "concept_id": "floor_element_area",
+      "group": "envelope",
+      "comparability_risk": "medium",
+      "canonical_unit": "m2",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "FloorArea"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "floor-element/envelope area, not dwelling floor area",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Lisbon": {
+          "source_columns": [
+            "pavimento_area_total"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "total floor envelope element area",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 2,
+      "n_direct_cells": 2,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "floor_u_value",
+      "group": "envelope",
+      "comparability_risk": "medium",
+      "canonical_unit": "W/m2K",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "UValueFloor"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "aggregate/representative floor-element U-value",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 1,
+      "n_direct_cells": 1,
+      "coverage_level": "single_city"
+    },
+    {
+      "concept_id": "roof_area",
+      "group": "envelope",
+      "comparability_risk": "medium",
+      "canonical_unit": "m2",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "RoofArea"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "total roof area",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Lisbon": {
+          "source_columns": [
+            "cobertura_area_total"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "total roof envelope area",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 2,
+      "n_direct_cells": 2,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "roof_u_value",
+      "group": "envelope",
+      "comparability_risk": "medium",
+      "canonical_unit": "W/m2K",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "UValueRoof"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "aggregate/representative roof U-value",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 1,
+      "n_direct_cells": 1,
+      "coverage_level": "single_city"
+    },
+    {
+      "concept_id": "wall_area",
+      "group": "envelope",
+      "comparability_risk": "medium",
+      "canonical_unit": "m2",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "WallArea"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "total wall area",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Lisbon": {
+          "source_columns": [
+            "parede_area_total"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "total wall envelope area",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 2,
+      "n_direct_cells": 2,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "wall_u_value",
+      "group": "envelope",
+      "comparability_risk": "medium",
+      "canonical_unit": "W/m2K",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "UValueWall"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "aggregate/representative wall U-value",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 1,
+      "n_direct_cells": 1,
+      "coverage_level": "single_city"
+    },
+    {
+      "concept_id": "window_area",
+      "group": "envelope",
+      "comparability_risk": "medium",
+      "canonical_unit": "m2",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "WindowArea"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "total window area",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Lisbon": {
+          "source_columns": [
+            "envidracado_area_total"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "total glazed/window area",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 2,
+      "n_direct_cells": 2,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "window_u_value",
+      "group": "envelope",
+      "comparability_risk": "medium",
+      "canonical_unit": "W/m2K",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "UValueWindow"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "aggregate/representative window U-value",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 1,
+      "n_direct_cells": 1,
+      "coverage_level": "single_city"
+    },
+    {
+      "concept_id": "building_compactness",
+      "group": "geometry",
+      "comparability_risk": "high",
+      "canonical_unit": "ratio",
+      "cells": {
+        "Amsterdam": {
+          "source_columns": [
+            "Compactheid"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "reported compactness/form-factor indicator from EPC model",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "edif_compac"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "reported compactness/form-factor indicator; exact formula unspecified",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "ubat_w_par_m2_k"
+          ],
+          "semantic_match": "uncertain",
+          "qualifier": "global heat-loss coefficient per m2K (Ubât), not a pure geometric form factor",
+          "transform_needed": "none",
+          "confidence": "low",
+          "agrees_with_discovery": null
+        }
+      },
+      "n_cells_any": 3,
+      "n_direct_cells": 2,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "floor_area",
+      "group": "geometry",
+      "comparability_risk": "medium",
+      "canonical_unit": "m2",
+      "cells": {
+        "Amsterdam": {
+          "source_columns": [
+            "GebruiksoppervlakteThermischeZone"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "thermal-zone usable area",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Barcelona": {
+          "source_columns": [
+            "metres_cadastre"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "cadastral_area",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Copenhagen": {
+          "source_columns": [
+            "TotalHeatedFloorArea"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "heated",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        },
+        "Dublin": {
+          "source_columns": [
+            "GroundFloorArea(sq m)"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "gross/ground floor area of certified dwelling as reported",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Liège": {
+          "source_columns": [
+            "total_heated_floor"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "heated floor area",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "London": {
+          "source_columns": [
+            "total_floor_area"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "total floor area of certified asset",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "edif_superf"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "reported certified asset area; exact basis unspecified (likely useful/habitable/certified area)",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "surface_habitable_logement"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "habitable floor area of dwelling",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Turin": {
+          "source_columns": [
+            "superficie_di_riferimento_mq"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "reference area",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        }
+      },
+      "n_cells_any": 9,
+      "n_direct_cells": 9,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "floor_height",
+      "group": "geometry",
+      "comparability_risk": "medium",
+      "canonical_unit": "m",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "GroundFloorHeight"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "ground-floor height only, used as representative floor height",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "London": {
+          "source_columns": [
+            "floor_height"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "reported representative floor height/interior height",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "hauteur_sous_plafond"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "ceiling height / interior clear height",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 3,
+      "n_direct_cells": 2,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "number_of_storeys",
+      "group": "geometry",
+      "comparability_risk": "medium",
+      "canonical_unit": "count",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "NoStoreys"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "reported storey count",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Lisbon": {
+          "source_columns": [
+            "Nr de pisos"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "reported storeys/levels",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "nombre_niveau_logement"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "number of levels in dwelling rather than whole building",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 3,
+      "n_direct_cells": 2,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "climate_zone",
+      "group": "location",
+      "comparability_risk": "high",
+      "canonical_unit": "category",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "zona_climatica"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Lisbon": {
+          "source_columns": [
+            "Zona Climática de Inverno"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "winter climate zone",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "edif_zonaclim"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "Spanish EPC climate zone code",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "zone_climatique"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "French DPE climate zone",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 4,
+      "n_direct_cells": 3,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "house_number",
+      "group": "location",
+      "comparability_risk": "low",
+      "canonical_unit": "text",
+      "cells": {
+        "Amsterdam": {
+          "source_columns": [
+            "Huisnummer"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "primary house number only, without letter/addition",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Barcelona": {
+          "source_columns": [
+            "numero"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        },
+        "Copenhagen": {
+          "source_columns": [
+            "HouseNumber"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "numero_voie_ban"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "BAN geocoded address house number",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Turin": {
+          "source_columns": [
+            "numero_civico"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        }
+      },
+      "n_cells_any": 5,
+      "n_direct_cells": 5,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "latitude",
+      "group": "location",
+      "comparability_risk": "low",
+      "canonical_unit": "degrees",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "latitud"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Copenhagen": {
+          "source_columns": [
+            "Wgs84Latitude"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "WGS84",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        },
+        "Turin": {
+          "source_columns": [
+            "latitudine"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        }
+      },
+      "n_cells_any": 3,
+      "n_direct_cells": 3,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "longitude",
+      "group": "location",
+      "comparability_risk": "low",
+      "canonical_unit": "degrees",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "longitud"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Copenhagen": {
+          "source_columns": [
+            "Wgs84Longitude"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "WGS84",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        },
+        "Turin": {
+          "source_columns": [
+            "longitudine"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        }
+      },
+      "n_cells_any": 3,
+      "n_direct_cells": 3,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "municipality",
+      "group": "location",
+      "comparability_risk": "low",
+      "canonical_unit": "category",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "poblacio"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Copenhagen": {
+          "source_columns": [
+            "PostalCity"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "postal_city",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Dublin": {
+          "source_columns": [
+            "CountyName"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "district/county-style Dublin subdivision rather than municipality name",
+          "transform_needed": "value_normalization",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Liège": {
+          "source_columns": [
+            "city"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "municipality/locality text, sometimes combined with postal code in same field",
+          "transform_needed": "recategorization",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Lisbon": {
+          "source_columns": [
+            "Concelho"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "municipality name",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        },
+        "London": {
+          "source_columns": [
+            "posttown"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "post town rather than formal municipality",
+          "transform_needed": "value_normalization",
+          "confidence": "medium",
+          "agrees_with_discovery": false
+        },
+        "Madrid": {
+          "source_columns": [
+            "edif_muni"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "municipality name",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "nom_commune_ban"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "BAN geocoded commune/arrondissement naming",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 8,
+      "n_direct_cells": 4,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "postal_code",
+      "group": "location",
+      "comparability_risk": "low",
+      "canonical_unit": "postal_code",
+      "cells": {
+        "Amsterdam": {
+          "source_columns": [
+            "Postcode"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "Dutch postal code text",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Barcelona": {
+          "source_columns": [
+            "codi_postal"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        },
+        "Copenhagen": {
+          "source_columns": [
+            "PostalCode"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        },
+        "London": {
+          "source_columns": [
+            "postcode"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "UK postal code",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        },
+        "Madrid": {
+          "source_columns": [
+            "edif_codpost"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "5-digit postal code",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "code_postal_ban"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "BAN geocoded postal code",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 6,
+      "n_direct_cells": 6,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "projected_x_coordinate",
+      "group": "location",
+      "comparability_risk": "medium",
+      "canonical_unit": "m",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "utm_x"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "utm_easting",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "coordonnee_cartographique_x_ban"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "projected BAN easting; CRS not stated in profile",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 2,
+      "n_direct_cells": 2,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "projected_y_coordinate",
+      "group": "location",
+      "comparability_risk": "medium",
+      "canonical_unit": "m",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "utm_y"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "utm_northing",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "coordonnee_cartographique_y_ban"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "projected BAN northing; CRS not stated in profile",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 2,
+      "n_direct_cells": 2,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "street_name",
+      "group": "location",
+      "comparability_risk": "low",
+      "canonical_unit": "text",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "adre_a"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Copenhagen": {
+          "source_columns": [
+            "StreetName"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "nom_rue_ban"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "BAN geocoded street name",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 3,
+      "n_direct_cells": 3,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "certificate_context",
+      "group": "other",
+      "comparability_risk": "medium",
+      "canonical_unit": "category",
+      "cells": {
+        "Amsterdam": {
+          "source_columns": [
+            "Status"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "existing/new-build administrative status including existing, completion, permit application states",
+          "transform_needed": "recategorization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Barcelona": {
+          "source_columns": [
+            "tipus_tramit"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "existing_vs_completed_building_context",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Dublin": {
+          "source_columns": [
+            "TypeofRating"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "existing/final/provisional certificate context",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "London": {
+          "source_columns": [
+            "transaction_type"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "transaction/use context rather than strict certificate state",
+          "transform_needed": "recategorization",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Madrid": {
+          "source_columns": [
+            "edif_tiporeg"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "administrative certificate state/context; values include existing building, project, completed building",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "methode_application_dpe"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "application context by asset scope: apartment individual / apartment generated from building DPE / collective building / house",
+          "transform_needed": "recategorization",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        }
+      },
+      "n_cells_any": 6,
+      "n_direct_cells": 4,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "certification_method",
+      "group": "other",
+      "comparability_risk": "high",
+      "canonical_unit": "category",
+      "cells": {
+        "Amsterdam": {
+          "source_columns": [
+            "Berekeningstype"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "calculation methodology/version string",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Barcelona": {
+          "source_columns": [
+            "eina_de_certificacio"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "software_tool",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "edif_proced"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "software/calculation engine used for certification",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "modele_dpe"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "3CL 2021 residential method/model",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 4,
+      "n_direct_cells": 4,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "domestic_hot_water_cost_total",
+      "group": "other",
+      "comparability_risk": "medium",
+      "canonical_unit": "currency/year",
+      "cells": {
+        "London": {
+          "source_columns": [
+            "hot_water_cost_current"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "current annual domestic hot water cost",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "cout_ecs"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "domestic hot water annual estimated cost",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 2,
+      "n_direct_cells": 2,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "heating_cost_total",
+      "group": "other",
+      "comparability_risk": "medium",
+      "canonical_unit": "currency/year",
+      "cells": {
+        "Copenhagen": {
+          "source_columns": [
+            "HeatSupplyCost"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "heat_supply_cost",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "London": {
+          "source_columns": [
+            "heating_cost_current"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "current annual heating cost",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "edif_calef"
+          ],
+          "semantic_match": "uncertain",
+          "qualifier": "annual heating-related reported quantity, likely cost rather than energy due to parallel naming with cooling and ACS and low magnitude",
+          "transform_needed": "none",
+          "confidence": "low",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "cout_chauffage"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "space heating annual estimated cost",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 4,
+      "n_direct_cells": 2,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "lighting_cost_total",
+      "group": "other",
+      "comparability_risk": "medium",
+      "canonical_unit": "currency/year",
+      "cells": {
+        "London": {
+          "source_columns": [
+            "lighting_cost_current"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "current annual lighting cost",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "cout_eclairage"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "lighting annual estimated cost",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 2,
+      "n_direct_cells": 2,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "total_energy_cost",
+      "group": "other",
+      "comparability_risk": "medium",
+      "canonical_unit": "currency/year",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "cost_anual_aproximat_d_energia"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "approximate_annual_energy_cost",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "edif_refrig",
+            "edif_calef",
+            "edif_acs"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "sum of reported end-use annual costs for cooling, heating, and DHW; lighting not included",
+          "transform_needed": "derivation",
+          "confidence": "low",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "cout_total_5_usages"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "5 uses annual estimated energy cost",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 3,
+      "n_direct_cells": 2,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "co2_class",
+      "group": "rating",
+      "comparability_risk": "high",
+      "canonical_unit": "class",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "qualificacio_d_emissions"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "total_emissions_label",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "cal_co2global"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "Spanish EPC CO2 emissions class",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "etiquette_ges"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "French GES class A-G",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 3,
+      "n_direct_cells": 3,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "energy_class",
+      "group": "rating",
+      "comparability_risk": "high",
+      "canonical_unit": "class",
+      "cells": {
+        "Amsterdam": {
+          "source_columns": [
+            "Energieklasse"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "national EPC energy label class",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Barcelona": {
+          "source_columns": [
+            "qualificaci_de_consum_d"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "energy_consumption_label",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Copenhagen": {
+          "source_columns": [
+            "CurrentEnergyLabelClassification"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        },
+        "Dublin": {
+          "source_columns": [
+            "EnergyRating"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "BER alphabetic class",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Liège": {
+          "source_columns": [
+            "e_spec_label"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "ordinal EPC energy label class",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "London": {
+          "source_columns": [
+            "current_energy_rating"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "current EPC energy rating class",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "cal_norenovglobal"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "Spanish EPC energy class based on non-renewable primary energy",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "etiquette_dpe"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "French DPE class A-G",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Turin": {
+          "source_columns": [
+            "classe_energetica_ape"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        }
+      },
+      "n_cells_any": 9,
+      "n_direct_cells": 9,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "energy_efficiency_score",
+      "group": "rating",
+      "comparability_risk": "high",
+      "canonical_unit": "score",
+      "cells": {
+        "Amsterdam": {
+          "source_columns": [
+            "EnergieIndex"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "legacy Dutch Energie-Index score",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Dublin": {
+          "source_columns": [
+            "BerRating"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "BER numeric index",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "London": {
+          "source_columns": [
+            "current_energy_efficiency"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "current SAP/EPC score",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Turin": {
+          "source_columns": [
+            "ape_score_total"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "composite APE score",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        }
+      },
+      "n_cells_any": 4,
+      "n_direct_cells": 4,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "cooling_system_type",
+      "group": "systems",
+      "comparability_risk": "medium",
+      "canonical_unit": "category",
+      "cells": {
+        "Madrid": {
+          "source_columns": [
+            "refrig_tipo"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "main cooling system/generator type",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "type_generateur_froid"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "cooling generator type",
+          "transform_needed": "recategorization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 2,
+      "n_direct_cells": 2,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "heating_installation_scope",
+      "group": "systems",
+      "comparability_risk": "medium",
+      "canonical_unit": "category",
+      "cells": {
+        "Paris": {
+          "source_columns": [
+            "type_installation_chauffage"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "individuel / collectif / mixte collectif-individuel",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 1,
+      "n_direct_cells": 1,
+      "coverage_level": "single_city"
+    },
+    {
+      "concept_id": "heating_system_efficiency",
+      "group": "systems",
+      "comparability_risk": "medium",
+      "canonical_unit": "%",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "HSMainSystemEfficiency"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "main space-heating system efficiency as reported; may exceed 100 for heat pumps",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "calefac_rendim"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "reported heating system efficiency/performance metric; exact basis may vary by technology and contains sentinel values",
+          "transform_needed": "value_normalization",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 2,
+      "n_direct_cells": 1,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "heating_system_type",
+      "group": "systems",
+      "comparability_risk": "medium",
+      "canonical_unit": "category",
+      "cells": {
+        "Liège": {
+          "source_columns": [
+            "device"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "main heating generator/device type",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "London": {
+          "source_columns": [
+            "mainheat_description"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "main heating system/generator description rather than normalized type",
+          "transform_needed": "recategorization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "calefac_tipo"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "main space-heating generator type",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "type_generateur_chauffage_principal"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "main heating generator type, detailed French catalog",
+          "transform_needed": "recategorization",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 4,
+      "n_direct_cells": 2,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "hot_water_installation_scope",
+      "group": "systems",
+      "comparability_risk": "medium",
+      "canonical_unit": "category",
+      "cells": {
+        "Paris": {
+          "source_columns": [
+            "type_installation_ecs"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "individuel / collectif / mixte collectif-individuel",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 1,
+      "n_direct_cells": 1,
+      "coverage_level": "single_city"
+    },
+    {
+      "concept_id": "hot_water_system_efficiency",
+      "group": "systems",
+      "comparability_risk": "medium",
+      "canonical_unit": "%",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "WHMainSystemEff"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "main domestic hot water system efficiency as reported",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "acs_rendim"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "reported DHW system efficiency/performance metric; exact basis may vary and contains sentinel values",
+          "transform_needed": "value_normalization",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 2,
+      "n_direct_cells": 1,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "hot_water_system_type",
+      "group": "systems",
+      "comparability_risk": "medium",
+      "canonical_unit": "category",
+      "cells": {
+        "London": {
+          "source_columns": [
+            "hotwater_description"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "system description rather than normalized type",
+          "transform_needed": "recategorization",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "acs_tipo"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "domestic hot water generator type",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "type_generateur_chauffage_principal_ecs"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "main DHW generator type, detailed French catalog",
+          "transform_needed": "recategorization",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 3,
+      "n_direct_cells": 1,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "low_energy_lighting_share",
+      "group": "systems",
+      "comparability_risk": "medium",
+      "canonical_unit": "%",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "LowEnergyLightingPercent"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "percentage of low-energy lighting",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "London": {
+          "source_columns": [
+            "low_energy_lighting"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "share of fixed lighting outlets that are low energy",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 2,
+      "n_direct_cells": 2,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "main_heating_fuel",
+      "group": "systems",
+      "comparability_risk": "medium",
+      "canonical_unit": "category",
+      "cells": {
+        "Copenhagen": {
+          "source_columns": [
+            "HeatSupply"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "reported_heat_supply",
+          "transform_needed": "value_normalization",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Dublin": {
+          "source_columns": [
+            "MainSpaceHeatingFuel"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "main space-heating fuel",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "London": {
+          "source_columns": [
+            "main_fuel"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "main fuel, includes community/not-community distinctions",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "calefac_vector"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "main energy carrier for space heating",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "type_energie_principale_chauffage"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "primary energy carrier for space heating",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 5,
+      "n_direct_cells": 5,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "main_hot_water_fuel",
+      "group": "systems",
+      "comparability_risk": "medium",
+      "canonical_unit": "category",
+      "cells": {
+        "Dublin": {
+          "source_columns": [
+            "MainWaterHeatingFuel"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "main domestic hot water fuel",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "acs_vector"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "main energy carrier for domestic hot water",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "type_energie_principale_ecs"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "primary energy carrier for domestic hot water",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 3,
+      "n_direct_cells": 3,
+      "coverage_level": "limited_cross_city"
+    },
+    {
+      "concept_id": "solar_hot_water_present",
+      "group": "systems",
+      "comparability_risk": "low",
+      "canonical_unit": "boolean",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "solar_termica"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Dublin": {
+          "source_columns": [
+            "SolarHotWaterHeating"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "solar thermal for hot water",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "London": {
+          "source_columns": [
+            "solar_water_heating_flag"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "solar water heating present flag",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "termica_nombre"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "presence of solar thermal / thermal renewable contribution for DHW or other end uses",
+          "transform_needed": "recategorization",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "type_installation_solaire_n1"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "presence inferred from solar installation type for ECS/heating",
+          "transform_needed": "derivation",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 5,
+      "n_direct_cells": 3,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "solar_pv_present",
+      "group": "systems",
+      "comparability_risk": "low",
+      "canonical_unit": "boolean",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "solar_fotovoltaica"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Dublin": {
+          "source_columns": [
+            "SecondEnergyType_Description"
+          ],
+          "semantic_match": "uncertain",
+          "qualifier": "presence inferred only when renewable electrical production type appears in second slot",
+          "transform_needed": "derivation",
+          "confidence": "low",
+          "agrees_with_discovery": null
+        },
+        "London": {
+          "source_columns": [
+            "photo_supply"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "PV electricity supply amount/indicator; presence inferred from nonzero value",
+          "transform_needed": "derivation",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "Madrid": {
+          "source_columns": [
+            "elec_nombre"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "presence of on-site photovoltaic installation",
+          "transform_needed": "recategorization",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "presence_production_pv"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "reported on-site PV presence flag",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 5,
+      "n_direct_cells": 3,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "ventilation_type",
+      "group": "systems",
+      "comparability_risk": "medium",
+      "canonical_unit": "category",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "ventilacio_us_residencial"
+          ],
+          "semantic_match": "uncertain",
+          "qualifier": "residential_ventilation_indicator_numeric",
+          "transform_needed": "recategorization",
+          "confidence": "low",
+          "agrees_with_discovery": null
+        },
+        "Dublin": {
+          "source_columns": [
+            "VentilationMethod"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "EPC ventilation method/system type",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "London": {
+          "source_columns": [
+            "mechanical_ventilation"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "ventilation method/system type",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "edif_acrist"
+          ],
+          "semantic_match": "uncertain",
+          "qualifier": "possible window/glazing/ventilation-related encoded text, but semantics unclear",
+          "transform_needed": "recategorization",
+          "confidence": "low",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "type_ventilation"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "French ventilation system categories",
+          "transform_needed": "recategorization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 5,
+      "n_direct_cells": 3,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "assessment_date",
+      "group": "temporal",
+      "comparability_risk": "low",
+      "canonical_unit": "date",
+      "cells": {
+        "Amsterdam": {
+          "source_columns": [
+            "Opnamedatum"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "assessment/inspection date encoded as numeric YYYYMMDD",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Dublin": {
+          "source_columns": [
+            "DateOfAssessment"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "assessment date-time; date component needed",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Liège": {
+          "source_columns": [
+            "certificate_date"
+          ],
+          "semantic_match": "uncertain",
+          "qualifier": "certificate-related date; may be assessment or issuance/registration date",
+          "transform_needed": "none",
+          "confidence": "low",
+          "agrees_with_discovery": true
+        },
+        "London": {
+          "source_columns": [
+            "inspection_date"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "inspection/assessment date",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "date_visite_diagnostiqueur"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "diagnostic visit date",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 5,
+      "n_direct_cells": 4,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "certificate_valid_until",
+      "group": "temporal",
+      "comparability_risk": "low",
+      "canonical_unit": "date",
+      "cells": {
+        "Amsterdam": {
+          "source_columns": [
+            "GeldigTot"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "certificate validity end date encoded as numeric YYYYMMDD",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Copenhagen": {
+          "source_columns": [
+            "ValidTo"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "date_fin_validite_dpe"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "certificate validity end date",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Turin": {
+          "source_columns": [
+            "data_decorrenza"
+          ],
+          "semantic_match": "uncertain",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "low",
+          "agrees_with_discovery": null
+        }
+      },
+      "n_cells_any": 4,
+      "n_direct_cells": 3,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "construction_period",
+      "group": "temporal",
+      "comparability_risk": "medium",
+      "canonical_unit": "category",
+      "cells": {
+        "Barcelona": {
+          "source_columns": [
+            "normativa_construcci"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "regulatory_construction_period",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Liège": {
+          "source_columns": [
+            "build_period_v2"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "construction age band, finer-grained categorical period",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Lisbon": {
+          "source_columns": [
+            "Período_Construcao_Geral"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "construction age band",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "London": {
+          "source_columns": [
+            "construction_age_band"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "England and Wales age-band category",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "periode_construction"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "French construction age bands",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 5,
+      "n_direct_cells": 4,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "construction_year",
+      "group": "temporal",
+      "comparability_risk": "low",
+      "canonical_unit": "year",
+      "cells": {
+        "Amsterdam": {
+          "source_columns": [
+            "Bouwjaar"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "reported original construction year",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Barcelona": {
+          "source_columns": [
+            "any_construccio"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Copenhagen": {
+          "source_columns": [
+            "YearOfConstruction"
+          ],
+          "semantic_match": "direct",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": null
+        },
+        "Dublin": {
+          "source_columns": [
+            "Year_of_Construction"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "reported original construction year",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Liège": {
+          "source_columns": [
+            "build_year"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "reported original construction year",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "edif_año"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "mostly construction year, but distribution includes clear invalid/outlier values",
+          "transform_needed": "value_normalization",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        },
+        "Paris": {
+          "source_columns": [
+            "annee_construction"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "reported original construction year",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Turin": {
+          "source_columns": [
+            "epoca_costruzione"
+          ],
+          "semantic_match": "uncertain",
+          "qualifier": null,
+          "transform_needed": "none",
+          "confidence": "low",
+          "agrees_with_discovery": null
+        }
+      },
+      "n_cells_any": 8,
+      "n_direct_cells": 6,
+      "coverage_level": "cross_city"
+    },
+    {
+      "concept_id": "registration_date",
+      "group": "temporal",
+      "comparability_risk": "low",
+      "canonical_unit": "date",
+      "cells": {
+        "Amsterdam": {
+          "source_columns": [
+            "Registratiedatum"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "administrative registration date encoded as numeric YYYYMMDD",
+          "transform_needed": "value_normalization",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Barcelona": {
+          "source_columns": [
+            "data_entrada"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "administrative_entry_date",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Copenhagen": {
+          "source_columns": [
+            "ValidFrom"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "valid_from",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": null
+        },
+        "London": {
+          "source_columns": [
+            "lodgement_date"
+          ],
+          "semantic_match": "direct",
+          "qualifier": "lodgement/registration date",
+          "transform_needed": "none",
+          "confidence": "high",
+          "agrees_with_discovery": true
+        },
+        "Madrid": {
+          "source_columns": [
+            "edif_fecha"
+          ],
+          "semantic_match": "uncertain",
+          "qualifier": "certificate date, likely registration/issue date rather than on-site assessment date",
+          "transform_needed": "none",
+          "confidence": "low",
+          "agrees_with_discovery": null
+        },
+        "Paris": {
+          "source_columns": [
+            "date_etablissement_dpe"
+          ],
+          "semantic_match": "partial",
+          "qualifier": "administrative establishment date rather than explicit registry lodging date",
+          "transform_needed": "none",
+          "confidence": "medium",
+          "agrees_with_discovery": true
+        }
+      },
+      "n_cells_any": 6,
+      "n_direct_cells": 3,
+      "coverage_level": "cross_city"
+    }
+  ],
+  "new_concept_candidates": [
+    {
+      "city": "Amsterdam",
+      "source_column": "Energiebehoefte",
+      "suggested_label": "energy_need_intensity",
+      "reason": "Dutch NTA 8800 'Energiebehoefte' is a core EPC metric likely reported per m2.year, but the canonical vocabulary lacks a general asset-level energy need concept distinct from final/primary energy."
+    },
+    {
+      "city": "Amsterdam",
+      "source_column": "PrimaireFossieleEnergie",
+      "suggested_label": "fossil_primary_energy_intensity",
+      "reason": "Reported fossil primary energy appears central to Dutch EPC methodology and differs semantically from total primary energy."
+    },
+    {
+      "city": "Amsterdam",
+      "source_column": "Warmtebehoefte",
+      "suggested_label": "space_heating_demand_intensity",
+      "reason": "Column name means heating demand/need and likely corresponds to a per-m2 heating-demand metric, but the current metadata does not make that explicit enough for conservative direct mapping."
+    },
+    {
+      "city": "Amsterdam",
+      "source_column": "Temperatuuroverschrijding",
+      "suggested_label": "overheating_indicator",
+      "reason": "Reported summer thermal comfort/overheating metric is present in Dutch EPC data but absent from the current vocabulary."
+    },
+    {
+      "city": "Amsterdam",
+      "source_column": "SoortOpname",
+      "suggested_label": "survey_detail_level",
+      "reason": "Basisopname vs Detailopname is a meaningful methodological distinction not captured by existing concepts."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "vehicle_electric",
+      "suggested_label": "electric_vehicle_charging_present",
+      "reason": "Boolean indicator for EV-related feature, likely relevant to newer EPC datasets."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "sistema_biomassa",
+      "suggested_label": "biomass_system_present",
+      "reason": "Boolean presence of biomass system is a real system concept not covered directly."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "xarxa_districte",
+      "suggested_label": "district_network_present",
+      "reason": "Boolean presence of district heating/cooling network is a real supply-system concept missing from vocabulary."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "energia_geotermica",
+      "suggested_label": "geothermal_system_present",
+      "reason": "Boolean presence of geothermal energy/system is a real system concept missing from vocabulary."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "emissions_calefacci",
+      "suggested_label": "space_heating_co2_intensity",
+      "reason": "End-use heating emissions appear reported as intensity rather than total; canonical vocabulary only has total."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "emissions_refrigeraci",
+      "suggested_label": "cooling_co2_intensity",
+      "reason": "Cooling emissions appear reported as intensity rather than total; canonical vocabulary only has total."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "emissions_acs",
+      "suggested_label": "domestic_hot_water_co2_intensity",
+      "reason": "DHW emissions appear reported as intensity rather than total; canonical vocabulary only has total."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "emissions_enllumenament",
+      "suggested_label": "lighting_co2_intensity",
+      "reason": "Lighting emissions appear reported as intensity rather than total; canonical vocabulary only has total."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "energia_calefacci",
+      "suggested_label": "space_heating_final_energy_intensity",
+      "reason": "Heating final energy appears reported as intensity rather than total; canonical vocabulary only has total."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "energia_refrigeraci",
+      "suggested_label": "cooling_final_energy_intensity",
+      "reason": "Cooling final energy appears reported as intensity rather than total; canonical vocabulary only has total."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "energia_acs",
+      "suggested_label": "domestic_hot_water_final_energy_intensity",
+      "reason": "DHW final energy appears reported as intensity rather than total; canonical vocabulary only has total."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "energia_enllumenament",
+      "suggested_label": "lighting_final_energy_intensity",
+      "reason": "Lighting final energy appears reported as intensity rather than total; canonical vocabulary only has total."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "qualificaci_emissions_1",
+      "suggested_label": "end_use_emissions_class",
+      "reason": "A-G class for an emissions subcomponent/end use is a real EPC concept missing from vocabulary."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "qualificaci_emissions_acs",
+      "suggested_label": "domestic_hot_water_emissions_class",
+      "reason": "A-G class for DHW emissions is a real EPC concept missing from vocabulary."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "qualificaci_energia_calefacci",
+      "suggested_label": "space_heating_energy_class",
+      "reason": "A-G class for heating energy performance is a real EPC concept missing from vocabulary."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "qualificaci_energia_acs",
+      "suggested_label": "domestic_hot_water_energy_class",
+      "reason": "A-G class for DHW energy performance is a real EPC concept missing from vocabulary."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "rehabilitacio_energetica",
+      "suggested_label": "energy_rehabilitation_present",
+      "reason": "Boolean retrofit/rehabilitation indicator is a meaningful building-status concept absent from vocabulary."
+    },
+    {
+      "city": "Barcelona",
+      "source_column": "actuacions_rehabilitacio",
+      "suggested_label": "rehabilitation_actions",
+      "reason": "Textual listing of retrofit measures is a real concept not represented in current vocabulary."
+    },
+    {
+      "city": "Copenhagen",
+      "source_column": "CalculatedConsumption",
+      "suggested_label": "calculated_energy_consumption_total_unspecified_scope",
+      "reason": "Important total energy metric in kWh, but profile does not make clear whether scope is final, delivered, or another national-method metric."
+    },
+    {
+      "city": "Copenhagen",
+      "source_column": "CalculatedEnergyConsumption",
+      "suggested_label": "calculated_energy_consumption_total_alternate_scope",
+      "reason": "Second total energy metric in kWh distinct from CalculatedConsumption; likely a different methodological scope not represented clearly in current vocabulary."
+    },
+    {
+      "city": "Copenhagen",
+      "source_column": "AllProposalsEnergyLabelClassification",
+      "suggested_label": "post_improvement_energy_class",
+      "reason": "Energy label after implementing all proposals is a meaningful EPC output absent from current vocabulary."
+    },
+    {
+      "city": "Copenhagen",
+      "source_column": "AllProfitableProposalsEnergyLabelClassification",
+      "suggested_label": "post_profitable_improvements_energy_class",
+      "reason": "Energy label after profitable proposals is a meaningful EPC improvement-scenario output absent from current vocabulary."
+    },
+    {
+      "city": "Copenhagen",
+      "source_column": "CalculatedEmissionLowering",
+      "suggested_label": "co2_emissions_reduction_potential_total",
+      "reason": "Reported reduction potential from recommended measures is a real EPC concept not present in current vocabulary."
+    },
+    {
+      "city": "Copenhagen",
+      "source_column": "CalculatedEnergySavings",
+      "suggested_label": "energy_savings_potential_total",
+      "reason": "Reported annual energy savings potential from measures is a real EPC concept not present in current vocabulary."
+    },
+    {
+      "city": "Copenhagen",
+      "source_column": "AdditionalHeat",
+      "suggested_label": "secondary_heating_fuel_or_system",
+      "reason": "Secondary/additional heating source is a meaningful building-systems concept absent from current vocabulary."
+    },
+    {
+      "city": "Dublin",
+      "source_column": "PrimaryEnergyLighting",
+      "suggested_label": "lighting_primary_energy_total",
+      "reason": "Annual primary energy for lighting is clearly reported but no corresponding end-use primary-energy concept exists."
+    },
+    {
+      "city": "Dublin",
+      "source_column": "PrimaryEnergyPumpsFans",
+      "suggested_label": "auxiliary_primary_energy_total",
+      "reason": "Annual primary energy for pumps/fans is clearly reported but absent from vocabulary."
+    },
+    {
+      "city": "Dublin",
+      "source_column": "PrimaryEnergyMainWater",
+      "suggested_label": "domestic_hot_water_primary_energy_total",
+      "reason": "Annual primary energy for main hot water is available but no end-use primary-energy concept exists."
+    },
+    {
+      "city": "Dublin",
+      "source_column": "PrimaryEnergyMainSpace",
+      "suggested_label": "space_heating_primary_energy_total",
+      "reason": "Annual primary energy for main space heating is available but no end-use primary-energy concept exists."
+    },
+    {
+      "city": "Dublin",
+      "source_column": "DeliveredEnergySecondarySpace",
+      "suggested_label": "secondary_space_heating_final_or_delivered_energy_total",
+      "reason": "Dataset distinguishes secondary space-heating energy from main space-heating energy."
+    },
+    {
+      "city": "Dublin",
+      "source_column": "DeliveredEnergySupplementaryWater",
+      "suggested_label": "supplementary_domestic_hot_water_final_or_delivered_energy_total",
+      "reason": "Dataset distinguishes supplementary DHW energy from main DHW energy."
+    },
+    {
+      "city": "Dublin",
+      "source_column": "CO2SecondarySpace",
+      "suggested_label": "secondary_space_heating_co2_total",
+      "reason": "Dataset distinguishes secondary space-heating CO2 from main space-heating CO2."
+    },
+    {
+      "city": "Dublin",
+      "source_column": "CO2SupplementaryWater",
+      "suggested_label": "supplementary_domestic_hot_water_co2_total",
+      "reason": "Dataset distinguishes supplementary DHW CO2 from main DHW CO2."
+    },
+    {
+      "city": "Dublin",
+      "source_column": "RER",
+      "suggested_label": "renewable_energy_ratio",
+      "reason": "Stored as ratio/fraction rather than percent; vocabulary currently only has percentage share."
+    },
+    {
+      "city": "Liège",
+      "source_column": "free_facade",
+      "suggested_label": "building_detachment_type",
+      "reason": "Categorical morphology variable indicating detached/semi-detached/number of free façades, which is a meaningful residential building-form concept not present in the vocabulary."
+    },
+    {
+      "city": "London",
+      "source_column": "environment_impact_current",
+      "suggested_label": "environmental_impact_rating_score_current",
+      "reason": "UK EPC-specific numeric environmental impact score distinct from energy score and class."
+    },
+    {
+      "city": "London",
+      "source_column": "environment_impact_potential",
+      "suggested_label": "environmental_impact_rating_score_potential",
+      "reason": "Potential/improved-state environmental impact score."
+    },
+    {
+      "city": "London",
+      "source_column": "energy_consumption_current",
+      "suggested_label": "energy_consumption_metric_current",
+      "reason": "Important UK EPC metric, likely per-area energy consumption figure underlying the energy rating, but scope needs formal definition."
+    },
+    {
+      "city": "London",
+      "source_column": "energy_consumption_potential",
+      "suggested_label": "energy_consumption_metric_potential",
+      "reason": "Potential/improved-state version of the UK EPC energy consumption metric."
+    },
+    {
+      "city": "London",
+      "source_column": "built_form",
+      "suggested_label": "built_form",
+      "reason": "Common residential morphology attribute (mid-terrace, semi-detached, end-terrace) not captured by broad building_type."
+    },
+    {
+      "city": "London",
+      "source_column": "main_heating_controls",
+      "suggested_label": "heating_controls_type",
+      "reason": "Heating controls are materially relevant and widely reported in UK EPC data."
+    },
+    {
+      "city": "London",
+      "source_column": "multi_glaze_proportion",
+      "suggested_label": "multi_glazed_window_share",
+      "reason": "Quantitative glazing-quality share distinct from generic window type."
+    },
+    {
+      "city": "London",
+      "source_column": "flat_top_storey",
+      "suggested_label": "top_storey_flag",
+      "reason": "Useful dwelling position attribute for flats/apartments."
+    },
+    {
+      "city": "London",
+      "source_column": "floor_level",
+      "suggested_label": "dwelling_floor_level",
+      "reason": "Dwelling position within building is a meaningful residential EPC attribute."
+    },
+    {
+      "city": "London",
+      "source_column": "wind_turbine_count",
+      "suggested_label": "wind_turbine_present_or_count",
+      "reason": "On-site renewable technology field not covered by existing canonical renewable concepts."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "refrig_rendim",
+      "suggested_label": "cooling_system_efficiency",
+      "reason": "Reported cooling system performance/efficiency is present but the canonical vocabulary only includes heating and DHW system efficiency."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "refrig_vector",
+      "suggested_label": "main_cooling_fuel",
+      "reason": "Cooling energy carrier is explicitly reported."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "elec_demglobal",
+      "suggested_label": "total_energy_demand_intensity",
+      "reason": "Global building energy demand intensity appears reported separately from final or primary energy."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "elec_demacs",
+      "suggested_label": "domestic_hot_water_demand_intensity",
+      "reason": "DHW demand is reported per area/intensity form rather than only total."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "cal_calefdem",
+      "suggested_label": "space_heating_demand_class",
+      "reason": "Ordinal EPC class for heating demand is available."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "cal_refrigdem",
+      "suggested_label": "cooling_demand_class",
+      "reason": "Ordinal EPC class for cooling demand is available."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "cal_norenovcalef",
+      "suggested_label": "space_heating_primary_energy_class",
+      "reason": "Service-specific non-renewable primary energy class is available."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "cal_norenovrefrig",
+      "suggested_label": "cooling_primary_energy_class",
+      "reason": "Service-specific non-renewable primary energy class is available."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "cal_norenovacs",
+      "suggested_label": "domestic_hot_water_primary_energy_class",
+      "reason": "Service-specific non-renewable primary energy class is available."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "cal_co2calef",
+      "suggested_label": "space_heating_co2_class",
+      "reason": "Service-specific CO2 emissions class is available."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "cal_co2refrig",
+      "suggested_label": "cooling_co2_class",
+      "reason": "Service-specific CO2 emissions class is available."
+    },
+    {
+      "city": "Madrid",
+      "source_column": "cal_co2acs",
+      "suggested_label": "domestic_hot_water_co2_class",
+      "reason": "Service-specific CO2 emissions class is available."
+    },
+    {
+      "city": "Paris",
+      "source_column": "typologie_logement",
+      "suggested_label": "dwelling_typology",
+      "reason": "Apartment typology T1/T2/T3/T4 is a common residential attribute distinct from generic building_type."
+    },
+    {
+      "city": "Paris",
+      "source_column": "indicateur_confort_ete",
+      "suggested_label": "summer_comfort_indicator",
+      "reason": "Explicit EPC comfort outcome for summer conditions, with values insuffisant/moyen/bon."
+    },
+    {
+      "city": "Paris",
+      "source_column": "conso_chauffage_ep",
+      "suggested_label": "space_heating_primary_energy_total",
+      "reason": "Clear primary-energy heating subtotal by end use, missing from current vocabulary."
+    },
+    {
+      "city": "Paris",
+      "source_column": "conso_ecs_ep",
+      "suggested_label": "domestic_hot_water_primary_energy_total",
+      "reason": "Clear primary-energy DHW subtotal by end use, missing from current vocabulary."
+    },
+    {
+      "city": "Paris",
+      "source_column": "conso_refroidissement_ep",
+      "suggested_label": "cooling_primary_energy_total",
+      "reason": "Clear primary-energy cooling subtotal by end use, missing from current vocabulary."
+    },
+    {
+      "city": "Paris",
+      "source_column": "conso_eclairage_ep",
+      "suggested_label": "lighting_primary_energy_total",
+      "reason": "Clear primary-energy lighting subtotal by end use, missing from current vocabulary."
+    },
+    {
+      "city": "Paris",
+      "source_column": "conso_auxiliaires_ep",
+      "suggested_label": "auxiliary_primary_energy_total",
+      "reason": "Clear primary-energy auxiliaries subtotal by end use, missing from current vocabulary."
+    },
+    {
+      "city": "Paris",
+      "source_column": "cout_refroidissement",
+      "suggested_label": "cooling_cost_total",
+      "reason": "Annual cooling cost is present and aligns with existing cost concepts for heating/DHW/lighting."
+    },
+    {
+      "city": "Paris",
+      "source_column": "cout_auxiliaires",
+      "suggested_label": "auxiliary_cost_total",
+      "reason": "Annual auxiliaries cost is present and aligns with existing cost concepts."
+    },
+    {
+      "city": "Paris",
+      "source_column": "type_emetteur_installation_chauffage_n1",
+      "suggested_label": "heating_emitter_type",
+      "reason": "Emitter type (radiator, convector, panel, etc.) is a meaningful EPC systems concept missing from vocabulary."
+    },
+    {
+      "city": "Paris",
+      "source_column": "production_ecs_solaire_installation_n1",
+      "suggested_label": "solar_hot_water_production_total",
+      "reason": "Explicit amount of solar DHW production is present but no canonical solar thermal production concept exists."
+    },
+    {
+      "city": "Paris",
+      "source_column": "facteur_couverture_solaire_n1",
+      "suggested_label": "solar_hot_water_coverage_share",
+      "reason": "Reported solar coverage factor is a meaningful renewable contribution metric distinct from generic renewable share."
+    },
+    {
+      "city": "Paris",
+      "source_column": "type_energie_climatisation",
+      "suggested_label": "main_cooling_fuel",
+      "reason": "Cooling energy carrier is explicitly reported but no canonical cooling fuel concept exists."
+    },
+    {
+      "city": "Paris",
+      "source_column": "surface_totale_capteurs_pv",
+      "suggested_label": "pv_collector_area",
+      "reason": "PV area is explicitly reported and useful for renewable system characterization."
+    },
+    {
+      "city": "Turin",
+      "source_column": "classe_target_ape",
+      "suggested_label": "target_energy_class",
+      "reason": "Clearly encodes an aspirational/improved target APE class distinct from the current certified energy class."
+    },
+    {
+      "city": "Turin",
+      "source_column": "ape_score_classe",
+      "suggested_label": "energy_class_subscore",
+      "reason": "Local APE scoring component tied to class dimension."
+    },
+    {
+      "city": "Turin",
+      "source_column": "ape_score_impianto",
+      "suggested_label": "system_quality_subscore",
+      "reason": "Local APE scoring component for building systems/plant."
+    },
+    {
+      "city": "Turin",
+      "source_column": "ape_score_involucro",
+      "suggested_label": "envelope_quality_subscore",
+      "reason": "Local APE scoring component for envelope performance."
+    },
+    {
+      "city": "Turin",
+      "source_column": "ape_score_rinnovabili",
+      "suggested_label": "renewables_subscore",
+      "reason": "Local APE scoring component for renewable contribution."
+    },
+    {
+      "city": "Turin",
+      "source_column": "meta_immobile",
+      "suggested_label": "multi_property_record_flag",
+      "reason": "Boolean seems to indicate whether the certificate/record refers to an aggregate or meta-property rather than a single property."
+    },
+    {
+      "city": "Turin",
+      "source_column": "numero_immobili_per_catasto",
+      "suggested_label": "cadastre_property_count",
+      "reason": "Administrative count of cadastral properties associated with the record."
+    },
+    {
+      "city": "Turin",
+      "source_column": "zona_omi",
+      "suggested_label": "real_estate_market_zone",
+      "reason": "Official Italian OMI market zone is a meaningful spatial classification not represented in the fixed vocabulary."
+    }
+  ],
+  "stats": {
+    "n_concepts": 75,
+    "concepts_mapped_ge1": 75,
+    "coverage_core_ge4": 32,
+    "comparable_core_ge4_not_high_risk": 18,
+    "total_cells": 254,
+    "discovery_agreement": 0.995,
+    "discovery_cells_checked": 185,
+    "unknown_concept_ids_from_agent": [
+      "local_authority_label"
+    ],
+    "n_new_concept_candidates": 84
+  }
+}

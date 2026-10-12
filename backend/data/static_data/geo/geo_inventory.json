@@ -1,0 +1,168 @@
+{
+  "turin": {
+    "country": "IT",
+    "resolution": "building",
+    "strategy": "latlon",
+    "sampled": 10000,
+    "placed": 10000,
+    "placed_pct": 100.0,
+    "energy_bands": {
+      "A": 382,
+      "B": 214,
+      "C": 562,
+      "D": 1521,
+      "E": 2959,
+      "F": 2795,
+      "G": 1567
+    }
+  },
+  "barcelona": {
+    "country": "ES",
+    "resolution": "building",
+    "strategy": "latlon",
+    "sampled": 10000,
+    "placed": 9967,
+    "placed_pct": 99.7,
+    "energy_bands": {
+      "A": 34,
+      "B": 47,
+      "C": 129,
+      "D": 599,
+      "E": 6158,
+      "F": 1221,
+      "G": 1779
+    }
+  },
+  "copenhagen": {
+    "country": "DK",
+    "resolution": "building",
+    "strategy": "latlon",
+    "sampled": 10000,
+    "placed": 9325,
+    "placed_pct": 93.2,
+    "energy_bands": {
+      "A": 1116,
+      "B": 502,
+      "C": 3986,
+      "D": 2514,
+      "E": 831,
+      "F": 278,
+      "G": 98
+    }
+  },
+  "paris": {
+    "country": "FR",
+    "resolution": "building",
+    "strategy": "proj_l93",
+    "sampled": 10000,
+    "placed": 9996,
+    "placed_pct": 100.0,
+    "energy_bands": {
+      "A": 15,
+      "B": 118,
+      "C": 2314,
+      "D": 3068,
+      "E": 2700,
+      "F": 1060,
+      "G": 721
+    }
+  },
+  "london": {
+    "country": "GB",
+    "resolution": "postcode",
+    "strategy": "postal",
+    "sampled": 10000,
+    "placed": 9666,
+    "placed_pct": 96.7,
+    "energy_bands": {
+      "A": 22,
+      "B": 1352,
+      "C": 5606,
+      "D": 2356,
+      "E": 286,
+      "F": 33,
+      "G": 11
+    }
+  },
+  "amsterdam": {
+    "country": "NL",
+    "resolution": "postcode",
+    "strategy": "postal",
+    "sampled": 10000,
+    "placed": 9978,
+    "placed_pct": 99.8,
+    "energy_bands": {
+      "?": 148,
+      "A": 4264,
+      "B": 1454,
+      "C": 2081,
+      "D": 1042,
+      "E": 486,
+      "F": 222,
+      "G": 281
+    }
+  },
+  "madrid": {
+    "country": "ES",
+    "resolution": "postcode",
+    "strategy": "postal",
+    "sampled": 10000,
+    "placed": 9931,
+    "placed_pct": 99.3,
+    "energy_bands": {
+      "A": 724,
+      "B": 448,
+      "C": 832,
+      "D": 1686,
+      "E": 4770,
+      "F": 716,
+      "G": 755
+    }
+  },
+  "dublin": {
+    "country": "IE",
+    "resolution": "district",
+    "strategy": "admin",
+    "sampled": 10000,
+    "placed": 10000,
+    "placed_pct": 100.0,
+    "energy_bands": {
+      "A": 2159,
+      "B": 1564,
+      "C": 2917,
+      "D": 1700,
+      "E": 888,
+      "F": 356,
+      "G": 416
+    }
+  },
+  "lisbon": {
+    "country": "PT",
+    "resolution": "parish",
+    "strategy": "admin",
+    "sampled": 10000,
+    "placed": 9995,
+    "placed_pct": 100.0,
+    "energy_bands": {
+      "?": 9995
+    }
+  },
+  "liege": {
+    "country": "BE",
+    "resolution": "city",
+    "strategy": "admin",
+    "sampled": 10000,
+    "placed": 10000,
+    "placed_pct": 100.0,
+    "energy_bands": {
+      "?": 8,
+      "A": 126,
+      "B": 1398,
+      "C": 2061,
+      "D": 1903,
+      "E": 1529,
+      "F": 1171,
+      "G": 1804
+    }
+  }
+}
