@@ -1,7 +1,7 @@
 {
   "meta": {
     "description": "Hand-curated full-pipeline benchmark for MURENA (Turin). Each query runs end to end through all agents; ground truth is stored per query (expected agent activation and the regulatory expectation), replacing the combinatorial generator and the phrase-substring activation map.",
-    "schema": "pipeline-v1. id: stable, [A-Za-z0-9-] only (no '_', not purely numeric); change the id whenever the query text changes (results and judge outputs are cached by id). lang: language of this query (it, en, or mixed for code-switching queries). suites: 'benchmark' = main runs (3 consistency trials); 'sensitivity' = also run all ablations and baselines. complexity: simple (1-2 constraints) / medium (3) / complex (4-5). slots: machine-readable constraints used for feasibility checks (typology = dataset tipologia label or null; landmark = key of LOCAL_LANDMARKS; radius_km = explicit radius if stated, else the location agent's 3 km default; surface min/max m2 as stated by the user; energy_classes; services among mobility/education/healthcare/green/sport/commercial; intended_use; capacity). expected_agents = agents that must contribute (graph names: location, building, energy, proximity, regulatory); optional_agents = acceptable either way. regulatory = same expectation shape as rag/eval/downstream_queries_turin.json (activate true/false/'either', value range, user_values echo guard). mirrors = matching downstream item.",
+    "schema": "pipeline-v1. id: stable, [A-Za-z0-9-] only (no '_', not purely numeric); change the id whenever the query text changes (results and judge outputs are cached by id). lang: language of this query (it, en, or mixed for code-switching queries). suites: 'benchmark' = main runs (3 consistency trials); 'sensitivity' = also run all ablations and baselines. complexity: simple (1-2 constraints) / medium (3) / complex (4-5). slots: machine-readable constraints used for feasibility checks (typology = dataset tipologia label or null; landmark = key of LOCAL_LANDMARKS; radius_km = explicit radius if stated, else the location agent's 3 km default; surface min/max m2 as stated by the user; energy_classes; services among mobility/education/healthcare/green/sport/commercial; intended_use; capacity). expected_agents = agents that must contribute (graph names: location, building, energy, proximity, regulatory); optional_agents = acceptable either way. regulatory = same expectation shape as rag/eval/downstream_queries_turin.json (activate true/false/'either', value range, user_values echo guard). mirrors = matching downstream item. heuristic_stratum = whether regulatory.value_min is above the building agent's ~10 m2/person capacity estimate ('law_above_heuristic') or not ('law_at_or_below_heuristic'); null when no rule applies or no capacity is given.",
     "country": "IT",
     "dataset": "data/metadata/estates.parquet (89,200 records, Turin)",
     "composition": "50 queries: 31 with an applicable regulatory rule (incl. 3 'either'), 19 without. Includes long realistic requests (PQ-41..44) and linguistic stress cases (numbers in words, code-switching, negation, self-correction, typos, two landmarks).",
@@ -53,6 +53,7 @@
         "user_values": [],
         "basis": "DM 1256: N=60, [9.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "mirrors": "DQ-03",
       "covers": [
         "regulatory-only",
@@ -98,6 +99,7 @@
         "user_values": [],
         "basis": "DM 1256: 40 single beds, [12.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "mirrors": "DQ-05",
       "covers": [
         "english",
@@ -153,6 +155,7 @@
         "user_values": [],
         "basis": "DM 1256: N=50, [9.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "mirrors": null,
       "covers": [
         "four-agents",
@@ -200,6 +203,7 @@
         "user_values": [],
         "basis": "DM 1256: 25 double rooms = 50 beds, [9.5 N, 14.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "mirrors": "DQ-06",
       "covers": [
         "adaptive-reuse-office",
@@ -251,6 +255,7 @@
         "user_values": [],
         "basis": "DM 1256: N=120, [9.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "mirrors": "DQ-04",
       "covers": [
         "large-capacity",
@@ -302,6 +307,7 @@
         ],
         "basis": "DM 1256: N=60, [9.5 N, 17.5 N]; the user's 2000 m2 is a preference"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "mirrors": "DQ-18",
       "covers": [
         "echo-with-capacity",
@@ -348,6 +354,7 @@
         ],
         "basis": "No capacity: no building-level threshold"
       },
+      "heuristic_stratum": null,
       "mirrors": "DQ-20",
       "covers": [
         "echo-without-capacity",
@@ -394,6 +401,7 @@
         "user_values": [],
         "basis": "DM 1975 Art. 2: H(12) = 136, [H, 1.25 H]"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "mirrors": "DQ-12",
       "covers": [
         "co-housing-capacity",
@@ -436,6 +444,7 @@
         "user_values": [],
         "basis": "DM 1975 Art. 2: H(6) = 76, [H, 1.25 H]"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "mirrors": "DQ-13",
       "covers": [
         "family-dwelling",
@@ -487,6 +496,7 @@
         "user_values": [],
         "basis": "DM 1975 Art. 3: one-room flat for two >= 38 m2"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "mirrors": "DQ-16",
       "covers": [
         "studio",
@@ -529,6 +539,7 @@
         "user_values": [],
         "basis": "DPR 380 Art. 24 c.5-bis: existing-building derogation 38 -> 28 m2"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "mirrors": "DQ-17",
       "covers": [
         "studio-derogation",
@@ -581,6 +592,7 @@
         ],
         "basis": "DM 1256 (lex specialis over DM 1975 Art. 2): N=10, [9.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "mirrors": "DQ-11",
       "covers": [
         "lex-specialis",
@@ -632,6 +644,7 @@
         ],
         "basis": "DM 1256: N=60, [9.5 N, 17.5 N] — conflicts with the user's 50-80 m2"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "mirrors": null,
       "covers": [
         "conflict-user-vs-regulation",
@@ -675,6 +688,7 @@
         "user_values": [],
         "basis": "DM 1256: N=40, [9.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "mirrors": null,
       "covers": [
         "adaptive-reuse-hotel",
@@ -718,6 +732,7 @@
         "user_values": [],
         "basis": "DM 1256: 30 beds in double rooms, [9.5 N, 14.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "mirrors": null,
       "covers": [
         "double-room-rate",
@@ -773,6 +788,7 @@
         "user_values": [],
         "basis": "DM 1256 nuclei integrati: service 3.0 m2/bed, [9.5 N, 15.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "mirrors": "DQ-08",
       "covers": [
         "nuclei-integrati",
@@ -816,6 +832,7 @@
         "user_values": [],
         "basis": "DM 1256: N=100, [9.5 N, 17.5 N] + 6.1.2 accessibility allowance"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "mirrors": "DQ-10",
       "covers": [
         "accessibility",
@@ -862,6 +879,7 @@
         "user_values": [],
         "basis": "DM 1256: 60 single beds; Art. 2 c.2 allows -15% on service areas for existing buildings"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "mirrors": "DQ-09",
       "covers": [
         "existing-building",
@@ -905,6 +923,7 @@
         "user_values": [],
         "basis": "DM 1256: 20 single + 20 double-room beds"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "mirrors": "DQ-07",
       "covers": [
         "mixed-rooms",
@@ -960,6 +979,7 @@
         "user_values": [],
         "basis": "DM 1975 Art. 2: H(20) = 14*4 + 10*16 = 216, [H, 1.25 H]"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "mirrors": null,
       "covers": [
         "co-housing-large",
@@ -1007,6 +1027,7 @@
         "user_values": [],
         "basis": "No senior standard; if applied, DM 1975 Art. 2: H(8) = 96"
       },
+      "heuristic_stratum": null,
       "mirrors": "DQ-19",
       "covers": [
         "senior",
@@ -1052,6 +1073,7 @@
         "user_values": [],
         "basis": "Ambiguous: a private flat for 4 students may fall under the dwelling rule (H(4) = 56) rather than DM 1256 ([38, 70]); 56 lies inside the accepted range"
       },
+      "heuristic_stratum": null,
       "mirrors": null,
       "covers": [
         "ambiguous-use",
@@ -1098,6 +1120,7 @@
         ],
         "basis": "DM 1975 Art. 2: H(3) = 42, [H, 1.25 H]; the user's 60 m2 is stricter"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "mirrors": "DQ-14",
       "covers": [
         "user-bound-above-regulation",
@@ -1143,6 +1166,7 @@
         ],
         "basis": "Office use: no regulatory threshold"
       },
+      "heuristic_stratum": null,
       "mirrors": "DQ-27",
       "covers": [
         "office",
@@ -1187,6 +1211,7 @@
         "user_values": [],
         "basis": "Retail use: no regulatory threshold"
       },
+      "heuristic_stratum": null,
       "mirrors": "DQ-28",
       "covers": [
         "retail",
@@ -1230,6 +1255,7 @@
         ],
         "basis": "Industrial use: no regulatory threshold"
       },
+      "heuristic_stratum": null,
       "mirrors": "DQ-29",
       "covers": [
         "industrial",
@@ -1273,6 +1299,7 @@
         "user_values": [],
         "basis": "Energy-only request"
       },
+      "heuristic_stratum": null,
       "mirrors": "DQ-30",
       "covers": [
         "energy-only",
@@ -1310,6 +1337,7 @@
         "user_values": [],
         "basis": "Location-only request"
       },
+      "heuristic_stratum": null,
       "mirrors": "DQ-31",
       "covers": [
         "location-only"
@@ -1352,6 +1380,7 @@
         "user_values": [],
         "basis": "No day-centre standard in the corpus"
       },
+      "heuristic_stratum": null,
       "mirrors": "DQ-23",
       "covers": [
         "senior",
@@ -1396,6 +1425,7 @@
         "user_values": [],
         "basis": "Healthcare accreditation standards not in the corpus; 40 beds must not trigger the student per-bed rule"
       },
+      "heuristic_stratum": null,
       "mirrors": "DQ-24",
       "covers": [
         "capacity-without-rule",
@@ -1435,6 +1465,7 @@
         "user_values": [],
         "basis": "No reachable hotel standard"
       },
+      "heuristic_stratum": null,
       "mirrors": "DQ-25",
       "covers": [
         "hospitality",
@@ -1477,6 +1508,7 @@
         "user_values": [],
         "basis": "Reg. 30 Art. 123 (30 m3/person, ~11.1 m2/person at 2.70 m) exists but is unreachable under QUANT_ONLY"
       },
+      "heuristic_stratum": null,
       "mirrors": "DQ-26",
       "covers": [
         "dormitory",
@@ -1517,6 +1549,7 @@
         "user_values": [],
         "basis": "LR 16/2018 Art. 6 sets heights, not surfaces"
       },
+      "heuristic_stratum": null,
       "mirrors": "DQ-32",
       "covers": [
         "attic",
@@ -1555,6 +1588,7 @@
         "user_values": [],
         "basis": "Change of use is procedural (LR 19/1999 Art. 8)"
       },
+      "heuristic_stratum": null,
       "mirrors": "DQ-34",
       "covers": [
         "change-of-use",
@@ -1608,6 +1642,7 @@
         ],
         "basis": "No number of people: the dwelling rule cannot be applied"
       },
+      "heuristic_stratum": null,
       "mirrors": "DQ-21",
       "covers": [
         "echo-without-capacity",
@@ -1649,6 +1684,7 @@
         "user_values": [],
         "basis": "No constraint at all"
       },
+      "heuristic_stratum": null,
       "mirrors": null,
       "covers": [
         "vague-request",
@@ -1698,6 +1734,7 @@
         "user_values": [],
         "basis": "No intended use"
       },
+      "heuristic_stratum": null,
       "mirrors": null,
       "covers": [
         "relative-term-large",
@@ -1738,6 +1775,7 @@
         "user_values": [],
         "basis": "No capacity, and heritage rules are not in the corpus"
       },
+      "heuristic_stratum": null,
       "mirrors": "DQ-35",
       "covers": [
         "heritage",
@@ -1790,6 +1828,7 @@
         ],
         "basis": "No number of people: the dwelling rule cannot be applied"
       },
+      "heuristic_stratum": null,
       "mirrors": null,
       "covers": [
         "explicit-radius",
@@ -1846,6 +1885,7 @@
         ],
         "basis": "No capacity: no building-level threshold"
       },
+      "heuristic_stratum": null,
       "mirrors": null,
       "covers": [
         "echo-without-capacity",
@@ -1899,6 +1939,7 @@
         "user_values": [],
         "basis": "DM 1256: 45 single beds, [12.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "mirrors": "DQ-36",
       "covers": [
         "long-query",
@@ -1954,6 +1995,7 @@
         "user_values": [],
         "basis": "DM 1975 Art. 2: H(6) = 76, [H, 1.25 H]"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "mirrors": "DQ-13",
       "covers": [
         "long-query",
@@ -2008,6 +2050,7 @@
         ],
         "basis": "Reg. 30 Art. 130 c.1: workplaces must ensure at least 3 m2 per person present; 25 persons -> 75 m2 (range [75, 1.25 x 75]). Declining is also acceptable (the user's own 400 m2 makes it non-binding). The per-inhabitant dwelling rule must NOT be used."
       },
+      "heuristic_stratum": null,
       "mirrors": "DQ-43",
       "covers": [
         "long-query",
@@ -2049,6 +2092,7 @@
         "user_values": [],
         "basis": "Undecided use and no exact capacity ('a few dozen'): no threshold can be computed"
       },
+      "heuristic_stratum": null,
       "mirrors": null,
       "covers": [
         "ambiguous-intent",
@@ -2094,6 +2138,7 @@
         "user_values": [],
         "basis": "DM 1256: 60 beds in double rooms, [9.5 N, 14.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "mirrors": "DQ-37",
       "covers": [
         "number-in-words",
@@ -2148,6 +2193,7 @@
         "user_values": [],
         "basis": "DM 1256: 30 single beds, [12.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "mirrors": "DQ-39",
       "covers": [
         "code-switching",
@@ -2199,6 +2245,7 @@
         "user_values": [],
         "basis": "DM 1975 Art. 2: H(4) = 56, [H, 1.25 H]"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "mirrors": null,
       "covers": [
         "negation-energy",
@@ -2244,6 +2291,7 @@
         ],
         "basis": "DM 1256: final capacity N=50, [9.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "mirrors": "DQ-38",
       "covers": [
         "self-correction",
@@ -2295,6 +2343,7 @@
         "user_values": [],
         "basis": "DM 1256: N=70, [9.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "mirrors": "DQ-42",
       "covers": [
         "typos",
@@ -2339,6 +2388,7 @@
         "user_values": [],
         "basis": "DM 1975 Art. 2: H(10) = 14*4 + 10*6 = 116, [H, 1.25 H]"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "mirrors": null,
       "covers": [
         "two-landmarks",

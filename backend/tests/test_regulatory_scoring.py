@@ -98,6 +98,14 @@ def test_winner_cited_on_precedence_items():
     assert rs.score_output(EXPECT, other, HITS, COLS, precedence=prec, key2name=KEY2NAME)["winner_cited"] is False
 
 
+def test_winner_cited_by_alias_when_the_name_has_no_number():
+    prec = {"winner": "th_standards", "loser": "si_2018", "winner_aliases": ["Property Standards"]}
+    k2n = {"th_standards": "Tower Hamlets — Private Rented Housing Property Standards", "si_2018": "SI 2018/616"}
+    assert rs.winner_cited("Tower Hamlets Private Rented Housing Property Standards, sleeping rooms", prec, k2n) is True
+    assert rs.winner_cited("SI 2018/616 para 1A(2)(a)", prec, k2n) is False
+    assert rs.winner_cited("SI 2018/616 para 1A", {**prec, "winner_aliases": []}, k2n) is False
+
+
 def test_routing_ok_only_when_routed():
     r = rs.score_output(EXPECT, _answer(750), HITS, COLS, expected_use_case="student_housing",
                         routing={"use_case": "student_housing"}, key2name=KEY2NAME)

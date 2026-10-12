@@ -61,6 +61,9 @@ class MapService:
         Args:
             overlay_type: 'municipalities', 'omi', or 'urban'
         """
+        from app.core.cities import active_city
+        if active_city().key != "turin":  # the overlay files are Turin's
+            return None
         if overlay_type == "municipalities" or overlay_type == "municipi":
             return self._load_geojson(settings.MUNICIPI_GEOJSON)
         elif overlay_type == "omi":
@@ -208,11 +211,15 @@ class MapService:
         )
 
     async def get_config(self) -> Dict[str, Any]:
-        """Get default map configuration."""
+        """Get default map configuration (centred on the active city)."""
+        from app.core.cities import active_city
+        city = active_city()
+        lat, lng = ((settings.DEFAULT_MAP_CENTER_LAT, settings.DEFAULT_MAP_CENTER_LON)
+                    if city.key == "turin" else city.map_center)
         return {
             "center": {
-                "lat": settings.DEFAULT_MAP_CENTER_LAT,
-                "lng": settings.DEFAULT_MAP_CENTER_LON,
+                "lat": lat,
+                "lng": lng,
             },
             "zoom": settings.DEFAULT_MAP_ZOOM,
             "style": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",  # Default OSM

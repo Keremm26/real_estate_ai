@@ -644,8 +644,11 @@ class RealEstateService:
 
         # Map city
         city_val = safe_get("city", alternatives=["codice_comune"])
+        from app.core.cities import active_city
         if city_val == "L219" or (hasattr(settings, "TARGET_COMUNE_CODE") and city_val == settings.TARGET_COMUNE_CODE):
             city_str = getattr(settings, "TARGET_CITY", "Torino")
+        elif active_city().key != "turin":  # one dataset = one city (codice_comune is a borough/INE code)
+            city_str = active_city().name
         else:
             city_str = city_val
 

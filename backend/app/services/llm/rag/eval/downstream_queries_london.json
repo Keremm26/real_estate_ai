@@ -1,0 +1,1468 @@
+{
+  "meta": {
+    "description": "Downstream evaluation of the regulatory agent with RAG retrieval (London). Same design as the Turin set: each item is one production-shaped request; the agent must either produce a document-grounded building-level surface threshold (surface_area >= X) or decline (found: false).",
+    "schema": "downstream-v2 (see downstream_queries_turin.json). One query per language: queries: {en}. precedence.rule in {lex_specialis, delegated_derogation, higher_local_standard}; precedence.winner_aliases = names that identify the winner in a citation when its doc_name carries no number. rule_family in {hmo_national, hmo_th, hmo_th_bedsit, lp_dwelling} names the value_basis formula the range is computed from (null when no rule applies). heuristic_stratum = whether value_min is above the building agent's ~10 m2/person capacity estimate ('law_above_heuristic') or not ('law_at_or_below_heuristic'); null when no rule applies.",
+    "country": "UK",
+    "corpus": "London slice of the normative store: national (Use Classes Order 1987, GPDO 2015 Sch. 2 Part 3 current + as at 1 Jan 2021, HMO Mandatory Conditions 2018 SI 2018/616, Approved Document M vol. 1), regional (London Plan 2021), municipal (Tower Hamlets Local Plan 2031, Article 4 Direction Class E->C3, Private Rented Housing Property Standards).",
+    "value_basis": {
+      "hmo_national": "SI 2018/616 para 1A(2): sleeping room for one person aged over 10 >= 6.51 m2, for two >= 10.22 m2 (5.11 m2 per person). Building level = sum of sleeping rooms: H = 6.51 s + 10.22 d. Known room mix: [H, 1.25 H]; mix not stated: [5.11 N, 1.25 x 6.51 N].",
+      "hmo_tower_hamlets": "TH Private Rented Housing Property Standards (HMOs in the borough): sleeping room with kitchen facilities in a separate room 8.5 m2 (one person) / 13 m2 (two); with kitchen facilities within the room 13 / 18 m2; at most two per room. Shared kitchen by sharers: <=3 5.5, 4-5 7.5, 6-7 9.5, 8-10 11.5 m2. T = 8.5 s + 13 d; range [T, 1.25 (T + K)]; bedsits [13 s + 18 d, 1.25 x that]; mix not stated [6.5 N, 1.25 (8.5 N + K)]. Higher than the national licence minimum and applies in Tower Hamlets (precedence higher_local_standard).",
+      "london_plan_dwelling": "London Plan 2021 Policy D6 + Table 3.1 (new dwellings incl. conversions and change of use): GIA by bedrooms (b), persons (p) and storeys, e.g. 1b2p 50/58, 2b3p 61/70, 2b4p 70/79, 3b5p 86/93/99, 4b6p 99/106/112; 1b1p 39 (37 with a shower room). Storeys not stated: [min, max] over the storey columns; stated: [G, 1.25 G]."
+    },
+    "metrics": "As the Turin set (regulatory_scoring): activation, value in range, echo rate, source_in_context, winner_cited (doc identifiers or precedence.winner_aliases), routing. Items with activate 'either' are scored on grounding only.",
+    "caveats": [
+      "Author-constructed, not validated by an English planning or housing lawyer: state as a limitation.",
+      "Mandatory HMO licensing applies to HMOs of 5 or more persons (Licensing of HMOs (Prescribed Description) Order 2018, not in the corpus); 4-person items are 'either'.",
+      "Purpose-built student accommodation has no room-size standard in the corpus; such items are 'either'.",
+      "The 1.25 upper tolerance follows the Turin set (the agent may add shared or circulation space)."
+    ],
+    "known_retrieval_issues": [
+      "Retrieval check 2026-10-12 (rag arm, country UK, use-case router on, no LLM): routing 40/40, expected source in context 25/35. To be decided later, with generic fixes only (not tuned to these items):",
+      "Borough scope: the national-HMO items without a location or in another borough (DQ-L02, L04, L05, L07, L11, L26, L27) retrieve the Tower Hamlets documents instead of SI 2018/616. The store marks them 'municipal' but not which borough they cover, so London's local tier (33 boroughs, one in the corpus) can leak to queries outside Tower Hamlets. Turin never had this, being a single municipality.",
+      "Dwelling items (DQ-L21, L22, L23) retrieve Approved Document M (accessibility) instead of London Plan Policy D6 / Table 3.1. The London Plan chunks also carry wrong article refs ('Policy SD10 > ...' on chapter 3 text): a chunking flaw."
+    ]
+  },
+  "queries": [
+    {
+      "id": "DQ-L01",
+      "type": "dimensioning",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "en": "I'm looking for a house in London to let as a licensed HMO for 5 tenants."
+      },
+      "capacity": {
+        "persons": 5
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 25.55,
+        "value_max": 40.69,
+        "basis": "N=5 adults, room mix not stated: [5.11 N, 1.25 x 6.51 N] = (25.55, 40.69)"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "covers": [
+        "hmo",
+        "mix-unknown"
+      ],
+      "note": "Baseline HMO sizing: SI 2018/616 para 1A sleeping-room minima."
+    },
+    {
+      "id": "DQ-L02",
+      "type": "dimensioning",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "en": "We need a property for a shared house in multiple occupation with 8 occupiers."
+      },
+      "capacity": {
+        "persons": 8
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40.88,
+        "value_max": 65.1,
+        "basis": "N=8, room mix not stated: [5.11 N, 1.25 x 6.51 N] = (40.88, 65.1)"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "covers": [
+        "hmo",
+        "mid-capacity",
+        "occupiers-wording"
+      ],
+      "note": "Same rule, larger capacity and statutory wording."
+    },
+    {
+      "id": "DQ-L03",
+      "type": "room_mix",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "en": "An HMO with six single bedrooms, one person per room."
+      },
+      "capacity": {
+        "persons": 6,
+        "single_rooms": 6,
+        "double_rooms": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 39.06,
+        "value_max": 48.83,
+        "basis": "6 single rooms x 6.51 = 39.06; range [H, 1.25 H]"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "covers": [
+        "hmo",
+        "single-room-rate",
+        "capacity-in-rooms"
+      ],
+      "note": "Capacity given as rooms: the one-person minimum applies to every room."
+    },
+    {
+      "id": "DQ-L04",
+      "type": "room_mix",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "en": "House share for 7 people: 3 single rooms and 2 double rooms shared by couples."
+      },
+      "capacity": {
+        "persons": 7,
+        "single_rooms": 3,
+        "double_rooms": 2
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 39.97,
+        "value_max": 49.96,
+        "basis": "3 x 6.51 + 2 x 10.22 = 39.97; range [H, 1.25 H]"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "covers": [
+        "hmo",
+        "mixed-rooms",
+        "double-room-rate"
+      ],
+      "note": "Sum of applicable parts: single and double rates together."
+    },
+    {
+      "id": "DQ-L05",
+      "type": "dimensioning",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "en": "A shared house in London for 6 university students, each with their own bedroom."
+      },
+      "capacity": {
+        "persons": 6,
+        "single_rooms": 6,
+        "double_rooms": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 39.06,
+        "value_max": 48.83,
+        "basis": "Student shared house = HMO: 6 x 6.51 = 39.06; range [H, 1.25 H]"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "covers": [
+        "student",
+        "hmo",
+        "single-room-rate"
+      ],
+      "note": "The English student room-size rule lives in HMO licensing, not in a student-housing standard (gold uk01)."
+    },
+    {
+      "id": "DQ-L06",
+      "type": "room_mix",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "en": "Student house for 6 students sharing three double bedrooms."
+      },
+      "capacity": {
+        "persons": 6,
+        "single_rooms": 0,
+        "double_rooms": 3
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 30.66,
+        "value_max": 38.33,
+        "basis": "3 double rooms x 10.22 = 30.66; range [H, 1.25 H]"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "covers": [
+        "student",
+        "hmo",
+        "double-room-rate"
+      ],
+      "note": "Two persons per room: the 10.22 m2 rate per room, not 2 x 6.51. Six occupiers keep it a licensable HMO."
+    },
+    {
+      "id": "DQ-L07",
+      "type": "long_query",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "en": "Hi! My brother and I are starting a small letting business. We'd like to buy a terraced house near UCL in Camden and rent it to 6 students. Budget is tight, we care about transport links and a garden would be nice. What should we look for?"
+      },
+      "capacity": {
+        "persons": 6
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 30.66,
+        "value_max": 48.82,
+        "basis": "N=6, mix not stated, national rule (Camden: no borough standard in the corpus): (30.66, 48.82)"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "covers": [
+        "student",
+        "hmo",
+        "long-query",
+        "location-noise"
+      ],
+      "note": "Long chatty request with location and budget noise; no borough standard for Camden in the corpus, so the national minima apply."
+    },
+    {
+      "id": "DQ-L08",
+      "type": "typos",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "en": "Lisenced HMO for 5 tenents somwhere in north London."
+      },
+      "capacity": {
+        "persons": 5
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 25.55,
+        "value_max": 40.69,
+        "basis": "N=5, mix not stated: (25.55, 40.69)"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "covers": [
+        "hmo",
+        "typos"
+      ],
+      "note": "Spelling errors must not break routing or retrieval."
+    },
+    {
+      "id": "DQ-L09",
+      "type": "number_in_words",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "en": "An HMO for twelve tenants, all in single rooms."
+      },
+      "capacity": {
+        "persons": 12,
+        "single_rooms": 12,
+        "double_rooms": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 78.12,
+        "value_max": 97.65,
+        "basis": "12 x 6.51 = 78.12; range [H, 1.25 H]"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "covers": [
+        "hmo",
+        "number-in-words"
+      ],
+      "note": "Capacity written in words."
+    },
+    {
+      "id": "DQ-L10",
+      "type": "self_correction",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "en": "HMO for 6 tenants... actually make that 8, all in single rooms."
+      },
+      "capacity": {
+        "persons": 8,
+        "single_rooms": 8,
+        "double_rooms": 0
+      },
+      "user_values": [
+        6
+      ],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 52.08,
+        "value_max": 65.1,
+        "basis": "Corrected capacity 8 x 6.51 = 52.08; range [H, 1.25 H]"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "covers": [
+        "hmo",
+        "self-correction"
+      ],
+      "note": "The corrected figure (8) governs; 6 x 6.51 = 39.06 is outside the range."
+    },
+    {
+      "id": "DQ-L11",
+      "type": "negation",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "en": "A house for 5 working tenants, not students, each in a single room."
+      },
+      "capacity": {
+        "persons": 5,
+        "single_rooms": 5,
+        "double_rooms": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 32.55,
+        "value_max": 40.69,
+        "basis": "5 x 6.51 = 32.55; range [H, 1.25 H]"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "covers": [
+        "hmo",
+        "negation",
+        "not-student"
+      ],
+      "note": "Negated student use: still an HMO, same national minima."
+    },
+    {
+      "id": "DQ-L12",
+      "type": "echo_trap",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "en": "HMO for 6 tenants in single bedrooms; I'd like every bedroom to be at least 15 square metres."
+      },
+      "capacity": {
+        "persons": 6,
+        "single_rooms": 6,
+        "double_rooms": 0
+      },
+      "user_values": [
+        15,
+        90
+      ],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 39.06,
+        "value_max": 48.83,
+        "basis": "6 x 6.51 = 39.06; the user's 15 m2 per room (90 m2) is a preference, not a regulation"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "covers": [
+        "hmo",
+        "echo-with-capacity",
+        "user-bound-above-regulation"
+      ],
+      "note": "The value must come from SI 2018/616, not from the user's 15 (or 6 x 15 = 90)."
+    },
+    {
+      "id": "DQ-L13",
+      "type": "precedence",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "en": "Licensed HMO in Whitechapel, Tower Hamlets, for 6 tenants in single bedrooms with a shared kitchen."
+      },
+      "capacity": {
+        "persons": 6,
+        "single_rooms": 6,
+        "double_rooms": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 51.0,
+        "value_max": 75.62,
+        "basis": "TH standard: 6 x 8.5 = 51.0 (+ shared kitchen 9.5 for 6-7 sharers), range [T, 1.25 (T + K)] = (51.0, 75.62). The national rule would give 39.06 (outside the range)."
+      },
+      "rule_family": "hmo_th",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "th_prs_property_standards",
+          "article_ref": "*"
+        },
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "precedence": {
+        "winner": "th_prs_property_standards",
+        "loser": "hmo_mandatory_conditions_2018",
+        "rule": "higher_local_standard",
+        "winner_aliases": [
+          "Private Rented Housing Property Standards",
+          "Property Standards"
+        ]
+      },
+      "covers": [
+        "precedence",
+        "borough-standard",
+        "shared-kitchen"
+      ],
+      "note": "The borough's property standard (8.5 m2) is higher than the national licence minimum (6.51 m2) and applies in Tower Hamlets."
+    },
+    {
+      "id": "DQ-L14",
+      "type": "precedence",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "en": "HMO in Bethnal Green for 4 people living as two couples in two double bedrooms."
+      },
+      "capacity": {
+        "persons": 4,
+        "single_rooms": 0,
+        "double_rooms": 2
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 26.0,
+        "value_max": 41.88,
+        "basis": "TH: 2 x 13 = 26.0 (+ kitchen 7.5 for 4-5 sharers), range (26.0, 41.88). The national licence conditions cover licensed HMOs of 5+ persons (and would give only 20.44); the borough standard covers this HMO."
+      },
+      "rule_family": "hmo_th",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "th_prs_property_standards",
+          "article_ref": "*"
+        },
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "precedence": {
+        "winner": "th_prs_property_standards",
+        "loser": "hmo_mandatory_conditions_2018",
+        "rule": "higher_local_standard",
+        "winner_aliases": [
+          "Private Rented Housing Property Standards",
+          "Property Standards"
+        ]
+      },
+      "covers": [
+        "precedence",
+        "borough-standard",
+        "double-room-rate"
+      ],
+      "note": "Bethnal Green is in Tower Hamlets: the location alone triggers the borough standard."
+    },
+    {
+      "id": "DQ-L15",
+      "type": "precedence",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "en": "Five bedsits in Tower Hamlets, each with its own kitchen facilities inside the room, one person per bedsit."
+      },
+      "capacity": {
+        "persons": 5,
+        "single_rooms": 5,
+        "double_rooms": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 65,
+        "value_max": 81.25,
+        "basis": "TH bedsits with kitchen within the room: 5 x 13 = 65; range [T, 1.25 T]. National: 32.55."
+      },
+      "rule_family": "hmo_th_bedsit",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "th_prs_property_standards",
+          "article_ref": "*"
+        },
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "precedence": {
+        "winner": "th_prs_property_standards",
+        "loser": "hmo_mandatory_conditions_2018",
+        "rule": "higher_local_standard",
+        "winner_aliases": [
+          "Private Rented Housing Property Standards",
+          "Property Standards"
+        ]
+      },
+      "covers": [
+        "precedence",
+        "bedsit",
+        "kitchen-in-room"
+      ],
+      "note": "Bedsit rate (13 m2) instead of the bedroom rate (8.5 m2)."
+    },
+    {
+      "id": "DQ-L16",
+      "type": "dimensioning",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "en": "We want to open a house in multiple occupation for 10 tenants in Poplar, Tower Hamlets."
+      },
+      "capacity": {
+        "persons": 10
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 65.0,
+        "value_max": 120.62,
+        "basis": "TH, mix not stated: [6.5 N, 1.25 (8.5 N + kitchen 11.5)] = (65.0, 120.62). National: (51.1, 81.38)."
+      },
+      "rule_family": "hmo_th",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "th_prs_property_standards",
+          "article_ref": "*"
+        },
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "precedence": {
+        "winner": "th_prs_property_standards",
+        "loser": "hmo_mandatory_conditions_2018",
+        "rule": "higher_local_standard",
+        "winner_aliases": [
+          "Private Rented Housing Property Standards",
+          "Property Standards"
+        ]
+      },
+      "covers": [
+        "borough-standard",
+        "mix-unknown",
+        "large-hmo"
+      ],
+      "note": "Large HMO in the borough; at most 2 per room and one kitchen set per 5 persons."
+    },
+    {
+      "id": "DQ-L17",
+      "type": "general_dwelling",
+      "tier": "regional",
+      "use_case": "general",
+      "queries": {
+        "en": "I want to convert a shop into a two-bedroom flat for four people."
+      },
+      "capacity": {
+        "persons": 4,
+        "bedrooms": 2
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 70,
+        "value_max": 79,
+        "basis": "Table 3.1 2b4p: 70 (1 storey) .. 79 (2 storeys) = (70, 79)"
+      },
+      "rule_family": "lp_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "london_plan_2021",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "dwelling",
+        "change-of-use",
+        "space-standard"
+      ],
+      "note": "Table 3.1 applies to new dwellings including conversions and changes of use."
+    },
+    {
+      "id": "DQ-L18",
+      "type": "general_dwelling",
+      "tier": "regional",
+      "use_case": "general",
+      "queries": {
+        "en": "Looking for a property to turn into a one-bedroom flat for a couple."
+      },
+      "capacity": {
+        "persons": 2,
+        "bedrooms": 1
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 50,
+        "value_max": 58,
+        "basis": "Table 3.1 1b2p: 50 .. 58 = (50, 58)"
+      },
+      "rule_family": "lp_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "london_plan_2021",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "dwelling",
+        "couple"
+      ],
+      "note": "Persons inferred from 'a couple'."
+    },
+    {
+      "id": "DQ-L19",
+      "type": "studio_minimum",
+      "tier": "regional",
+      "use_case": "general",
+      "queries": {
+        "en": "A studio flat for one person with a shower room instead of a bathroom."
+      },
+      "capacity": {
+        "persons": 1,
+        "bedrooms": 1,
+        "shower_room": true
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 37,
+        "value_max": 48.75,
+        "basis": "Table 3.1 1b1p: 39, reduced to 37 with a shower room; range [37, 1.25 x 39] = (37, 48.75)"
+      },
+      "rule_family": "lp_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "london_plan_2021",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "studio",
+        "shower-room-reduction"
+      ],
+      "note": "The footnoted 37 m2 reduction applies."
+    },
+    {
+      "id": "DQ-L20",
+      "type": "general_dwelling",
+      "tier": "regional",
+      "use_case": "general",
+      "queries": {
+        "en": "A three-bedroom family home for five people in Lewisham."
+      },
+      "capacity": {
+        "persons": 5,
+        "bedrooms": 3
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 86,
+        "value_max": 99,
+        "basis": "Table 3.1 3b5p: 86 / 93 / 99 by storeys = (86, 99)"
+      },
+      "rule_family": "lp_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "london_plan_2021",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "dwelling",
+        "family",
+        "storeys-unknown"
+      ],
+      "note": "Storeys not stated: any storey count is legal."
+    },
+    {
+      "id": "DQ-L21",
+      "type": "general_dwelling",
+      "tier": "regional",
+      "use_case": "general",
+      "queries": {
+        "en": "A two-storey house with four bedrooms for six people."
+      },
+      "capacity": {
+        "persons": 6,
+        "bedrooms": 4,
+        "storeys": 2
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 106,
+        "value_max": 132.5,
+        "basis": "Table 3.1 4b6p, 2 storeys: 106; range [G, 1.25 G] = (106, 132.5)"
+      },
+      "rule_family": "lp_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "london_plan_2021",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "dwelling",
+        "storeys-stated"
+      ],
+      "note": "Storeys stated: the 2-storey column applies."
+    },
+    {
+      "id": "DQ-L22",
+      "type": "general_dwelling",
+      "tier": "regional",
+      "use_case": "general",
+      "queries": {
+        "en": "We are converting an office building into flats; I need units with two bedrooms for three people."
+      },
+      "capacity": {
+        "persons": 3,
+        "bedrooms": 2
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 61,
+        "value_max": 70,
+        "basis": "Table 3.1 2b3p: 61 .. 70 = (61, 70)"
+      },
+      "rule_family": "lp_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "london_plan_2021",
+          "article_ref": "*"
+        },
+        {
+          "doc_key": "gpdo_2015_part3",
+          "article_ref": "Class MA"
+        }
+      ],
+      "covers": [
+        "dwelling",
+        "office-to-residential",
+        "per-unit"
+      ],
+      "note": "Per-unit standard for each new flat; Class MA is procedural and sets no area."
+    },
+    {
+      "id": "DQ-L23",
+      "type": "echo_trap",
+      "tier": "regional",
+      "use_case": "general",
+      "queries": {
+        "en": "Two-bedroom flat for four people, at least 100 square metres."
+      },
+      "capacity": {
+        "persons": 4,
+        "bedrooms": 2
+      },
+      "user_values": [
+        100
+      ],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 70,
+        "value_max": 79,
+        "basis": "Table 3.1 2b4p = (70, 79); the user's 100 m2 is a preference"
+      },
+      "rule_family": "lp_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "london_plan_2021",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "dwelling",
+        "echo-guard"
+      ],
+      "note": "The regulatory value is 70-79, not the user's 100."
+    },
+    {
+      "id": "DQ-L24",
+      "type": "code_switching",
+      "tier": "national",
+      "use_case": "student_housing",
+      "queries": {
+        "en": "Cerco una casa a Londra per 5 studenti, each one in a single room, da affittare come HMO."
+      },
+      "capacity": {
+        "persons": 5,
+        "single_rooms": 5,
+        "double_rooms": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 32.55,
+        "value_max": 40.69,
+        "basis": "5 x 6.51 = 32.55; range [H, 1.25 H]"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "covers": [
+        "student",
+        "hmo",
+        "code-switching"
+      ],
+      "note": "Italian-English mix: the language must not change the jurisdiction (London, England)."
+    },
+    {
+      "id": "DQ-L25",
+      "type": "ambiguous_use",
+      "tier": "regional",
+      "use_case": "student_housing",
+      "queries": {
+        "en": "Purpose-built student accommodation block for 200 students."
+      },
+      "capacity": {
+        "persons": 200
+      },
+      "user_values": [],
+      "expect": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 1022.0,
+        "value_max": 1627.5,
+        "basis": "No room-size standard for PBSA in the corpus (London Plan H15 covers affordability and nominations); if the HMO minima are applied: (1022.0, 1627.5)"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "london_plan_2021",
+          "article_ref": "*"
+        },
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "covers": [
+        "pbsa",
+        "no-space-standard"
+      ],
+      "note": "Declining is acceptable; if the agent activates, the value must be grounded."
+    },
+    {
+      "id": "DQ-L26",
+      "type": "ambiguous_use",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "en": "A house share for 4 young professionals."
+      },
+      "capacity": {
+        "persons": 4
+      },
+      "user_values": [],
+      "expect": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 20.44,
+        "value_max": 32.55,
+        "basis": "Mandatory licensing (and its conditions) covers HMOs of 5 or more persons, a threshold not in the corpus; if the SI 2018/616 minima are applied: (20.44, 32.55)"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "covers": [
+        "hmo",
+        "licensing-threshold"
+      ],
+      "note": "Below the mandatory-licensing size: activation and decline are both defensible."
+    },
+    {
+      "id": "DQ-L27",
+      "type": "ambiguous_use",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "en": "Supported shared housing for 6 elderly residents."
+      },
+      "capacity": {
+        "persons": 6
+      },
+      "user_values": [],
+      "expect": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 30.66,
+        "value_max": 48.82,
+        "basis": "No senior-housing standard in the corpus; if treated as an HMO: (30.66, 48.82)"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "covers": [
+        "senior",
+        "care"
+      ],
+      "note": "Care use: declining is acceptable."
+    },
+    {
+      "id": "DQ-L28",
+      "type": "no_capacity",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "en": "What room sizes does a licensed HMO need?"
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Per-room standards; without a capacity there is no building-level threshold"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "covers": [
+        "no-capacity",
+        "question-form"
+      ],
+      "note": "Retrieval should still find para 1A, but extraction should decline."
+    },
+    {
+      "id": "DQ-L29",
+      "type": "no_capacity",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "en": "I want to turn a house into an HMO."
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "No number of occupiers or rooms"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "hmo_mandatory_conditions_2018",
+          "article_ref": "1A"
+        }
+      ],
+      "covers": [
+        "no-capacity"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-L30",
+      "type": "out_of_corpus",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "en": "A hotel with 40 rooms near King's Cross."
+      },
+      "capacity": {
+        "rooms": 40
+      },
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "No hotel standard in the corpus"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [],
+      "covers": [
+        "hotel",
+        "out-of-corpus"
+      ],
+      "note": "A room count is present but no rule covers hotels."
+    },
+    {
+      "id": "DQ-L31",
+      "type": "negative",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "en": "Office of at least 300 square metres in Shoreditch."
+      },
+      "capacity": null,
+      "user_values": [
+        300
+      ],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Office use: no regulatory surface threshold"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [],
+      "covers": [
+        "office",
+        "echo-guard"
+      ],
+      "note": "Negative control with a user surface that must not be echoed."
+    },
+    {
+      "id": "DQ-L32",
+      "type": "negative",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "en": "A flat with an EPC rating of B or better near Canary Wharf."
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Energy preference, no regulation involved"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [],
+      "covers": [
+        "energy",
+        "negative"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-L33",
+      "type": "procedural",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "en": "Can I convert a commercial building into flats without a full planning application?"
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "GPDO Class MA is a prior-approval route: procedural, no area threshold"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "gpdo_2015_part3",
+          "article_ref": "Class MA"
+        }
+      ],
+      "covers": [
+        "permitted-development",
+        "procedural",
+        "temporal"
+      ],
+      "note": "The current right is Class MA (the superseded Class O text is also in the store)."
+    },
+    {
+      "id": "DQ-L34",
+      "type": "procedural",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "en": "Converting a shop to residential in Tower Hamlets under permitted development."
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "The Article 4 direction removes Class MA in parts of the borough: procedural"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "th_article4_class_e",
+          "article_ref": "*"
+        },
+        {
+          "doc_key": "gpdo_2015_part3",
+          "article_ref": "Class MA"
+        }
+      ],
+      "covers": [
+        "article-4",
+        "procedural",
+        "borough"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-L35",
+      "type": "non_surface_rule",
+      "tier": "municipal",
+      "use_case": "student_housing",
+      "queries": {
+        "en": "Student accommodation in Tower Hamlets with wheelchair-accessible rooms."
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "TH Local Plan: 5% of student rooms wheelchair accessible; no surface threshold"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "th_local_plan_2031",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "student",
+        "accessibility-share",
+        "non-surface"
+      ],
+      "note": "A share of rooms, not an area."
+    },
+    {
+      "id": "DQ-L36",
+      "type": "non_surface_rule",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "en": "A wheelchair-user flat to category M4(3): what door widths does it need?"
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Approved Document M sets widths and turning spaces, not floor areas"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "approved_doc_m_vol1",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "accessibility",
+        "widths",
+        "non-surface"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-L37",
+      "type": "non_surface_rule",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "en": "An HMO in a loft conversion in Tower Hamlets with sloping ceilings."
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "TH sets a 2.14 m ceiling height over 75% of the floor; no capacity, no surface threshold"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "th_prs_property_standards",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "height-rule",
+        "borough"
+      ],
+      "note": "Height rule exists but the dataset has no height column."
+    },
+    {
+      "id": "DQ-L38",
+      "type": "out_of_corpus",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "en": "A day nursery for 30 children in Hackney."
+      },
+      "capacity": {
+        "persons": 30
+      },
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "No nursery standard in the corpus"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [],
+      "covers": [
+        "childcare",
+        "out-of-corpus"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-L39",
+      "type": "negative",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "en": "Warehouse for logistics of about 2000 square metres in Park Royal."
+      },
+      "capacity": null,
+      "user_values": [
+        2000
+      ],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Industrial use, no regulatory area"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [],
+      "covers": [
+        "industrial",
+        "echo-guard"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-L40",
+      "type": "procedural",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "en": "Which use class is a small house in multiple occupation?"
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Use Classes Order C4: a classification, no area threshold"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "use_classes_1987",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "use-class",
+        "question-form"
+      ],
+      "note": ""
+    }
+  ]
+}

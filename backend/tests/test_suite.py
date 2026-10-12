@@ -154,7 +154,10 @@ async def preload_data():
     """Initializes the RealEstateService by pre-loading and merging essential datasets."""
     if not RealEstateService._dataset_cache.get("full"):
         try:
-            df = load_and_merge_data(settings.DATASET_FULL)
+            path = settings.dataset_options["full"]   # the --city dataset (Turin: DATASET_FULL)
+            if not os.path.isabs(path):
+                path = str(backend_dir / path)
+            df = load_and_merge_data(path)
             if df is not None:
                 RealEstateService._dataset_cache["full"] = df
                 # Build indexed cache
@@ -267,30 +270,37 @@ def check_sql_ood(sql, data_stats):
 # safety confounding other experiments. Use "enforce" for TriSQL evaluations.
 CONSTRAINT_MODE = os.environ.get("CONSTRAINT_MODE", "repair")
 
-# Query set and retrieval arm, set once per process by configure_run() (CLI
-# --queries / --arm; the conductor forwards both to its model subprocesses).
-#   legacy  = Marco's combinatorial generator (query_parameters.json)
-#   curated = benchmark_queries_turin.json (RAG study: arms none vs rag)
+# Query set, retrieval arm and city, set once per process by configure_run() (CLI
+# --queries / --arm / --city; the conductor forwards them to its model subprocesses).
+#   legacy  = Marco's combinatorial generator (query_parameters.json, Turin only)
+#   curated = benchmark_queries_<city>.json (RAG study: arms none vs rag)
 # suite_root holds the suite CSVs and outputs/. Legacy without an arm keeps the
 # original layout (results/); every other run gets its own folder so the arms
-# never overwrite each other.
+# never overwrite each other, and cities other than Turin get a _<city> suffix.
 from app.services.llm.rag import config as rag_config
+from app.core.cities import CITIES
 
 CURATED_QUERIES_PATH = suite_path / "benchmark_queries_turin.json"
 QUERY_SET = "legacy"
 suite_root = results_path
 
 
-def configure_run(query_set: str = "legacy", arm: Optional[str] = None) -> Path:
-    """Select the query set and the regulatory retrieval arm for this process."""
-    global QUERY_SET, suite_root
+def configure_run(query_set: str = "legacy", arm: Optional[str] = None, city: str = "turin") -> Path:
+    """Select the query set, the regulatory retrieval arm and the city for this process."""
+    global QUERY_SET, suite_root, CURATED_QUERIES_PATH
+    if query_set == "legacy" and city != "turin":
+        raise SystemExit("The legacy query set is Turin's; use --queries curated for other cities.")
     QUERY_SET = query_set
+    settings.set_city(city)   # dataset, RAG jurisdiction and geocoding context
+    CURATED_QUERIES_PATH = suite_path / f"benchmark_queries_{city}.json"
     if arm:
         rag_config.RETRIEVAL_MODE = arm   # read at call time by load_regulatory_context
     if query_set == "legacy" and not arm:
         suite_root = results_path
     else:
         suite_root = results_path / f"{query_set}_{rag_config.RETRIEVAL_MODE}"
+    if city != "turin":
+        suite_root = suite_root.with_name(f"{suite_root.name}_{city}")
     suite_root.mkdir(parents=True, exist_ok=True)
     return suite_root
 
@@ -362,7 +372,12 @@ async def run_query(query, architecture="multiagent", disabled=None, use_knowled
         results_pack = {
             "query": query,
             "arm": rag_config.RETRIEVAL_MODE,
+            "city": settings.CITY,
             "results_count": res.get("results_count", 0),
+            # the SQL matched nothing and the graph returned the nearest / best-EPC
+            # buildings with every constraint dropped (graph_agent._fallback_results)
+            "fallback": bool(gr.get("fallback_activated")),
+            "sql_source": (gr.get("constraint_layer") or {}).get("sql_source"),
             "execution_time_ms": duration,
             "final_sql": res.get("filters_applied", {}).get("final_sql", ""),
             "ranking": ranking,
@@ -1555,9 +1570,11 @@ if __name__ == "__main__":
     parser.add_argument("--arm", choices=list(rag_config.RETRIEVAL_MODES), default=None,
                         help="regulatory retrieval arm (default: RAG_RETRIEVAL_MODE, i.e. rag)")
     parser.add_argument("--ids", type=str, default=None, help="Comma-separated query ids to run (smoke runs)")
+    parser.add_argument("--city", choices=sorted(CITIES), default="turin",
+                        help="city dataset + regulatory jurisdiction (app/core/cities.py)")
     args = parser.parse_args()
 
-    configure_run(args.queries, args.arm)
+    configure_run(args.queries, args.arm, args.city)
     ids = [i.strip() for i in args.ids.split(",") if i.strip()] if args.ids else None
 
     if args.model:
@@ -1573,6 +1590,6 @@ if __name__ == "__main__":
         # Launch the conductor
         selected_models = args.models.split(",") if args.models else None
         run_flags = ["--queries", args.queries] + (["--arm", args.arm] if args.arm else []) \
-            + (["--ids", args.ids] if args.ids else [])
+            + (["--ids", args.ids] if args.ids else []) + ["--city", args.city]
         asyncio.run(conductor_main(args.max_concurrent, args.only_analysis, limit=args.limit,
                                    models=selected_models, run_flags=run_flags))

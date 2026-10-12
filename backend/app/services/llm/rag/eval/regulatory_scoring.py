@@ -142,12 +142,17 @@ def source_in_context(sources: List[Dict[str, Any]], hits: List[Dict[str, Any]],
 def winner_cited(regulation: Optional[str], precedence: Optional[Dict[str, Any]],
                  key2name: Dict[str, str]) -> Optional[bool]:
     """On precedence items: the main requirement's 'regulation' names the
-    winner document (by its law number / year). None when not applicable."""
+    winner document, by its law number / year or, for a document whose name
+    carries no number (e.g. a borough's property standards), by one of the
+    item's ``winner_aliases``. None when not applicable."""
     if not precedence or not precedence.get("winner"):
         return None
     if not regulation:
         return False
-    return bool(doc_ids(key2name.get(precedence["winner"], precedence["winner"])) & doc_ids(regulation))
+    if doc_ids(key2name.get(precedence["winner"], precedence["winner"])) & doc_ids(regulation):
+        return True
+    low = regulation.lower()
+    return any(a.lower() in low for a in precedence.get("winner_aliases") or [])
 
 
 # --------------------------------------------------------------------------

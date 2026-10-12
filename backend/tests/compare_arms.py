@@ -1,10 +1,12 @@
 """
 RAG study — compare two regulatory-retrieval arms of the full MURENA pipeline
-on the curated query set (tests/benchmark_queries_turin.json).
+on the curated query set (tests/benchmark_queries_<city>.json, default Turin).
 
-Run the suite once per arm first (results land in results/curated_<arm>/):
-    python tests/test_suite.py --model gpt-5.4-mini --queries curated --arm none
-    python tests/test_suite.py --model gpt-5.4-mini --queries curated --arm rag
+Run the suite once per arm first (results land in results/curated_<arm>/, or
+results/curated_<arm>_<city>/ for London / Madrid):
+    python tests/test_suite.py --model gpt-5.4-mini --queries curated --arm none [--city london]
+    python tests/test_suite.py --model gpt-5.4-mini --queries curated --arm rag  [--city london]
+Every command below takes the same --city (outputs in results/curated_compare[_<city>]/).
 
 Then:
     python tests/compare_arms.py metrics      [--model M] [--arms none,rag]
@@ -72,6 +74,21 @@ from app.services.llm.rag.eval import regulatory_scoring as rs  # noqa: E402
 RESULTS = Path(os.environ.get("EXPERIMENT_RESULTS_DIR", str(suite_path / "results")))
 QUERIES_PATH = suite_path / "benchmark_queries_turin.json"
 DOWNSTREAM_PATH = backend_dir / "app" / "services" / "llm" / "rag" / "eval" / "downstream_queries_turin.json"
+CITY = "turin"
+JUDGE_PLACE = {"turin": "Turin, Italy", "london": "London, United Kingdom", "madrid": "Madrid, Spain"}
+
+
+def configure_city(city: str) -> None:
+    """Point the comparison at one city's query sets and suite results (the
+    suite writes non-Turin runs to results/curated_<arm>_<city>/)."""
+    global CITY, QUERIES_PATH, DOWNSTREAM_PATH
+    CITY = city
+    QUERIES_PATH = suite_path / f"benchmark_queries_{city}.json"
+    DOWNSTREAM_PATH = backend_dir / "app" / "services" / "llm" / "rag" / "eval" / f"downstream_queries_{city}.json"
+
+
+def _city_suffix() -> str:
+    return "" if CITY == "turin" else f"_{CITY}"
 
 JUDGE_MODEL = "claude-sonnet-5-5"
 JUDGE_EFFORT = "medium"
@@ -97,7 +114,7 @@ def load_items() -> Dict[str, Dict[str, Any]]:
 
 
 def arm_root(arm: str, model: str) -> Path:
-    return RESULTS / f"curated_{arm}" / "outputs" / "benchmarks" / model
+    return RESULTS / f"curated_{arm}{_city_suffix()}" / "outputs" / "benchmarks" / model
 
 
 def load_runs(arm: str, model: str) -> Dict[str, Dict[str, Any]]:
@@ -129,7 +146,7 @@ def representative(packs: List[Dict[str, Any]]) -> Dict[str, Any]:
 
 
 def out_dir(model: str) -> Path:
-    d = RESULTS / "curated_compare" / model
+    d = RESULTS / f"curated_compare{_city_suffix()}" / model
     d.mkdir(parents=True, exist_ok=True)
     return d
 
@@ -153,6 +170,20 @@ def top_ids(pack: Dict[str, Any]) -> List[str]:
 def iou(a: List[str], b: List[str]) -> float:
     sa, sb = set(a), set(b)
     return len(sa & sb) / len(sa | sb) if (sa | sb) else 1.0
+
+
+# When the SQL matches nothing, graph_agent._fallback_results returns the
+# FALLBACK_SIZE nearest (or best-EPC) buildings with every other constraint
+# dropped, and results_count is that size. Runs from test_suite record it as
+# `fallback`; for older runs exactly FALLBACK_SIZE results is the signature
+# (checked on the Turin RAG study: all such runs' SQL re-executes to 0 rows).
+FALLBACK_SIZE = 500
+
+
+def is_fallback(pack: Dict[str, Any]) -> bool:
+    if "fallback" in pack:
+        return bool(pack["fallback"])
+    return pack.get("results_count") == FALLBACK_SIZE
 
 
 def compliance(pack: Dict[str, Any], value_min: float, k: int) -> Optional[float]:
@@ -203,6 +234,46 @@ def _paired(a: Dict[str, float], b: Dict[str, float]) -> Dict[str, Any]:
 # --------------------------------------------------------------------------
 # metrics
 # --------------------------------------------------------------------------
+def _compliance(runs, items, a: str, b: str, keep=lambda p: True, per_query=None) -> Dict[str, Any]:
+    """Top-k compliance on activate=true items: mean over the kept trials of each
+    query, paired per query (queries with no kept trial drop out)."""
+    out = {}
+    for k in (10, 3):
+        vals = {arm: {} for arm in (a, b)}
+        for arm in (a, b):
+            for qid, packs in runs[arm]["trials"].items():
+                item = items.get(qid)
+                if not item or item["regulatory"].get("activate") is not True or item["regulatory"].get("value_min") is None:
+                    continue
+                c = [compliance(p, item["regulatory"]["value_min"], k) for p in packs if keep(p)]
+                c = [x for x in c if x is not None]
+                if c:
+                    vals[arm][qid] = float(np.mean(c))
+                    if per_query is not None:
+                        per_query[qid][arm][f"compliance@{k}"] = vals[arm][qid]
+        out[f"@{k}"] = _paired(vals[a], vals[b])
+    return out
+
+
+def _stability(runs, items, a: str, b: str, keep=lambda p: True, per_query=None) -> Dict[str, Any]:
+    """activate=false items: cross-arm top-10 IoU vs each arm's trial-to-trial IoU."""
+    cross, self_iou = {}, {arm: {} for arm in (a, b)}
+    for qid, item in items.items():
+        if item["regulatory"].get("activate") is not False:
+            continue
+        ta = [p for p in runs[a]["trials"].get(qid) or [] if keep(p)]
+        tb = [p for p in runs[b]["trials"].get(qid) or [] if keep(p)]
+        if ta and tb:
+            cross[qid] = float(np.mean([iou(top_ids(x), top_ids(y)) for x, y in product(ta, tb)]))
+            if per_query is not None:
+                per_query[qid]["cross_arm_iou"] = cross[qid]
+        for arm, tt in ((a, ta), (b, tb)):
+            if len(tt) > 1:
+                self_iou[arm][qid] = float(np.mean([iou(top_ids(x), top_ids(y)) for x, y in combinations(tt, 2)]))
+    return {"n": len(cross), "cross_arm_iou": rs.mean(cross.values()),
+            **{f"self_iou_{arm}": rs.mean(self_iou[arm].values()) for arm in (a, b)}}
+
+
 def cmd_metrics(args) -> int:
     from app.services.llm.rag.eval.run import _doc_key_to_name
 
@@ -240,36 +311,26 @@ def cmd_metrics(args) -> int:
                                    "zero_result_rate": rs.rate(zero), "mean_latency_s": (rs.mean(lat) or 0) / 1000}
         report.setdefault("regulatory_runs", {})[arm] = recs
 
-    # compliance on activate=true items (mean over trials, paired per query)
-    report["compliance"] = {}
-    for k in (10, 3):
-        vals = {arm: {} for arm in (a, b)}
-        for arm in (a, b):
-            for qid, packs in runs[arm]["trials"].items():
-                item = items.get(qid)
-                if not item or item["regulatory"].get("activate") is not True or item["regulatory"].get("value_min") is None:
-                    continue
-                c = [compliance(p, item["regulatory"]["value_min"], k) for p in packs]
-                c = [x for x in c if x is not None]
-                if c:
-                    vals[arm][qid] = float(np.mean(c))
-                    per_query[qid][arm][f"compliance@{k}"] = vals[arm][qid]
-        report["compliance"][f"@{k}"] = _paired(vals[a], vals[b])
+    report["compliance"] = _compliance(runs, items, a, b, per_query=per_query)
+    report["stability"] = _stability(runs, items, a, b, per_query=per_query)
 
-    # stability on activate=false items: cross-arm IoU vs within-arm noise floor
-    cross, self_iou = {}, {arm: {} for arm in (a, b)}
-    for qid, item in items.items():
-        if item["regulatory"].get("activate") is not False:
-            continue
-        ta, tb = runs[a]["trials"].get(qid) or [], runs[b]["trials"].get(qid) or []
-        if ta and tb:
-            cross[qid] = float(np.mean([iou(top_ids(x), top_ids(y)) for x, y in product(ta, tb)]))
-            per_query[qid]["cross_arm_iou"] = cross[qid]
-        for arm, tt in ((a, ta), (b, tb)):
-            if len(tt) > 1:
-                self_iou[arm][qid] = float(np.mean([iou(top_ids(x), top_ids(y)) for x, y in combinations(tt, 2)]))
-    report["stability"] = {"n": len(cross), "cross_arm_iou": rs.mean(cross.values()),
-                           **{f"self_iou_{arm}": rs.mean(self_iou[arm].values()) for arm in (a, b)}}
+    # fallback trials (SQL matched nothing; constraints dropped): how often, and
+    # compliance / stability again with those trials counted as no answer
+    report["fallback"] = {}
+    for arm in (a, b):
+        trials = [(qid, p) for qid, packs in runs[arm]["trials"].items() if qid in items for p in packs]
+        fb = [is_fallback(p) for _, p in trials]
+        reps = [is_fallback(p) for qid, p in runs[arm]["rep"].items() if qid in runs[arm]["trials"] and qid in items]
+        report["fallback"][arm] = {
+            "n_trials": len(fb), "n_fallback": int(sum(fb)), "trial_rate": rs.rate(fb),
+            "rate_rule_items": rs.rate(f for (q, _), f in zip(trials, fb) if items[q]["regulatory"].get("activate") is True),
+            "rate_no_rule_items": rs.rate(f for (q, _), f in zip(trials, fb) if items[q]["regulatory"].get("activate") is False),
+            "representative_rate": rs.rate(reps),
+            "queries": sorted({q for (q, _), f in zip(trials, fb) if f}),
+        }
+    real = lambda p: not is_fallback(p)  # noqa: E731
+    report["compliance_excl_fallback"] = _compliance(runs, items, a, b, keep=real)
+    report["stability_excl_fallback"] = _stability(runs, items, a, b, keep=real)
     report["per_query"] = per_query
 
     d = out_dir(args.model)
@@ -299,22 +360,43 @@ def _metrics_md(rep: Dict[str, Any], a: str, b: str) -> str:
     lines += [f"| agent activation as expected | {_pct(pa['activation_perfect_rate'])} | {_pct(pb['activation_perfect_rate'])} |",
               f"| runs with zero results | {_pct(pa['zero_result_rate'])} | {_pct(pb['zero_result_rate'])} |",
               f"| mean latency (s) | {pa['mean_latency_s']:.1f} | {pb['mean_latency_s']:.1f} |", "",
-              "## Top-k legal compliance (activate=true items, mean over trials, paired per query)", "",
-              f"| k | n | {a} | {b} | mean diff | {b} better / tie / {a} better | Wilcoxon p |", "|---|---|---|---|---|---|---|"]
-    for k, c in rep["compliance"].items():
-        if not c.get("n"):
-            lines.append(f"| {k} | 0 | — | — | — | — | — |")
-            continue
-        p = "—" if c["wilcoxon_p"] is None else f"{c['wilcoxon_p']:.3f}"
-        lines.append(f"| {k} | {c['n']} | {_pct(c['mean_a'])} | {_pct(c['mean_b'])} | {c['mean_diff'] * 100:+.1f} pp | "
-                     f"{c['b_better']} / {c['ties']} / {c['a_better']} | {p} |")
+              "## Top-k legal compliance (activate=true items, mean over trials, paired per query)", ""]
+    lines += _compliance_rows(rep["compliance"], a, b)
     s = rep["stability"]
     f = lambda x: "—" if x is None else f"{x:.3f}"  # noqa: E731
     lines += ["", "## Ranking stability where no rule applies (activate=false items)", "",
               f"Top-10 IoU {a} vs {b}: **{f(s['cross_arm_iou'])}** (n={s['n']}) · noise floor (same arm, trial vs trial): "
               f"{a} {f(s.get(f'self_iou_{a}'))}, {b} {f(s.get(f'self_iou_{b}'))}", "",
               "A cross-arm IoU close to the noise floor means retrieval does not perturb rankings when no rule applies.", ""]
+    fb = rep.get("fallback")
+    if fb:
+        cell = lambda arm, k: _pct(fb[arm][k])  # noqa: E731
+        se = rep["stability_excl_fallback"]
+        lines += ["## Fallback trials (SQL matched nothing → the 500 nearest buildings, all constraints dropped)", "",
+                  f"| | {a} | {b} |", "|---|---|---|",
+                  f"| fallback trials | {fb[a]['n_fallback']}/{fb[a]['n_trials']} ({cell(a, 'trial_rate')}) | "
+                  f"{fb[b]['n_fallback']}/{fb[b]['n_trials']} ({cell(b, 'trial_rate')}) |",
+                  f"| on rule items (activate=true) | {cell(a, 'rate_rule_items')} | {cell(b, 'rate_rule_items')} |",
+                  f"| on no-rule items (activate=false) | {cell(a, 'rate_no_rule_items')} | {cell(b, 'rate_no_rule_items')} |",
+                  f"| judge's representative trial is a fallback | {cell(a, 'representative_rate')} | {cell(b, 'representative_rate')} |", "",
+                  "### Compliance with fallback trials counted as no answer", ""]
+        lines += _compliance_rows(rep["compliance_excl_fallback"], a, b)
+        lines += ["", f"### Stability with fallback trials excluded", "",
+                  f"Top-10 IoU {a} vs {b}: **{f(se['cross_arm_iou'])}** (n={se['n']}) · noise floor: "
+                  f"{a} {f(se.get(f'self_iou_{a}'))}, {b} {f(se.get(f'self_iou_{b}'))}", ""]
     return "\n".join(lines)
+
+
+def _compliance_rows(comp: Dict[str, Any], a: str, b: str) -> List[str]:
+    lines = [f"| k | n | {a} | {b} | mean diff | {b} better / tie / {a} better | Wilcoxon p |", "|---|---|---|---|---|---|---|"]
+    for k, c in comp.items():
+        if not c.get("n"):
+            lines.append(f"| {k} | 0 | — | — | — | — | — |")
+            continue
+        p = "—" if c["wilcoxon_p"] is None else f"{c['wilcoxon_p']:.3f}"
+        lines.append(f"| {k} | {c['n']} | {_pct(c['mean_a'])} | {_pct(c['mean_b'])} | {c['mean_diff'] * 100:+.1f} pp | "
+                     f"{c['b_better']} / {c['ties']} / {c['a_better']} | {p} |")
+    return lines
 
 
 # --------------------------------------------------------------------------
@@ -340,6 +422,11 @@ Rules
 - The order in which the lists are shown (A first, B second) carries no information.
 - Answer tie when the difference is negligible.
 - Give a short reason for each criterion before its verdict."""
+
+def judge_system() -> str:
+    """The judge instructions for the configured city (Turin's text unchanged)."""
+    return JUDGE_SYSTEM.replace("Turin, Italy", JUDGE_PLACE[CITY])
+
 
 _VERDICT = {"type": "string", "enum": ["A", "B", "tie"]}
 _CRIT = {"type": "object", "properties": {"reason": {"type": "string"}, "verdict": _VERDICT},
@@ -423,7 +510,7 @@ def _submit(args, items, runs, a: str, b: str) -> Dict[str, Any]:
             cid = f"{qid}__{order}"
             mapping[cid] = {"qid": qid, "A": x, "B": y}
             requests.append(Request(custom_id=cid, params=MessageCreateParamsNonStreaming(
-                model=JUDGE_MODEL, max_tokens=JUDGE_MAX_TOKENS, system=JUDGE_SYSTEM,
+                model=JUDGE_MODEL, max_tokens=JUDGE_MAX_TOKENS, system=judge_system(),
                 messages=[{"role": "user", "content": judge_prompt(items[qid], runs[x]["rep"][qid],
                                                                    runs[y]["rep"][qid], not args.no_reference)}],
                 output_config={"effort": JUDGE_EFFORT, "format": {"type": "json_schema", "schema": JUDGE_SCHEMA}},
@@ -677,7 +764,10 @@ def main(argv=None) -> int:
     p.add_argument("--n", type=int, default=15, help="human-sample: number of pairs")
     p.add_argument("--seed", type=int, default=7, help="human-sample: sampling / order seed")
     p.add_argument("--human", default=None, help="agreement: the filled human_sample.csv")
+    p.add_argument("--city", choices=sorted(JUDGE_PLACE), default="turin",
+                   help="city whose query sets and suite results to compare (test_suite.py --city)")
     args = p.parse_args(argv)
+    configure_city(args.city)
     args.arms = [x.strip() for x in args.arms.split(",")]
     if len(args.arms) != 2:
         p.error("--arms takes exactly two arms")

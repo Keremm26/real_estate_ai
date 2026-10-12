@@ -36,24 +36,10 @@ if os.path.exists(GEOCODE_CACHE_FILE):
     except Exception as e:
         logger.warning(f"Failed to load geocode cache: {e}")
 
-DEFAULT_CITY = os.getenv("DEFAULT_CITY", "Torino")
-
-LOCAL_LANDMARKS = {
-    "palazzo nuovo": (45.068846, 7.691295),
-    "porta susa": (45.0732, 7.6663),
-    "porta nuova": (45.0622, 7.6785),
-    "politecnico": (45.0624, 7.6607),
-    "università degli studi di torino": (45.0688, 7.6912),
-    "mole antonelliana": (45.0677, 7.6930),
-    "piazza castello": (45.0710, 7.6856),
-    "campus einaudi": (45.0768, 7.7013),
-    "parco valentino": (45.0544, 7.6852),
-    "biblioteca civica": (45.0664, 7.6781),
-    "ospedale molinette": (45.0415, 7.6755),
-    "san salvario": (45.057, 7.681),
-    "crocetta": (45.060, 7.665),
-    "centro": (45.070, 7.686),
-}
+# Geocoding context (city name, country, Nominatim box, landmark registry) comes
+# from the active city (app/core/cities.py). Turin's landmarks keep their old
+# name here for the callers that import it.
+from app.core.cities import TURIN_LANDMARKS as LOCAL_LANDMARKS  # noqa: E402
 
 def _clean_place_name(name: str) -> str:
     """Pre-processes place name for better geocoding results."""
@@ -132,13 +118,10 @@ def load_and_merge_data(file_path):
     return pd_data
 
 
-@lru_cache(maxsize=128)
-@retry_with_backoff(
-    retries=3, initial_delay=1.0, exceptions=(requests.RequestException,)
-)
 def get_coordinates(place_name):
     """
-    Fetch coordinates for a place using Nominatim API (cached).
+    Fetch coordinates for a place using Nominatim API (cached), in the context
+    of the active city.
 
     Args:
         place_name: Name of the place to geocode
@@ -146,19 +129,32 @@ def get_coordinates(place_name):
     Returns:
         tuple: (latitude, longitude) or (None, None) if not found
     """
+    from app.core.cities import active_city
+    return _get_coordinates(place_name, active_city().key)
+
+
+@lru_cache(maxsize=128)
+@retry_with_backoff(
+    retries=3, initial_delay=1.0, exceptions=(requests.RequestException,)
+)
+def _get_coordinates(place_name, city_key):
+    from app.core.cities import CITIES
+    city = CITIES[city_key]
+
     # 1. Cleaning
     place_name = _clean_place_name(place_name)
     if not place_name: return None, None
 
-    # 2. Local landmarks registry (Turin focused)
+    # 2. Local landmarks registry (Turin only)
     clean_name = place_name.lower().strip()
-    for landmark, coords in LOCAL_LANDMARKS.items():
+    for landmark, coords in city.landmarks.items():
         if landmark in clean_name or (len(clean_name) > 3 and clean_name in landmark):
             return coords
 
-    # 3. Global file-based cache
-    if place_name in GEOCODE_CACHE:
-        return GEOCODE_CACHE[place_name]
+    # 3. Global file-based cache (Turin keeps its original plain keys)
+    cache_key = place_name if city_key == "turin" else f"{city_key}|{place_name}"
+    if cache_key in GEOCODE_CACHE:
+        return GEOCODE_CACHE[cache_key]
 
     # Geocoding attempts hierarchy
     url = "https://nominatim.openstreetmap.org/search"
@@ -168,9 +164,9 @@ def get_coordinates(place_name):
     # 1. Bounded search (strict)
     # 2. Unbounded search with local context
     queries = [
-        { "q": f"{place_name}, {DEFAULT_CITY}, Italia", "bounded": 1 },
-        { "q": f"{place_name}, {DEFAULT_CITY}, Italia", "bounded": 0 },
-        { "q": f"{place_name}, Italia", "bounded": 0 }
+        { "q": f"{place_name}, {city.name}, {city.country_name}", "bounded": 1 },
+        { "q": f"{place_name}, {city.name}, {city.country_name}", "bounded": 0 },
+        { "q": f"{place_name}, {city.country_name}", "bounded": 0 }
     ]
 
     for config in queries:
@@ -178,7 +174,7 @@ def get_coordinates(place_name):
             "q": config["q"],
             "format": "json",
             "limit": 1,
-            "viewbox": "7.5,45.2,7.8,44.9",
+            "viewbox": city.viewbox,
             "bounded": config["bounded"],
         }
         
@@ -192,7 +188,7 @@ def get_coordinates(place_name):
                 
                 # Success! Update cache and return
                 with CACHE_LOCK:
-                    GEOCODE_CACHE[place_name] = (lat, lon)
+                    GEOCODE_CACHE[cache_key] = (lat, lon)
                     try:
                         os.makedirs(os.path.dirname(GEOCODE_CACHE_FILE), exist_ok=True)
                         with open(GEOCODE_CACHE_FILE, "w", encoding="utf-8") as f:

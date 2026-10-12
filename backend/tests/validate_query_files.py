@@ -42,7 +42,12 @@ from app.services.llm.rag import store  # noqa: E402
 from app.services.llm.rag.eval.run import _doc_key_to_name, _hit_matches, _label  # noqa: E402
 
 DOWNSTREAM = backend_dir / "app" / "services" / "llm" / "rag" / "eval" / "downstream_queries_turin.json"
+DOWNSTREAM_CITIES = [backend_dir / "app" / "services" / "llm" / "rag" / "eval" / f"downstream_queries_{c}.json"
+                     for c in ("london", "madrid")]
+HEURISTIC_M2_PER_PERSON = 10.0   # building agent rule 5 capacity estimate
 PIPELINE = backend_dir / "tests" / "benchmark_queries_turin.json"
+PIPELINE_CITIES = [backend_dir / "tests" / f"benchmark_queries_{c}.json" for c in ("london", "madrid")]
+CITY_OF_COUNTRY = {"UK": "london", "ES": "madrid"}
 SERVICES = {"education": "educazione", "mobility": "mobilita", "healthcare": "sanita", "sport": "sport",
             "green": "verde", "commercial": "commerciale"}
 DEFAULT_RADIUS_KM = 3.0
@@ -96,11 +101,107 @@ def check_downstream(problems):
                 exp = (m, math.ceil(m * 1.25))
         if exp and (p := _range_problem(q["id"], e["value_min"], e["value_max"], exp)):
             problems.append(p)
+        n = cap.get("beds") or cap.get("persons")
+        want = None
+        if e["activate"] is True and n and e["value_min"] is not None:
+            want = ("law_above_heuristic" if e["value_min"] > HEURISTIC_M2_PER_PERSON * n
+                    else "law_at_or_below_heuristic")
+        if q.get("heuristic_stratum") != want:
+            problems.append(f"{q['id']} heuristic_stratum {q.get('heuristic_stratum')} != {want}")
         for src in q["sources"]:
             if not any(_hit_matches(h, _label(src, k2n)) for h in hits):
                 problems.append(f"{q['id']} source {src} matches no chunk")
     print("DOWNSTREAM:", len(dq), "items | activate", dict(Counter(str(q["expect"]["activate"]) for q in dq)),
           "| longest it query:", max(len(q["queries"]["it"].split()) for q in dq), "words")
+
+
+# --- London / Madrid rule families (recomputed independently of the generator) ---
+_TH_KITCHEN = ((3, 5.5), (5, 7.5), (7, 9.5), (10, 11.5))
+_T31 = {(1, 1): (39,), (1, 2): (50, 58), (2, 3): (61, 70), (2, 4): (70, 79), (3, 4): (74, 84, 90),
+        (3, 5): (86, 93, 99), (3, 6): (95, 102, 108), (4, 5): (90, 97, 103), (4, 6): (99, 106, 112),
+        (4, 7): (108, 115, 121)}
+
+
+def city_range(family, cap):
+    """Expected [value_min, value_max] for a London / Madrid item (see each file's meta.value_basis)."""
+    n, s, d = cap.get("persons"), cap.get("single_rooms"), cap.get("double_rooms")
+    known = s is not None and d is not None
+    if family == "hmo_national":
+        if known:
+            h = 6.51 * s + 10.22 * d
+            return h, 1.25 * h
+        return 5.11 * n, 1.25 * 6.51 * n
+    if family in ("hmo_th", "hmo_th_bedsit"):
+        k = next(v for lim, v in _TH_KITCHEN if (n or s + 2 * d) <= lim)
+        if family == "hmo_th_bedsit":
+            t = 13 * s + 18 * d
+            return t, 1.25 * t
+        if known:
+            t = 8.5 * s + 13 * d
+            return t, 1.25 * (t + k)
+        return 6.5 * n, 1.25 * (8.5 * n + k)
+    if family == "lp_dwelling":
+        g = _T31[(cap["bedrooms"], cap["persons"])]
+        if cap.get("storeys"):
+            return g[cap["storeys"] - 1], 1.25 * g[cap["storeys"] - 1]
+        if len(g) == 1:
+            return (37 if cap.get("shower_room") else 39), 1.25 * 39
+        return min(g), max(g)
+    if family in ("es_res_comunitaria", "es_dwelling"):     # PGOUM 7.3.4 programme, P(R) = max(40, 29 + 7 R)
+        prog = lambda r: max(40, 29 + 7 * r)  # noqa: E731
+        rooms = (s + d) if known else cap.get("bedrooms")
+        if rooms:
+            return prog(rooms), 1.25 * prog(rooms)
+        n = cap.get("beds") or n
+        return prog(math.ceil(n / 2)), 1.25 * prog(n)
+    if family == "es_res_compartida":                       # 7.3.11.3: 20 s + 25 d + 20
+        su, du = cap.get("single_units"), cap.get("double_units")
+        c = lambda a, b: 20 * a + 25 * b + 20  # noqa: E731
+        if su is not None and du is not None:
+            return c(su, du), 1.25 * c(su, du)
+        return c(n % 2, n // 2), 1.25 * c(n, 0)
+    return None
+
+
+def check_downstream_city(problems, path):
+    if not path.exists():
+        return
+    data = json.loads(path.read_text(encoding="utf-8"))
+    dq, country = data["queries"], data["meta"]["country"]
+    r = store.get_collection().get(where={"country": country}, include=["metadatas"])
+    hits = r["metadatas"]
+    k2n = _doc_key_to_name()
+    if len({q["id"] for q in dq}) != len(dq):
+        problems.append(f"{path.name}: duplicate ids")
+    for q in dq:
+        e, cap, fam = q["expect"], q.get("capacity") or {}, q.get("rule_family")
+        if e["activate"] in (True, "either"):
+            exp = city_range(fam, cap) if fam else None
+            if exp is None:
+                problems.append(f"{q['id']} activates but has no recomputable rule_family")
+            elif abs(exp[0] - e["value_min"]) > .01 or abs(exp[1] - e["value_max"]) > .01:
+                problems.append(f"{q['id']} range {e['value_min']}-{e['value_max']} != {round(exp[0], 2)}-{round(exp[1], 2)}")
+        persons = cap.get("persons") or cap.get("beds")
+        want = None
+        if e["activate"] is True and persons:
+            want = ("law_above_heuristic" if e["value_min"] > HEURISTIC_M2_PER_PERSON * persons
+                    else "law_at_or_below_heuristic")
+        if q.get("heuristic_stratum") != want:
+            problems.append(f"{q['id']} heuristic_stratum {q.get('heuristic_stratum')} != {want}")
+        for src in q["sources"]:
+            if not any(_hit_matches(h, _label(src, k2n)) for h in hits):
+                problems.append(f"{q['id']} source {src} matches no chunk")
+        prec = q.get("precedence")
+        if prec:
+            from app.services.llm.rag.eval.regulatory_scoring import doc_ids
+            for role in ("winner", "loser"):
+                if prec[role] not in k2n:
+                    problems.append(f"{q['id']} precedence {role} {prec[role]} not in the manifest")
+            if not doc_ids(k2n.get(prec["winner"], "")) and not prec.get("winner_aliases"):
+                problems.append(f"{q['id']} winner has no identifier in its name and no winner_aliases")
+    print(f"DOWNSTREAM {path.name}:", len(dq), "items | activate",
+          dict(Counter(str(q["expect"]["activate"]) for q in dq)),
+          "| strata", dict(Counter(str(q.get("heuristic_stratum")) for q in dq if q["expect"]["activate"] is True)))
 
 
 def check_pipeline(problems):
@@ -140,6 +241,12 @@ def check_pipeline(problems):
                 exp = (28, 38) if ("existing" in text or "esistente" in text) else (38, math.ceil(38 * 1.25))
         if exp and (p := _range_problem(q["id"], rg["value_min"], rg["value_max"], exp)):
             problems.append(p)
+        n = cap.get("beds") or cap.get("persons")
+        want = None
+        if rg["activate"] is True and n and rg["value_min"] is not None:
+            want = "law_above_heuristic" if rg["value_min"] > HEURISTIC_M2_PER_PERSON * n else "law_at_or_below_heuristic"
+        if q.get("heuristic_stratum") != want:
+            problems.append(f"{q['id']} heuristic_stratum {q.get('heuristic_stratum')} != {want}")
         m = pd.Series(True, index=df.index)
         if s.get("typology"):
             m &= df.tipologia_bene_immobile.eq(s["typology"])
@@ -166,10 +273,92 @@ def check_pipeline(problems):
           "| smallest candidate pool:", min((v, k) for k, v in rows.items() if v))
 
 
+def check_pipeline_city(problems, path):
+    """London / Madrid pipeline sets: agent consistency, recomputed ranges,
+    heuristic_stratum, and feasibility on the city's own dataset."""
+    if not path.exists():
+        return
+    from app.core.cities import CITIES
+    data = json.loads(path.read_text(encoding="utf-8"))
+    pq, meta = data["queries"], data["meta"]
+    city = CITY_OF_COUNTRY[meta["country"]]
+    ds = CITIES[city].dataset
+    df = pd.read_parquet(backend_dir / ds, columns=["tipologia_bene_immobile", "superficie_di_riferimento_mq",
+                                                     "classe_energetica_ape", "latitudine", "longitudine",
+                                                     *SERVICES.values()])
+    landmarks = meta.get("landmarks") or {}
+
+    def km_from(lat, lon):
+        p1, p2 = np.radians(df.latitudine), np.radians(lat)
+        dl = np.radians(lon - df.longitudine)
+        return 2 * 6371.0 * np.arcsin(np.sqrt(np.sin((p2 - p1) / 2) ** 2 + np.cos(p1) * np.cos(p2) * np.sin(dl / 2) ** 2))
+
+    if len({q["id"] for q in pq}) != len(pq):
+        problems.append(f"{path.name}: duplicate ids")
+    rows = {}
+    for q in pq:
+        s, rg, cap = q["slots"], q["regulatory"], q["slots"].get("capacity") or {}
+        if not re.fullmatch(r"PQ-[LM]\d{2}", q["id"]) or q["lang"] not in ("en", "es", "mixed"):
+            problems.append(f"{q['id']} id/lang")
+        if rg["activate"] is True and "regulatory" not in q["expected_agents"]:
+            problems.append(f"{q['id']} regulatory not expected")
+        if rg["activate"] == "either" and "regulatory" not in q["optional_agents"]:
+            problems.append(f"{q['id']} either not optional")
+        if rg["activate"] is False and "regulatory" in q["expected_agents"] + q["optional_agents"]:
+            problems.append(f"{q['id']} regulatory listed")
+        for slot, agent in (("landmark", "location"), ("energy_classes", "energy"), ("services", "proximity")):
+            if s.get(slot) and agent not in q["expected_agents"]:
+                problems.append(f"{q['id']} {slot} without {agent}")
+        if rg["activate"] in (True, "either"):
+            exp = city_range(q.get("rule_family"), cap) if q.get("rule_family") else None
+            if exp is None:
+                problems.append(f"{q['id']} activates but has no recomputable rule_family")
+            elif abs(exp[0] - rg["value_min"]) > .01 or abs(exp[1] - rg["value_max"]) > .01:
+                problems.append(f"{q['id']} range {rg['value_min']}-{rg['value_max']} != {round(exp[0], 2)}-{round(exp[1], 2)}")
+        n = cap.get("persons") or cap.get("beds")
+        want = None
+        if rg["activate"] is True and n:
+            want = "law_above_heuristic" if rg["value_min"] > HEURISTIC_M2_PER_PERSON * n else "law_at_or_below_heuristic"
+        if q.get("heuristic_stratum") != want:
+            problems.append(f"{q['id']} heuristic_stratum {q.get('heuristic_stratum')} != {want}")
+        m = pd.Series(True, index=df.index)
+        if s.get("typology"):
+            m &= df.tipologia_bene_immobile.eq(s["typology"])
+        if s.get("landmark"):
+            if s["landmark"] not in landmarks:
+                problems.append(f"{q['id']} landmark {s['landmark']} not in meta.landmarks")
+            else:
+                m &= km_from(*landmarks[s["landmark"]]) <= (s.get("radius_km") or DEFAULT_RADIUS_KM)
+        sf = s.get("surface") or {}
+        lo = max([v for v in (sf.get("min"), rg["value_min"] if rg["activate"] is True else None) if v is not None],
+                 default=None)
+        if lo is not None:
+            m &= df.superficie_di_riferimento_mq >= lo
+        if sf.get("max") is not None:
+            m &= df.superficie_di_riferimento_mq <= sf["max"]
+        if s.get("energy_classes"):
+            m &= df.classe_energetica_ape.isin(s["energy_classes"])
+        for sv in s.get("services") or []:
+            m &= df[SERVICES[sv]] >= SERVICE_MIN
+        rows[q["id"]] = int(m.sum())
+        if rows[q["id"]] == 0 and "conflict-user-vs-regulation" not in q["covers"]:
+            problems.append(f"{q['id']} returns 0 rows")
+    small = sorted((v, k) for k, v in rows.items() if v)[:3]
+    print(f"PIPELINE {path.name}:", len(pq), "queries | lang", dict(Counter(q["lang"] for q in pq)),
+          "| regulatory", dict(Counter(str(q["regulatory"]["activate"]) for q in pq)),
+          "| strata", dict(Counter(q.get("heuristic_stratum") for q in pq if q.get("heuristic_stratum"))),
+          "| landmarks used", len({q["slots"].get("landmark") for q in pq} - {None}), f"/ {len(landmarks)}",
+          "| smallest candidate pools:", small)
+
+
 def main() -> int:
     problems = []
     check_downstream(problems)
+    for path in DOWNSTREAM_CITIES:
+        check_downstream_city(problems, path)
     check_pipeline(problems)
+    for path in PIPELINE_CITIES:
+        check_pipeline_city(problems, path)
     print("PROBLEMS:", problems or "none")
     return 1 if problems else 0
 

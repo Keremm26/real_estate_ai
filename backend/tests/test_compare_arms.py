@@ -102,6 +102,41 @@ def test_padding_buildings_are_not_results():
     assert ca.compliance({"results_count": 0, "top10": pack["top10"]}, 570, 10) is None
 
 
+def test_fallback_detection_and_exclusion():
+    assert ca.is_fallback({"fallback": True, "results_count": 3})                   # recorded flag wins
+    assert not ca.is_fallback({"fallback": False, "results_count": ca.FALLBACK_SIZE})
+    assert ca.is_fallback({"results_count": ca.FALLBACK_SIZE})                      # older runs: the signature
+    assert not ca.is_fallback({"results_count": 12})
+    # PQ-06: none has one real trial (1/4 compliant) and one fallback trial (0/4);
+    # excluding the fallback leaves only the real trial
+    fb = _pack("PQ-06", [50, 60, 70, 80])
+    fb["fallback"] = True
+    _write_arm("none", {"PQ-06": [_pack("PQ-06", [600, 100, 200, 300]), fb],
+                        "PQ-27": [_pack("PQ-27", [80, 90], found=("energy",))] * 2})
+    _write_arm("rag", {"PQ-06": [_pack("PQ-06", [600, 700, 800, 300], start_id=10)] * 2,
+                       "PQ-27": [_pack("PQ-27", [80, 90], found=("energy",))] * 2})
+    assert ca.cmd_metrics(_Args()) == 0
+    rep = json.loads((ca.out_dir(MODEL) / "metrics.json").read_text())
+    assert rep["fallback"]["none"]["n_fallback"] == 1 and rep["fallback"]["rag"]["n_fallback"] == 0
+    assert rep["compliance"]["@10"]["mean_a"] == 0.125                 # (0.25 + 0) / 2
+    assert rep["compliance_excl_fallback"]["@10"]["mean_a"] == 0.25    # real trial only
+
+
+def test_city_paths_and_judge_text():
+    turin_judge = ca.judge_system()
+    assert "Turin, Italy" in turin_judge and ca.arm_root("rag", MODEL).parts[-4] == "curated_rag"
+    ca.configure_city("london")
+    try:
+        assert ca.arm_root("rag", MODEL).parts[-4] == "curated_rag_london"
+        assert ca.out_dir(MODEL).parent.name == "curated_compare_london"
+        assert ca.QUERIES_PATH.name == "benchmark_queries_london.json"
+        assert ca.DOWNSTREAM_PATH.name == "downstream_queries_london.json"
+        assert "London, United Kingdom" in ca.judge_system() and "Turin" not in ca.judge_system()
+    finally:
+        ca.configure_city("turin")
+    assert ca.judge_system() == turin_judge                     # Turin's judge text unchanged
+
+
 def test_blind_list_hides_scores():
     text = ca.format_list(_pack("PQ-06", [1250.0]))
     assert "1,250 m²" in text and "99" not in text and "score" not in text

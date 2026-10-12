@@ -60,7 +60,9 @@ def load_regulatory_context(
     error recorded in the trace, rather than taking the whole agent down.
     """
     mode = (retrieval_mode or rag_config.RETRIEVAL_MODE).lower()
-    country = country or rag_config.DEFAULT_COUNTRY
+    if not country:  # pipeline callers: the active city's jurisdiction (Turin -> IT)
+        from app.core.cities import active_city
+        country = active_city().rag_country
 
     if mode == "none":
         use_case = use_case or rag_config.DEFAULT_USE_CASE

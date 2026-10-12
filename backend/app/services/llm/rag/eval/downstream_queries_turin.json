@@ -1,7 +1,7 @@
 {
   "meta": {
     "description": "Downstream evaluation of the regulatory agent with RAG retrieval (Turin). Each item is one production-shaped request; the agent must either produce a document-grounded building-level surface threshold (surface_area >= X) or decline (found: false). Measures whether retrieval + extraction yield the RIGHT threshold, and whether the agent declines when the corpus has no applicable rule or the request lacks the capacity needed to compute one.",
-    "schema": "downstream-v2. One item = one need, one query per language (queries: {it, en}). type in {dimensioning, room_mix, service_rate, derogation, accessibility, precedence, general_dwelling, studio_minimum, echo_trap, ambiguous_use, no_capacity, out_of_corpus, retrieval_probe, non_surface_rule, procedural, negative, long_query, number_in_words, self_correction, code_switching, mixed_use, negation, typos}. tier = jurisdiction level of the governing rule (null when no rule applies). use_case = expected router output (student_housing | general). capacity = structured occupancy used to derive the range (beds / single_beds / double_beds / persons). user_values = numbers stated by the user (echo guard: the regulatory value must not simply repeat them). expect.activate in {true, false, 'either'}; value_min / value_max bound the main requirement's value (inclusive). sources use the gold-v2 label format (doc_key + article_ref, or '*' for the whole document). precedence {winner, loser, rule} on items where two applicable rules compete; rule in {lex_specialis, delegated_derogation}. covers = aspect tags for coverage and de-duplication review.",
+    "schema": "downstream-v2. One item = one need, one query per language (queries: {it, en}). type in {dimensioning, room_mix, service_rate, derogation, accessibility, precedence, general_dwelling, studio_minimum, echo_trap, ambiguous_use, no_capacity, out_of_corpus, retrieval_probe, non_surface_rule, procedural, negative, long_query, number_in_words, self_correction, code_switching, mixed_use, negation, typos}. tier = jurisdiction level of the governing rule (null when no rule applies). use_case = expected router output (student_housing | general). capacity = structured occupancy used to derive the range (beds / single_beds / double_beds / persons). user_values = numbers stated by the user (echo guard: the regulatory value must not simply repeat them). expect.activate in {true, false, 'either'}; value_min / value_max bound the main requirement's value (inclusive). sources use the gold-v2 label format (doc_key + article_ref, or '*' for the whole document). precedence {winner, loser, rule} on items where two applicable rules compete; rule in {lex_specialis, delegated_derogation}. covers = aspect tags for coverage and de-duplication review. heuristic_stratum = whether value_min is above the building agent's ~10 m2/person capacity estimate ('law_above_heuristic') or not ('law_at_or_below_heuristic'); null when no rule applies or no capacity is given.",
     "country": "IT",
     "corpus": "Turin slice of the normative store: national (DPR 380/2001, DM Sanità 1975, DM 236/1989, DM 1444/1968, Legge 122/1989, DM MUR 1256/2021 + Allegato A), Piemonte (LR 19/1999, LR 16/2018), Città di Torino (NUEA PRG, Reg. 381 Edilizio, Reg. 30 Igiene Titolo III).",
     "value_basis": {
@@ -44,6 +44,7 @@
         "value_max": 70,
         "basis": "N=4, room type not stated: [9.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -77,6 +78,7 @@
         "value_max": 525,
         "basis": "N=30, room type not stated: [9.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -111,6 +113,7 @@
         "value_max": 1050,
         "basis": "N=60, room type not stated: [9.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -144,6 +147,7 @@
         "value_max": 2100,
         "basis": "N=120, room type not stated: [9.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -179,6 +183,7 @@
         "value_max": 700,
         "basis": "40 single rooms = 40 beds: [12.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -214,6 +219,7 @@
         "value_max": 725,
         "basis": "25 double rooms = 50 beds: [9.5 N, 14.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -250,6 +256,7 @@
         "value_max": 640,
         "basis": "20 single beds + 20 double-room beds: min 12.5*20 + 9.5*20, max 17.5*20 + 14.5*20"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -283,6 +290,7 @@
         "value_max": 372,
         "basis": "Nuclei integrati: service area 3.0 m2/bed (6.2.1); room type not stated: [9.5 N, 15.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -318,6 +326,7 @@
         "value_max": 1050,
         "basis": "60 single beds: residential 12.5 N = 750; with services 17.5 N = 1050, or 16.75 N = 1005 applying the Art. 2 c.2 15% reduction of service areas on existing buildings"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -356,6 +365,7 @@
         "value_max": 1760,
         "basis": "N=100, room type not stated: [9.5 N, 17.5 N]; 6.1.2 adds +10% area on >= 5% of places (at most +0.5% overall), upper bound rounded to 1760"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -391,6 +401,7 @@
         "value_max": 175,
         "basis": "Student-specific rule: N=10, [9.5 N, 17.5 N]. The general dwelling rule would give H(10) = 116 m2 (inside the range), so the value alone cannot tell the rules apart: scored by winner_cited."
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -433,6 +444,7 @@
         "value_max": 170,
         "basis": "H(12) = 14*4 + 10*8 = 136; range [H, 1.25 H]"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "sources": [
         {
           "doc_key": "dm_sanita_1975",
@@ -471,6 +483,7 @@
         "value_max": 95,
         "basis": "H(6) = 14*4 + 10*2 = 76; range [H, 1.25 H]"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "sources": [
         {
           "doc_key": "dm_sanita_1975",
@@ -509,6 +522,7 @@
         "value_max": 53,
         "basis": "H(3) = 14*3 = 42; range [H, 1.25 H] rounded up"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "sources": [
         {
           "doc_key": "dm_sanita_1975",
@@ -546,6 +560,7 @@
         "value_max": 35,
         "basis": "DM 1975 Art. 3: one-room dwelling for one person >= 28 m2; range [28, 1.25 x 28]"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "sources": [
         {
           "doc_key": "dm_sanita_1975",
@@ -579,6 +594,7 @@
         "value_max": 48,
         "basis": "DM 1975 Art. 3: one-room dwelling for two people >= 38 m2; range [38, 1.25 x 38] rounded up"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "sources": [
         {
           "doc_key": "dm_sanita_1975",
@@ -612,6 +628,7 @@
         "value_max": 38,
         "basis": "DPR 380 Art. 24 c.5-bis b): on recovery of existing buildings the two-person one-room minimum may go down from 38 to 28 m2"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "sources": [
         {
           "doc_key": "dpr_380_2001",
@@ -656,6 +673,7 @@
         "value_max": 1050,
         "basis": "N=60, room type not stated: [9.5 N, 17.5 N]. The user's own 2000 m2 is a preference, not a regulation"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -689,6 +707,7 @@
         "value_max": 120,
         "basis": "No senior-housing standard in the corpus; if the general dwelling rule is applied: H(8) = 14*4 + 10*4 = 96, range [H, 1.25 H]"
       },
+      "heuristic_stratum": null,
       "sources": [
         {
           "doc_key": "dm_sanita_1975",
@@ -722,6 +741,7 @@
         "value_max": null,
         "basis": "No capacity stated: the per-bed standard cannot become a building threshold; the per-room minima (7.1) are not building-level"
       },
+      "heuristic_stratum": null,
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -756,6 +776,7 @@
         "value_max": null,
         "basis": "No number of people stated: the per-inhabitant rule cannot be applied"
       },
+      "heuristic_stratum": null,
       "sources": [
         {
           "doc_key": "dm_sanita_1975",
@@ -787,6 +808,7 @@
         "value_max": null,
         "basis": "Standards are per bed or per room; without a capacity there is no building-level threshold"
       },
+      "heuristic_stratum": null,
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -818,6 +840,7 @@
         "value_max": null,
         "basis": "No standard for day centres in the corpus (NUEA Art. 3 only classifies the use)"
       },
+      "heuristic_stratum": null,
       "sources": [],
       "covers": [
         "senior",
@@ -846,6 +869,7 @@
         "value_max": null,
         "basis": "Healthcare accreditation standards (Piemonte) are not in the corpus; a bed count must not trigger the student per-bed rule"
       },
+      "heuristic_stratum": null,
       "sources": [],
       "covers": [
         "capacity-without-rule",
@@ -873,6 +897,7 @@
         "value_max": null,
         "basis": "No reachable hotel standard (Reg. 30 lodging rules are not quantitative-tagged and are air-volume based)"
       },
+      "heuristic_stratum": null,
       "sources": [],
       "covers": [
         "hospitality",
@@ -901,6 +926,7 @@
         "value_max": 420,
         "basis": "Reg. 30 Art. 123: >= 30 m3 of air per person in dormitories; at 2.70 m height = 11.1 m2/person -> 333 m2 (upper bound 14 m2/person). Unreachable under QUANT_ONLY"
       },
+      "heuristic_stratum": null,
       "sources": [
         {
           "doc_key": "to_reg_30_igiene",
@@ -935,6 +961,7 @@
         "value_max": null,
         "basis": "Office use: no regulatory surface threshold in the corpus"
       },
+      "heuristic_stratum": null,
       "sources": [],
       "covers": [
         "office",
@@ -961,6 +988,7 @@
         "value_max": null,
         "basis": "Retail use: no regulatory surface threshold"
       },
+      "heuristic_stratum": null,
       "sources": [],
       "covers": [
         "retail"
@@ -988,6 +1016,7 @@
         "value_max": null,
         "basis": "Industrial use: no regulatory surface threshold"
       },
+      "heuristic_stratum": null,
       "sources": [],
       "covers": [
         "industrial",
@@ -1014,6 +1043,7 @@
         "value_max": null,
         "basis": "Energy-only request: no regulatory requirement"
       },
+      "heuristic_stratum": null,
       "sources": [],
       "covers": [
         "energy-only"
@@ -1039,6 +1069,7 @@
         "value_max": null,
         "basis": "Location-only request: no regulatory requirement"
       },
+      "heuristic_stratum": null,
       "sources": [],
       "covers": [
         "location-only"
@@ -1064,6 +1095,7 @@
         "value_max": null,
         "basis": "LR 16/2018 Art. 6 sets mean HEIGHTS (2.40 / 2.20 m); the dataset has no height column, so no surface_area requirement follows"
       },
+      "heuristic_stratum": null,
       "sources": [
         {
           "doc_key": "lr_piemonte_16_2018",
@@ -1096,6 +1128,7 @@
         "value_max": null,
         "basis": "Legge 122/1989 Art. 2: 1 m2 of parking per 10 m3 of building VOLUME; not a building surface threshold (and not quantitative-tagged)"
       },
+      "heuristic_stratum": null,
       "sources": [
         {
           "doc_key": "legge_122_1989",
@@ -1127,6 +1160,7 @@
         "value_max": null,
         "basis": "LR 19/1999 Art. 8 and DPR 380 Art. 23-ter are procedural: permit route, no surface threshold"
       },
+      "heuristic_stratum": null,
       "sources": [
         {
           "doc_key": "lr_piemonte_19_1999",
@@ -1159,6 +1193,7 @@
         "value_max": null,
         "basis": "Heritage law (D.Lgs. 42/2004) is not in the corpus and the dataset has no heritage column"
       },
+      "heuristic_stratum": null,
       "sources": [],
       "covers": [
         "heritage",
@@ -1189,6 +1224,7 @@
         "value_max": 787.5,
         "basis": "45 single beds: [12.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -1225,6 +1261,7 @@
         "value_max": 870,
         "basis": "60 beds in double rooms: [9.5 N, 14.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -1260,6 +1297,7 @@
         "value_max": 875,
         "basis": "Final capacity N=50 (the user corrected 40): [9.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -1295,6 +1333,7 @@
         "value_max": 525,
         "basis": "30 single beds: [12.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_above_heuristic",
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -1328,6 +1367,7 @@
         "value_max": 350,
         "basis": "Residential part only, N=20: [9.5 N, 17.5 N]; the shop adds no regulatory threshold"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -1361,6 +1401,7 @@
         "value_max": null,
         "basis": "Student residence is explicitly excluded; office use has no threshold"
       },
+      "heuristic_stratum": null,
       "sources": [],
       "covers": [
         "negation",
@@ -1389,6 +1430,7 @@
         "value_max": 1225,
         "basis": "N=70, room type not stated: [9.5 N, 17.5 N]"
       },
+      "heuristic_stratum": "law_at_or_below_heuristic",
       "sources": [
         {
           "doc_key": "dm_1256_2021_allegato_a",
@@ -1428,6 +1470,7 @@
         "value_max": 94,
         "basis": "Reg. 30 Art. 130 c.1: workplaces must ensure at least 3 m2 per person present; 25 persons -> 75 m2 (range [75, 1.25 x 75]). Declining is also acceptable (the user's own 400 m2 makes it non-binding). The per-inhabitant dwelling rule must NOT be used."
       },
+      "heuristic_stratum": null,
       "sources": [
         {
           "doc_key": "to_reg_30_igiene",

@@ -1,0 +1,1918 @@
+{
+  "meta": {
+    "description": "Hand-curated full-pipeline benchmark for MURENA (Madrid). Same design as benchmark_queries_turin.json: each query runs end to end through all agents; ground truth is the expected agent activation and the regulatory expectation. One language per query (es / en / mixed).",
+    "schema": "pipeline-v1 (see benchmark_queries_turin.json). id PQ-Mnn. slots.landmark = key of meta.landmarks (coordinates the pipeline's geocoder returns for that name in the Madrid context). rule_family / heuristic_stratum as in downstream_queries_madrid.json; regulatory ranges follow its value_basis.",
+    "country": "ES",
+    "dataset": "data/metadata/estates_madrid.parquet (residential, commercial premises and offices)",
+    "landmarks": {
+      "ciudad universitaria": [
+        40.4438,
+        -3.7264
+      ],
+      "moncloa": [
+        40.435,
+        -3.7192
+      ],
+      "puerta del sol": [
+        40.4169,
+        -3.7039
+      ],
+      "atocha": [
+        40.407,
+        -3.6886
+      ],
+      "nuevos ministerios": [
+        40.447,
+        -3.6928
+      ],
+      "parque del retiro": [
+        40.4149,
+        -3.6833
+      ],
+      "plaza de castilla": [
+        40.4663,
+        -3.6897
+      ],
+      "malasaña": [
+        40.4267,
+        -3.7042
+      ],
+      "lavapiés": [
+        40.4085,
+        -3.7009
+      ],
+      "hospital universitario la paz": [
+        40.4813,
+        -3.6873
+      ],
+      "hospital general universitario gregorio marañón": [
+        40.4197,
+        -3.6711
+      ],
+      "estación de chamartín": [
+        40.4742,
+        -3.685
+      ],
+      "argüelles": [
+        40.4307,
+        -3.7162
+      ],
+      "plaza de españa": [
+        40.4234,
+        -3.7109
+      ]
+    },
+    "composition": "40 queries: 25 with an applicable rule, 3 'either', 12 without a rule. Strata on rule queries: {'law_at_or_below_heuristic': 12, 'law_above_heuristic': 13}.",
+    "caveats": [
+      "Author-constructed; regulatory ranges follow downstream_queries_madrid.json value_basis.",
+      "Feasibility (non-empty results) is checked on the dataset with the slots as SQL-like filters within 3 km.",
+      "The pipeline's geocoder misplaces 'Universidad Politécnica de Madrid' (~12 km north) and does not resolve 'Campus Sur UPM'; neither is used."
+    ]
+  },
+  "queries": [
+    {
+      "id": "PQ-M01",
+      "lang": "es",
+      "query": "Busca un inmueble para una residencia de estudiantes con 60 habitaciones individuales.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "simple",
+      "slots": {
+        "typology": null,
+        "landmark": null,
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 60,
+          "single_rooms": 60,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 449,
+        "value_max": 561.25,
+        "user_values": [],
+        "basis": "PGOUM 7.3.11.2 -> 7.3.4: 29 + 7 x 60"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-M06",
+      "covers": [
+        "regulatory-only",
+        "student"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M02",
+      "lang": "en",
+      "query": "Find a building near Ciudad Universitaria for a student residence with 40 single rooms.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "ciudad universitaria",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 40,
+          "single_rooms": 40,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 309,
+        "value_max": 386.25,
+        "user_values": [],
+        "basis": "29 + 7 x 40"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-M01",
+      "covers": [
+        "english",
+        "location",
+        "student"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M03",
+      "lang": "es",
+      "query": "Edificio cerca de Moncloa para una residencia de 50 estudiantes en habitaciones individuales, con certificado energético C o mejor y bien comunicado.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": null,
+        "landmark": "moncloa",
+        "surface": null,
+        "energy_classes": [
+          "A",
+          "B",
+          "C"
+        ],
+        "services": [
+          "mobility"
+        ],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 50,
+          "single_rooms": 50,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "energy",
+        "proximity",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 379,
+        "value_max": 473.75,
+        "user_values": [],
+        "basis": "29 + 7 x 50"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": null,
+      "covers": [
+        "four-agents",
+        "energy",
+        "mobility"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M04",
+      "lang": "es",
+      "query": "Residencia de estudiantes con 20 habitaciones dobles y 10 individuales cerca de Argüelles.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "argüelles",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 50,
+          "single_rooms": 10,
+          "double_rooms": 20
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 239,
+        "value_max": 298.75,
+        "user_values": [],
+        "basis": "30 bedrooms: 29 + 7 x 30"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-M03",
+      "covers": [
+        "mixed-rooms"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M05",
+      "lang": "en",
+      "query": "Residence for 60 students near Plaza de España; the room types are not decided yet.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "plaza de españa",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 60
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 239,
+        "value_max": 561.25,
+        "user_values": [],
+        "basis": "60 beds, 1-2 per room: [P(30), 1.25 P(60)]"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-M02",
+      "covers": [
+        "mix-unknown"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M06",
+      "lang": "es",
+      "query": "Hola, buenos días. Represento a una fundación educativa y buscamos un edificio cerca de Moncloa para abrir una residencia para 45 estudiantes de grado, cada uno en su habitación individual. Nos importa el transporte y tener zonas verdes cerca.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": null,
+        "landmark": "moncloa",
+        "surface": null,
+        "energy_classes": null,
+        "services": [
+          "mobility",
+          "green"
+        ],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 45,
+          "single_rooms": 45,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "proximity",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 344,
+        "value_max": 430.0,
+        "user_values": [],
+        "basis": "29 + 7 x 45"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-M08",
+      "covers": [
+        "long-query",
+        "location-noise"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M07",
+      "lang": "es",
+      "query": "Residencia de estudiantes con sesenta habitaciones individuales cerca de Ciudad Universitaria.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "ciudad universitaria",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 60,
+          "single_rooms": 60,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 449,
+        "value_max": 561.25,
+        "user_values": [],
+        "basis": "29 + 7 x 60"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-M06",
+      "covers": [
+        "number-in-words"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M08",
+      "lang": "es",
+      "query": "Recidencia de estudiantes con 25 avitaciones individuales serca de Moncloa.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "moncloa",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 25,
+          "single_rooms": 25,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 204,
+        "value_max": 255.0,
+        "user_values": [],
+        "basis": "29 + 7 x 25"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-M07",
+      "covers": [
+        "typos"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M09",
+      "lang": "es",
+      "query": "Residencia para 30 estudiantes cerca de Malasaña... mejor que sean 40, todos en habitaciones individuales.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "malasaña",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 40,
+          "single_rooms": 40,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 309,
+        "value_max": 386.25,
+        "user_values": [
+          30
+        ],
+        "basis": "Corrected capacity: 29 + 7 x 40"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-M09",
+      "covers": [
+        "self-correction"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M10",
+      "lang": "es",
+      "query": "Residencia para 50 estudiantes en habitaciones individuales cerca de Nuevos Ministerios; el edificio debe tener más de 2000 m2.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "nuevos ministerios",
+        "surface": {
+          "min": 2000,
+          "max": null
+        },
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 50,
+          "single_rooms": 50,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 379,
+        "value_max": 473.75,
+        "user_values": [
+          2000
+        ],
+        "basis": "29 + 7 x 50; the user's 2000 m2 is a preference"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-M05",
+      "covers": [
+        "echo-guard",
+        "user-bound-above-regulation"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M11",
+      "lang": "es",
+      "query": "Edificio cerca de Argüelles para una residencia de estudiantes con 30 habitaciones individuales; entiendo que cada habitación tiene que ser una vivienda mínima.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "argüelles",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 30,
+          "single_rooms": 30,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 239,
+        "value_max": 298.75,
+        "user_values": [],
+        "basis": "Lex specialis: establishment as a whole (7.3.11.2, FAQ 20.b); per-room reading 1200 is outside"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-M04",
+      "covers": [
+        "lex-specialis",
+        "user-misconception"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M12",
+      "lang": "en",
+      "query": "A small student residence with 4 single rooms near Lavapiés.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "lavapiés",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": {
+          "beds": 4,
+          "single_rooms": 4,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 57,
+        "value_max": 71.25,
+        "user_values": [],
+        "basis": "29 + 7 x 4"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-M10",
+      "covers": [
+        "small-capacity"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M13",
+      "lang": "es",
+      "query": "Busco un edificio completo cerca de Atocha para un coliving con 20 unidades de alojamiento individuales.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "atocha",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "co_living",
+        "capacity": {
+          "persons": 20,
+          "single_units": 20,
+          "double_units": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 420,
+        "value_max": 525.0,
+        "user_values": [],
+        "basis": "7.3.11.3: 20 x 15 + 25 + 5 x 19"
+      },
+      "rule_family": "es_res_compartida",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-M11",
+      "covers": [
+        "co-living"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M14",
+      "lang": "en",
+      "query": "Co-living in a dedicated building near Malasaña with 10 single units and 5 double units.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "malasaña",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "co_living",
+        "capacity": {
+          "persons": 20,
+          "single_units": 10,
+          "double_units": 5
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 345,
+        "value_max": 431.25,
+        "user_values": [],
+        "basis": "10 x 15 + 5 x 20 + 25 + 5 x 14"
+      },
+      "rule_family": "es_res_compartida",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-M12",
+      "covers": [
+        "co-living",
+        "mixed-units"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M15",
+      "lang": "es",
+      "query": "Residencia compartida para 30 personas en un edificio exclusivo cerca de Plaza de Castilla, con certificado energético C o mejor.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": null,
+        "landmark": "plaza de castilla",
+        "surface": null,
+        "energy_classes": [
+          "A",
+          "B",
+          "C"
+        ],
+        "services": [],
+        "intended_use": "co_living",
+        "capacity": {
+          "persons": 30
+        }
+      },
+      "expected_agents": [
+        "location",
+        "energy",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 395,
+        "value_max": 775.0,
+        "user_values": [],
+        "basis": "Units not stated: [most doubles, 1.25 x all singles]"
+      },
+      "rule_family": "es_res_compartida",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-M13",
+      "covers": [
+        "co-living",
+        "energy"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M16",
+      "lang": "mixed",
+      "query": "Busco un building para un coliving con 15 private units individuales near Puerta del Sol.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "puerta del sol",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "co_living",
+        "capacity": {
+          "persons": 15,
+          "single_units": 15,
+          "double_units": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 320,
+        "value_max": 400.0,
+        "user_values": [],
+        "basis": "15 x 15 + 25 + 5 x 14"
+      },
+      "rule_family": "es_res_compartida",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-M15",
+      "covers": [
+        "code-switching"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M17",
+      "lang": "es",
+      "query": "Coliving para 12 personas en unidades individuales de 30 m2 cada una, cerca de Lavapiés.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "lavapiés",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "co_living",
+        "capacity": {
+          "persons": 12,
+          "single_units": 12,
+          "double_units": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 260,
+        "value_max": 325.0,
+        "user_values": [
+          30,
+          360
+        ],
+        "basis": "12 x 15 + 25 + 5 x 11; the user's 30 m2 per unit is a preference"
+      },
+      "rule_family": "es_res_compartida",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-M14",
+      "covers": [
+        "echo-guard"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M18",
+      "lang": "es",
+      "query": "Quiero convertir un local comercial cerca de Lavapiés en una vivienda de un dormitorio para una persona.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Attività commerciali e assimilabili",
+        "landmark": "lavapiés",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "dwelling",
+        "capacity": {
+          "persons": 1,
+          "bedrooms": 1
+        }
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "regulatory"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40,
+        "value_max": 50.0,
+        "user_values": [],
+        "basis": "7.3.14 -> 7.3.4 (FAQ 21.a): 40"
+      },
+      "rule_family": "es_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-M16",
+      "covers": [
+        "change-of-use",
+        "commercial-typology"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M19",
+      "lang": "en",
+      "query": "A three-bedroom flat for a family of four near Retiro Park, close to schools.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "parque del retiro",
+        "surface": null,
+        "energy_classes": null,
+        "services": [
+          "education"
+        ],
+        "intended_use": "dwelling",
+        "capacity": {
+          "persons": 4,
+          "bedrooms": 3
+        }
+      },
+      "expected_agents": [
+        "location",
+        "proximity",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 50,
+        "value_max": 62.5,
+        "user_values": [],
+        "basis": "14 + 7 + 3 + 12 + 7 x 2"
+      },
+      "rule_family": "es_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-M17",
+      "covers": [
+        "family",
+        "education"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M20",
+      "lang": "es",
+      "query": "Vivienda de uso turístico con dos dormitorios para cuatro huéspedes cerca de la Puerta del Sol.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "puerta del sol",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "tourist_dwelling",
+        "capacity": {
+          "persons": 4,
+          "bedrooms": 2
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 43,
+        "value_max": 53.75,
+        "user_values": [],
+        "basis": "7.6.3.2 -> 7.3.4 (FAQ 25.a)"
+      },
+      "rule_family": "es_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-M18",
+      "covers": [
+        "tourist-dwelling"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M21",
+      "lang": "es",
+      "query": "Un estudio para una persona cerca de Malasaña.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "simple",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "malasaña",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "studio",
+        "capacity": {
+          "persons": 1,
+          "bedrooms": 1
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40,
+        "value_max": 50.0,
+        "user_values": [],
+        "basis": "Minimum dwelling 40 (open plan allowed)"
+      },
+      "rule_family": "es_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-M19",
+      "covers": [
+        "studio"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M22",
+      "lang": "en",
+      "query": "A two-bedroom flat for a couple with a child near Atocha, between 30 and 40 square metres.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "atocha",
+        "surface": {
+          "min": 30,
+          "max": 40
+        },
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "dwelling",
+        "capacity": {
+          "persons": 3,
+          "bedrooms": 2
+        }
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "regulatory"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 43,
+        "value_max": 53.75,
+        "user_values": [
+          30,
+          40
+        ],
+        "basis": "Programme for 2 bedrooms: 43, above the user's bounds"
+      },
+      "rule_family": "es_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": null,
+      "covers": [
+        "conflict-user-vs-regulation"
+      ],
+      "note": "No result can satisfy both: tests how the pipeline resolves it."
+    },
+    {
+      "id": "PQ-M23",
+      "lang": "es",
+      "query": "Vivienda de cuatro dormitorios para una familia de seis cerca de Plaza de Castilla.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "plaza de castilla",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "dwelling",
+        "capacity": {
+          "persons": 6,
+          "bedrooms": 4
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 57,
+        "value_max": 71.25,
+        "user_values": [],
+        "basis": "14 + 7 + 3 + 12 + 7 x 3"
+      },
+      "rule_family": "es_dwelling",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-M21",
+      "covers": [
+        "large-family"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M24",
+      "lang": "en",
+      "query": "A shared flat for 4 university students near Ciudad Universitaria.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "ciudad universitaria",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "shared_flat",
+        "capacity": {
+          "persons": 4
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 43,
+        "value_max": 71.25,
+        "user_values": [],
+        "basis": "Dwelling, bedrooms not stated: [P(2), 1.25 P(4)]"
+      },
+      "rule_family": "es_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-M23",
+      "covers": [
+        "shared-flat",
+        "student"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M25",
+      "lang": "es",
+      "query": "Una vivienda para una pareja, no una residencia, con un solo dormitorio, cerca de Argüelles.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "argüelles",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "dwelling",
+        "capacity": {
+          "persons": 2,
+          "bedrooms": 1
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40,
+        "value_max": 50.0,
+        "user_values": [],
+        "basis": "Minimum dwelling 40"
+      },
+      "rule_family": "es_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-M22",
+      "covers": [
+        "negation"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M26",
+      "lang": "es",
+      "query": "Residencia de mayores para 20 personas cerca del Hospital Universitario La Paz, cerca de servicios sanitarios.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "hospital universitario la paz",
+        "surface": null,
+        "energy_classes": null,
+        "services": [
+          "healthcare"
+        ],
+        "intended_use": "senior_residence",
+        "capacity": {
+          "beds": 20
+        }
+      },
+      "expected_agents": [
+        "location",
+        "proximity"
+      ],
+      "optional_agents": [
+        "building",
+        "regulatory"
+      ],
+      "regulatory": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 99,
+        "value_max": 211.25,
+        "user_values": [],
+        "basis": "May be a social-services facility; if 7.3.11.2 applies"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": null,
+      "mirrors": "DQ-M24",
+      "covers": [
+        "senior",
+        "healthcare"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M27",
+      "lang": "en",
+      "query": "A building to house 15 seasonal workers in shared rooms near Atocha.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "atocha",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "worker_housing",
+        "capacity": {
+          "beds": 15
+        }
+      },
+      "expected_agents": [
+        "location"
+      ],
+      "optional_agents": [
+        "building",
+        "regulatory"
+      ],
+      "regulatory": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 85,
+        "value_max": 167.5,
+        "user_values": [],
+        "basis": "Residencia comunitaria is defensible; if applied"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": null,
+      "mirrors": "DQ-M25",
+      "covers": [
+        "worker-housing"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M28",
+      "lang": "es",
+      "query": "Residencia compartida para 8 personas en dos plantas de un edificio de viviendas cerca de Malasaña.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "malasaña",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "co_living",
+        "capacity": {
+          "persons": 8
+        }
+      },
+      "expected_agents": [
+        "location"
+      ],
+      "optional_agents": [
+        "building",
+        "regulatory"
+      ],
+      "regulatory": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 120,
+        "value_max": 225.0,
+        "user_values": [],
+        "basis": "7.3.11.5: only in an exclusive building (declining is better); a grounded surface is accepted"
+      },
+      "rule_family": "es_res_compartida",
+      "heuristic_stratum": null,
+      "mirrors": "DQ-M26",
+      "covers": [
+        "exclusive-building"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M29",
+      "lang": "es",
+      "query": "Piso con certificado energético A o B cerca de Nuevos Ministerios.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "simple",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "nuevos ministerios",
+        "surface": null,
+        "energy_classes": [
+          "A",
+          "B"
+        ],
+        "services": [],
+        "intended_use": null,
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "energy"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "Energy preference only"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "energy",
+        "no-rule"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M30",
+      "lang": "en",
+      "query": "Office of at least 250 square metres near Nuevos Ministerios.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Uffici e assimilabili",
+        "landmark": "nuevos ministerios",
+        "surface": {
+          "min": 250,
+          "max": null
+        },
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "office",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "building"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [
+          250
+        ],
+        "basis": "Office use: no regulatory area"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "office",
+        "echo-guard"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M31",
+      "lang": "es",
+      "query": "Local comercial de al menos 100 m2 cerca de la Puerta del Sol, bien comunicado.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": "Attività commerciali e assimilabili",
+        "landmark": "puerta del sol",
+        "surface": {
+          "min": 100,
+          "max": null
+        },
+        "energy_classes": null,
+        "services": [
+          "mobility"
+        ],
+        "intended_use": "shop",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "proximity"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [
+          100
+        ],
+        "basis": "Shop: no regulatory area"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "commercial",
+        "mobility"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M32",
+      "lang": "es",
+      "query": "Vivienda de al menos 120 m2 cerca del Parque del Retiro.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "simple",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "parque del retiro",
+        "surface": {
+          "min": 120,
+          "max": null
+        },
+        "energy_classes": null,
+        "services": [],
+        "intended_use": null,
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "building"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [
+          120
+        ],
+        "basis": "User surface, no regulation"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "echo-without-capacity"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M33",
+      "lang": "en",
+      "query": "Property near Malasaña close to parks and public transport.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "malasaña",
+        "surface": null,
+        "energy_classes": null,
+        "services": [
+          "green",
+          "mobility"
+        ],
+        "intended_use": null,
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "proximity"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "Services only"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "proximity"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M34",
+      "lang": "es",
+      "query": "Quiero transformar un edificio de oficinas cerca de Moncloa en residencia de estudiantes.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Uffici e assimilabili",
+        "landmark": "moncloa",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "building"
+      ],
+      "optional_agents": [
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "No capacity: no building-level threshold"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": "DQ-M28",
+      "covers": [
+        "no-capacity",
+        "change-of-use"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M35",
+      "lang": "es",
+      "query": "Residencia de estudiantes con habitaciones en planta sótano cerca de Ciudad Universitaria.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "ciudad universitaria",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_residence",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "7.3.11.4 forbids basement units: a prohibition, not an area"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": "DQ-M31",
+      "covers": [
+        "non-surface"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M36",
+      "lang": "es",
+      "query": "Vivienda en una buhardilla con techos bajos cerca de Lavapiés.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "lavapiés",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": null,
+        "capacity": null
+      },
+      "expected_agents": [
+        "location"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "7.3.5 clear heights, not areas"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": "DQ-M35",
+      "covers": [
+        "height-rule"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M37",
+      "lang": "es",
+      "query": "Guardería para 40 niños cerca de Plaza de Castilla.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "plaza de castilla",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "nursery",
+        "capacity": {
+          "persons": 40
+        }
+      },
+      "expected_agents": [
+        "location"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "No nursery standard in the corpus"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": "DQ-M38",
+      "covers": [
+        "out-of-corpus"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M38",
+      "lang": "en",
+      "query": "An industrial warehouse of about 1500 square metres near Atocha.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "atocha",
+        "surface": {
+          "min": 1500,
+          "max": null
+        },
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "industrial",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "building"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [
+          1500
+        ],
+        "basis": "Industrial use, no regulatory area"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": "DQ-M39",
+      "covers": [
+        "industrial",
+        "echo-guard"
+      ],
+      "note": "No industrial typology in the Madrid dataset: the building agent can only filter by surface."
+    },
+    {
+      "id": "PQ-M39",
+      "lang": "es",
+      "query": "Piso construido después del año 2000 cerca de la Estación de Chamartín, con certificado energético B.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "estación de chamartín",
+        "surface": null,
+        "energy_classes": [
+          "B"
+        ],
+        "services": [],
+        "intended_use": null,
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "energy",
+        "building"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "Construction period and energy only"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "construction-period",
+        "energy"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-M40",
+      "lang": "en",
+      "query": "Large home near Gregorio Marañón hospital close to sports facilities.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "hospital general universitario gregorio marañón",
+        "surface": null,
+        "energy_classes": null,
+        "services": [
+          "sport"
+        ],
+        "intended_use": null,
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "proximity"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "'Large' is relative, no regulation"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "relative-size",
+        "sport"
+      ],
+      "note": ""
+    }
+  ]
+}

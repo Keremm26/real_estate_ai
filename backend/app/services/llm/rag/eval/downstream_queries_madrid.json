@@ -1,0 +1,1565 @@
+{
+  "meta": {
+    "description": "Downstream evaluation of the regulatory agent with RAG retrieval (Madrid). Same design as the Turin set: each item is one production-shaped request; the agent must either produce a document-grounded building-level surface threshold (surface_area >= X) or decline (found: false).",
+    "schema": "downstream-v2 (see downstream_queries_turin.json). One query per language: queries: {es, en}. rule_family in {es_res_comunitaria, es_res_compartida, es_dwelling} names the value_basis formula (null when no rule applies). heuristic_stratum = whether value_min is above the building agent's ~10 m2/person capacity estimate ('law_above_heuristic') or not ('law_at_or_below_heuristic').",
+    "country": "ES",
+    "corpus": "Madrid slice of the normative store: state (CTE DB-SUA, DB-HS, DB-SI), regional (Ley 9/2001 del Suelo de la Comunidad de Madrid), municipal (PGOUM Compendio de las Normas Urbanísticas, MPG NNUU sept. 2025, and the Ayuntamiento's 'Preguntas de interés' FAQ).",
+    "value_basis": {
+      "programme": "PGOUM art. 7.3.4: minimum dwelling 40 m2 useful with living-dining 14, kitchen 7, bedroom 12 (additional bedrooms 7) and bathroom 3. P(R) = max(40, 29 + 7 R) for R bedrooms.",
+      "res_comunitaria": "Art. 7.3.11.2 (+ FAQ 20.b): residencias comunitarias (incl. student residences, art. 7.3.1) meet 7.3.3 / 7.3.4 / 7.3.5 for the establishment AS A WHOLE, so the rooms are bedrooms of one programme: rooms known [P(R), 1.25 P(R)]; only beds known (1-2 per room) [P(ceil(N/2)), 1.25 P(N)].",
+      "res_compartida": "Art. 7.3.11.3: private unit (bedroom + bathroom) >= 15 m2 and >= 10 m2 per person (single 15, double 20); common areas >= 25 m2 for one unit + 5 per additional unit. C = 20 s + 25 d + 20; known [C, 1.25 C]; persons only [most doubles, 1.25 x all singles]. Only in an exclusive building (7.3.11.5).",
+      "dwelling": "Art. 7.3.4 (conversions 7.3.14 / FAQ 21, tourist dwellings 7.6.3.2 / FAQ 25): [P(R), 1.25 P(R)]; bedrooms unknown with N persons (1-2 per room): [P(ceil(N/2)), 1.25 P(N)]."
+    },
+    "metrics": "As the Turin set (regulatory_scoring). The lex-specialis item (DQ-M04) is scored by value: both readings live in the same document, so winner_cited is not used. Items with activate 'either' are scored on grounding only.",
+    "caveats": [
+      "Author-constructed, not validated by a Spanish planning lawyer: state as a limitation.",
+      "The norm does not set persons per bedroom; where only beds or persons are given, 1-2 per bedroom is assumed (most residence items state the rooms).",
+      "Elderly care residences may be a social-services facility rather than a residencia comunitaria (DQ-M24 is 'either').",
+      "The 1.25 upper tolerance follows the Turin set."
+    ],
+    "known_retrieval_issues": [
+      "Retrieval check 2026-10-12 (rag arm, country ES, use-case router on, no LLM): routing 40/40 in both languages, expected source in context es 25/36, en 28/36. To be decided later, with generic fixes only:",
+      "Co-living items (art. 7.3.11.3: DQ-M12, M14, M15) and dwelling / studio items (art. 7.3.4: DQ-M19, M22, M23) often retrieve FAQ sections (4, 17, 19) or CTE chunks instead of the article.",
+      "Procedural items (Ley 9/2001 arts. 152 / 155 / 157: DQ-M33, M34) retrieve PGOUM chunks instead of the regional law; the height item (art. 7.3.5: DQ-M35) misses its article.",
+      "Spanish queries retrieve slightly worse than English ones (25 vs 28 of 36)."
+    ]
+  },
+  "queries": [
+    {
+      "id": "DQ-M01",
+      "type": "dimensioning",
+      "tier": "municipal",
+      "use_case": "student_housing",
+      "queries": {
+        "es": "Busco un edificio para una residencia de estudiantes con 40 habitaciones individuales.",
+        "en": "I'm looking for a building for a student residence with 40 single rooms."
+      },
+      "capacity": {
+        "beds": 40,
+        "single_rooms": 40,
+        "double_rooms": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 309,
+        "value_max": 386.25,
+        "basis": "Establishment as a whole (art. 7.3.11.2 -> 7.3.4): 29 + 7 x 40 = 309; range [P, 1.25 P]"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        },
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "student",
+        "single-rooms",
+        "establishment-as-a-whole"
+      ],
+      "note": "Rooms of a residence count as bedrooms of one establishment: one 12 m2 bedroom, the others 7 m2."
+    },
+    {
+      "id": "DQ-M02",
+      "type": "dimensioning",
+      "tier": "municipal",
+      "use_case": "student_housing",
+      "queries": {
+        "es": "Necesito un inmueble para una residencia universitaria de 60 plazas.",
+        "en": "I need a property for a 60-place university residence."
+      },
+      "capacity": {
+        "beds": 60
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 239,
+        "value_max": 561.25,
+        "basis": "60 beds, rooms not stated (1-2 per room): [P(30), 1.25 P(60)] = (239, 561.25)"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        },
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "student",
+        "mix-unknown",
+        "places-not-beds"
+      ],
+      "note": "Room mix unknown: the range spans doubles to singles."
+    },
+    {
+      "id": "DQ-M03",
+      "type": "room_mix",
+      "tier": "municipal",
+      "use_case": "student_housing",
+      "queries": {
+        "es": "Residencia de estudiantes con 20 habitaciones dobles y 10 individuales.",
+        "en": "Student residence with 20 double rooms and 10 single rooms."
+      },
+      "capacity": {
+        "beds": 50,
+        "single_rooms": 10,
+        "double_rooms": 20
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 239,
+        "value_max": 298.75,
+        "basis": "30 bedrooms: 29 + 7 x 30 = 239; range [P, 1.25 P]"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        },
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "student",
+        "mixed-rooms"
+      ],
+      "note": "The norm sizes bedrooms, not beds: a double room is one 7 m2 bedroom."
+    },
+    {
+      "id": "DQ-M04",
+      "type": "precedence",
+      "tier": "municipal",
+      "use_case": "student_housing",
+      "queries": {
+        "es": "Edificio para una residencia de estudiantes con 30 habitaciones individuales; entiendo que cada habitación tiene que cumplir las condiciones de una vivienda mínima.",
+        "en": "Building for a student residence with 30 single rooms; I understand each room has to meet the minimum-dwelling conditions."
+      },
+      "capacity": {
+        "beds": 30,
+        "single_rooms": 30,
+        "double_rooms": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 239,
+        "value_max": 298.75,
+        "basis": "Lex specialis: art. 7.3.11.2 applies 7.3.4 to the establishment AS A WHOLE (FAQ 20.b): 239; range [P, 1.25 P]. The per-room reading (30 x 40 = 1200) is the user's misconception and falls outside."
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        },
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "lex-specialis",
+        "establishment-as-a-whole",
+        "user-misconception"
+      ],
+      "note": "The value separates the two readings (both live in the same document, so winner_cited is not used)."
+    },
+    {
+      "id": "DQ-M05",
+      "type": "echo_trap",
+      "tier": "municipal",
+      "use_case": "student_housing",
+      "queries": {
+        "es": "Residencia para 50 estudiantes en habitaciones individuales; el edificio debe tener más de 2000 m2.",
+        "en": "Residence for 50 students in single rooms; the building must be larger than 2000 square metres."
+      },
+      "capacity": {
+        "beds": 50,
+        "single_rooms": 50,
+        "double_rooms": 0
+      },
+      "user_values": [
+        2000
+      ],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 379,
+        "value_max": 473.75,
+        "basis": "29 + 7 x 50 = 379; the user's 2000 m2 is a preference, not a regulation"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        },
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "student",
+        "echo-with-capacity",
+        "user-bound-above-regulation"
+      ],
+      "note": "The regulatory value must come from the PGOUM, not repeat the user's 2000."
+    },
+    {
+      "id": "DQ-M06",
+      "type": "number_in_words",
+      "tier": "municipal",
+      "use_case": "student_housing",
+      "queries": {
+        "es": "Residencia de estudiantes con sesenta habitaciones individuales.",
+        "en": "Student residence with sixty single rooms."
+      },
+      "capacity": {
+        "beds": 60,
+        "single_rooms": 60,
+        "double_rooms": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 449,
+        "value_max": 561.25,
+        "basis": "29 + 7 x 60 = 449"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        },
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "student",
+        "number-in-words"
+      ],
+      "note": "Capacity written in words."
+    },
+    {
+      "id": "DQ-M07",
+      "type": "typos",
+      "tier": "municipal",
+      "use_case": "student_housing",
+      "queries": {
+        "es": "Recidencia de estudiantes con 25 avitaciones individuales en Madird.",
+        "en": "Studnet residence with 25 singel rooms in Madird."
+      },
+      "capacity": {
+        "beds": 25,
+        "single_rooms": 25,
+        "double_rooms": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 204,
+        "value_max": 255.0,
+        "basis": "29 + 7 x 25 = 204"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        },
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "student",
+        "typos"
+      ],
+      "note": "Spelling errors must not break routing or retrieval."
+    },
+    {
+      "id": "DQ-M08",
+      "type": "long_query",
+      "tier": "municipal",
+      "use_case": "student_housing",
+      "queries": {
+        "es": "Hola, buenos días. Represento a una fundación educativa y estamos buscando un edificio en Madrid, idealmente cerca de Moncloa o de la Ciudad Universitaria, para abrir una residencia para 45 estudiantes de grado, cada uno en su habitación individual. Nos importa que haya buen transporte y algo de zona verde cerca. ¿Qué deberíamos buscar?",
+        "en": "Hello, good morning. I represent an educational foundation and we are looking for a building in Madrid, ideally near Moncloa or the Ciudad Universitaria, to open a residence for 45 undergraduate students, each in a single room. We care about good transport and some green space nearby. What should we look for?"
+      },
+      "capacity": {
+        "beds": 45,
+        "single_rooms": 45,
+        "double_rooms": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 344,
+        "value_max": 430.0,
+        "basis": "29 + 7 x 45 = 344"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        },
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "student",
+        "long-query",
+        "location-noise"
+      ],
+      "note": "Long request with location and preference noise."
+    },
+    {
+      "id": "DQ-M09",
+      "type": "self_correction",
+      "tier": "municipal",
+      "use_case": "student_housing",
+      "queries": {
+        "es": "Residencia para 30 estudiantes... mejor que sean 40, todos en habitaciones individuales.",
+        "en": "Residence for 30 students... make that 40, all in single rooms."
+      },
+      "capacity": {
+        "beds": 40,
+        "single_rooms": 40,
+        "double_rooms": 0
+      },
+      "user_values": [
+        30
+      ],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 309,
+        "value_max": 386.25,
+        "basis": "Corrected capacity 40: 309 (30 would give 239, outside)"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        },
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "student",
+        "self-correction"
+      ],
+      "note": "The corrected figure governs."
+    },
+    {
+      "id": "DQ-M10",
+      "type": "dimensioning",
+      "tier": "municipal",
+      "use_case": "student_housing",
+      "queries": {
+        "es": "Una residencia de estudiantes pequeña con 4 habitaciones individuales.",
+        "en": "A small student residence with 4 single rooms."
+      },
+      "capacity": {
+        "beds": 4,
+        "single_rooms": 4,
+        "double_rooms": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 57,
+        "value_max": 71.25,
+        "basis": "29 + 7 x 4 = 57 (above the 40 m2 floor)"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        },
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "student",
+        "small-capacity"
+      ],
+      "note": "Smallest scale: the programme is above the 40 m2 minimum dwelling."
+    },
+    {
+      "id": "DQ-M11",
+      "type": "dimensioning",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "es": "Busco un edificio completo para una residencia compartida (coliving) con 20 unidades de alojamiento individuales.",
+        "en": "I'm looking for a whole building for a shared residence (co-living) with 20 single accommodation units."
+      },
+      "capacity": {
+        "persons": 20,
+        "single_units": 20,
+        "double_units": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 420,
+        "value_max": 525.0,
+        "basis": "Art. 7.3.11.3: 20 x 15 + common 25 + 5 x 19 = 420; range [C, 1.25 C]"
+      },
+      "rule_family": "es_res_compartida",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        }
+      ],
+      "covers": [
+        "co-living",
+        "single-units"
+      ],
+      "note": "Private units plus common areas that grow with the number of units."
+    },
+    {
+      "id": "DQ-M12",
+      "type": "room_mix",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "es": "Coliving en edificio exclusivo con 10 unidades individuales y 5 unidades dobles.",
+        "en": "Co-living in a dedicated building with 10 single units and 5 double units."
+      },
+      "capacity": {
+        "persons": 20,
+        "single_units": 10,
+        "double_units": 5
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 345,
+        "value_max": 431.25,
+        "basis": "10 x 15 + 5 x 20 (10 m2 per person) + common 25 + 5 x 14 = 345"
+      },
+      "rule_family": "es_res_compartida",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        }
+      ],
+      "covers": [
+        "co-living",
+        "mixed-units",
+        "per-person-floor"
+      ],
+      "note": "A double unit needs 20 m2 (10 per person), not 15."
+    },
+    {
+      "id": "DQ-M13",
+      "type": "dimensioning",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "es": "Residencia compartida para 30 personas en un edificio exclusivo.",
+        "en": "A shared residence for 30 people in a dedicated building."
+      },
+      "capacity": {
+        "persons": 30
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 395,
+        "value_max": 775.0,
+        "basis": "Units not stated: all doubles 395 .. all singles x 1.25 = (395, 775.0)"
+      },
+      "rule_family": "es_res_compartida",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        }
+      ],
+      "covers": [
+        "co-living",
+        "mix-unknown"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-M14",
+      "type": "echo_trap",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "es": "Coliving para 12 personas en unidades individuales de 30 m2 cada una.",
+        "en": "Co-living for 12 people in single units of 30 square metres each."
+      },
+      "capacity": {
+        "persons": 12,
+        "single_units": 12,
+        "double_units": 0
+      },
+      "user_values": [
+        30,
+        360
+      ],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 260,
+        "value_max": 325.0,
+        "basis": "260; the user's 30 m2 per unit (360) is a preference"
+      },
+      "rule_family": "es_res_compartida",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        }
+      ],
+      "covers": [
+        "co-living",
+        "echo-guard"
+      ],
+      "note": "Neither 30 nor 12 x 30 = 360 is the regulatory value."
+    },
+    {
+      "id": "DQ-M15",
+      "type": "code_switching",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "es": "Busco un building para un coliving con 15 private units individuales en Madrid.",
+        "en": "Looking for an edificio for a coliving with 15 unidades privadas individuales in Madrid."
+      },
+      "capacity": {
+        "persons": 15,
+        "single_units": 15,
+        "double_units": 0
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 320,
+        "value_max": 400.0,
+        "basis": "320"
+      },
+      "rule_family": "es_res_compartida",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        }
+      ],
+      "covers": [
+        "co-living",
+        "code-switching"
+      ],
+      "note": "Spanish-English mix in both versions."
+    },
+    {
+      "id": "DQ-M16",
+      "type": "general_dwelling",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "es": "Quiero convertir un local comercial en una vivienda de un dormitorio para una persona.",
+        "en": "I want to convert a shop premises into a one-bedroom home for one person."
+      },
+      "capacity": {
+        "persons": 1,
+        "bedrooms": 1
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40,
+        "value_max": 50.0,
+        "basis": "Art. 7.3.14 -> 7.3.4 (FAQ 21.a): minimum dwelling 40"
+      },
+      "rule_family": "es_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "21"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "change-of-use",
+        "minimum-dwelling"
+      ],
+      "note": "A converted premises meets the same 40 m2 minimum dwelling."
+    },
+    {
+      "id": "DQ-M17",
+      "type": "general_dwelling",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "es": "Piso de tres dormitorios para una familia de cuatro personas.",
+        "en": "A three-bedroom flat for a family of four."
+      },
+      "capacity": {
+        "persons": 4,
+        "bedrooms": 3
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 50,
+        "value_max": 62.5,
+        "basis": "14 + 7 + 3 + 12 + 7 x 2 = 50"
+      },
+      "rule_family": "es_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "dwelling",
+        "family"
+      ],
+      "note": "The norm sizes rooms, not persons: three bedrooms set the programme."
+    },
+    {
+      "id": "DQ-M18",
+      "type": "general_dwelling",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "es": "Vivienda de uso turístico con dos dormitorios para cuatro huéspedes.",
+        "en": "A tourist-use dwelling with two bedrooms for four guests."
+      },
+      "capacity": {
+        "persons": 4,
+        "bedrooms": 2
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 43,
+        "value_max": 53.75,
+        "basis": "Art. 7.6.3.2 -> chapter 7.3 section one (FAQ 25.a): 43"
+      },
+      "rule_family": "es_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "25"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "tourist-dwelling",
+        "dwelling"
+      ],
+      "note": "Tourist dwellings meet the ordinary dwelling programme."
+    },
+    {
+      "id": "DQ-M19",
+      "type": "studio_minimum",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "es": "Un estudio para una persona.",
+        "en": "A studio for one person."
+      },
+      "capacity": {
+        "persons": 1,
+        "bedrooms": 1
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40,
+        "value_max": 50.0,
+        "basis": "Open-plan dwelling allowed if it reaches the minimum (art. 7.3.4.1): 40"
+      },
+      "rule_family": "es_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "studio",
+        "open-plan"
+      ],
+      "note": "Diáfana allowed, but still 40 m2."
+    },
+    {
+      "id": "DQ-M20",
+      "type": "echo_trap",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "es": "Vivienda de dos dormitorios para una pareja con un hijo, de al menos 90 m2.",
+        "en": "A two-bedroom home for a couple with a child, of at least 90 square metres."
+      },
+      "capacity": {
+        "persons": 3,
+        "bedrooms": 2
+      },
+      "user_values": [
+        90
+      ],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 43,
+        "value_max": 53.75,
+        "basis": "43; the user's 90 m2 is a preference"
+      },
+      "rule_family": "es_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "dwelling",
+        "echo-guard"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-M21",
+      "type": "general_dwelling",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "es": "Vivienda de cuatro dormitorios para una familia de seis.",
+        "en": "A four-bedroom dwelling for a family of six."
+      },
+      "capacity": {
+        "persons": 6,
+        "bedrooms": 4
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 57,
+        "value_max": 71.25,
+        "basis": "14 + 7 + 3 + 12 + 7 x 3 = 57"
+      },
+      "rule_family": "es_dwelling",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "dwelling",
+        "large-family"
+      ],
+      "note": "Below 10 m2 per person: the room programme, not the head count, governs."
+    },
+    {
+      "id": "DQ-M22",
+      "type": "negation",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "es": "Una vivienda para una pareja, no una residencia, con un solo dormitorio.",
+        "en": "A home for a couple, not a residence, with just one bedroom."
+      },
+      "capacity": {
+        "persons": 2,
+        "bedrooms": 1
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40,
+        "value_max": 50.0,
+        "basis": "40"
+      },
+      "rule_family": "es_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "dwelling",
+        "negation"
+      ],
+      "note": "Negated residence: the dwelling rule applies."
+    },
+    {
+      "id": "DQ-M23",
+      "type": "dimensioning",
+      "tier": "municipal",
+      "use_case": "student_housing",
+      "queries": {
+        "es": "Piso compartido para 4 estudiantes universitarios.",
+        "en": "A shared flat for 4 university students."
+      },
+      "capacity": {
+        "persons": 4
+      },
+      "user_values": [],
+      "expect": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 43,
+        "value_max": 71.25,
+        "basis": "A shared flat is a dwelling; bedrooms not stated (1-2 per room): [P(2), 1.25 P(4)] = (43, 71.25)"
+      },
+      "rule_family": "es_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "student",
+        "shared-flat",
+        "dwelling"
+      ],
+      "note": "Not a residence: the dwelling programme applies."
+    },
+    {
+      "id": "DQ-M24",
+      "type": "ambiguous_use",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "es": "Residencia de mayores para 20 personas.",
+        "en": "A residence for 20 elderly people."
+      },
+      "capacity": {
+        "beds": 20
+      },
+      "user_values": [],
+      "expect": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 99,
+        "value_max": 211.25,
+        "basis": "Care residences may be classified as a social-services facility rather than a residencia comunitaria; if art. 7.3.11.2 is applied: (99, 211.25)"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        },
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "senior",
+        "classification"
+      ],
+      "note": "Declining is acceptable."
+    },
+    {
+      "id": "DQ-M25",
+      "type": "ambiguous_use",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "es": "Edificio para alojar a 15 trabajadores temporales en habitaciones compartidas.",
+        "en": "A building to house 15 seasonal workers in shared rooms."
+      },
+      "capacity": {
+        "beds": 15
+      },
+      "user_values": [],
+      "expect": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 85,
+        "value_max": 167.5,
+        "basis": "Worker housing: residencia comunitaria (art. 7.3.1 groups with shared ties) is defensible; if applied: (85, 167.5)"
+      },
+      "rule_family": "es_res_comunitaria",
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.1"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "worker-housing",
+        "classification"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-M26",
+      "type": "ambiguous_use",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "es": "Residencia compartida para 8 personas en dos plantas de un edificio de viviendas.",
+        "en": "A shared residence for 8 people on two floors of a residential building."
+      },
+      "capacity": {
+        "persons": 8
+      },
+      "user_values": [],
+      "expect": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 120,
+        "value_max": 225.0,
+        "basis": "Art. 7.3.11.5: residencias compartidas only in an exclusive building, so the use is not permitted here (declining is the better answer); a grounded surface is accepted: (120, 225.0)"
+      },
+      "rule_family": "es_res_compartida",
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        },
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        }
+      ],
+      "covers": [
+        "co-living",
+        "exclusive-building"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-M27",
+      "type": "no_capacity",
+      "tier": null,
+      "use_case": "student_housing",
+      "queries": {
+        "es": "¿Qué superficie mínima debe tener una residencia de estudiantes en Madrid?",
+        "en": "What minimum floor area must a student residence in Madrid have?"
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "No number of rooms or beds"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        },
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
+      "covers": [
+        "no-capacity",
+        "question-form"
+      ],
+      "note": "Retrieval should find 7.3.11 / FAQ 20; extraction should decline."
+    },
+    {
+      "id": "DQ-M28",
+      "type": "no_capacity",
+      "tier": null,
+      "use_case": "student_housing",
+      "queries": {
+        "es": "Quiero transformar un edificio de oficinas en residencia de estudiantes.",
+        "en": "I want to turn an office building into a student residence."
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "No capacity"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        }
+      ],
+      "covers": [
+        "no-capacity",
+        "change-of-use"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-M29",
+      "type": "negative",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "es": "Oficina de al menos 250 m2 en el barrio de Salamanca.",
+        "en": "An office of at least 250 square metres in the Salamanca district."
+      },
+      "capacity": null,
+      "user_values": [
+        250
+      ],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Office use: no regulatory surface threshold"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [],
+      "covers": [
+        "office",
+        "echo-guard"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-M30",
+      "type": "negative",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "es": "Piso con certificado energético A o B en Chamberí.",
+        "en": "A flat with an A or B energy certificate in Chamberí."
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Energy preference only"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [],
+      "covers": [
+        "energy",
+        "negative"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-M31",
+      "type": "non_surface_rule",
+      "tier": "municipal",
+      "use_case": "student_housing",
+      "queries": {
+        "es": "Residencia de estudiantes con habitaciones en planta sótano.",
+        "en": "Student residence with bedrooms on the basement floor."
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Art. 7.3.11.4 forbids units below the ground floor: a prohibition, not an area"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        }
+      ],
+      "covers": [
+        "basement",
+        "non-surface"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-M32",
+      "type": "non_surface_rule",
+      "tier": "municipal",
+      "use_case": "student_housing",
+      "queries": {
+        "es": "¿Cuántas plazas de aparcamiento necesita una residencia de estudiantes de 100 plazas?",
+        "en": "How many parking spaces does a 100-place student residence need?"
+      },
+      "capacity": {
+        "beds": 100
+      },
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Parking standard (1 per 100 m2, FAQ 24 / art. 7.5.35), not a surface"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "24"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.5 > 7.5.35"
+        }
+      ],
+      "covers": [
+        "parking",
+        "non-surface"
+      ],
+      "note": "A capacity is present but the rule is about parking."
+    },
+    {
+      "id": "DQ-M33",
+      "type": "procedural",
+      "tier": "regional",
+      "use_case": "general",
+      "queries": {
+        "es": "¿Necesito licencia urbanística para cambiar el uso de un local a vivienda en la Comunidad de Madrid?",
+        "en": "Do I need a planning licence to change a shop premises into a dwelling in the Community of Madrid?"
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Ley 9/2001 arts. 152 / 155: planning titles, procedural"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "ley_9_2001_suelo_madrid",
+          "article_ref": "Artículo 152"
+        },
+        {
+          "doc_key": "ley_9_2001_suelo_madrid",
+          "article_ref": "Artículo 155"
+        }
+      ],
+      "covers": [
+        "licence",
+        "procedural",
+        "regional"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-M34",
+      "type": "procedural",
+      "tier": "regional",
+      "use_case": "general",
+      "queries": {
+        "es": "¿Desde cuándo puedo empezar las obras con una declaración responsable urbanística?",
+        "en": "From when can I start works under a declaración responsable urbanística?"
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Ley 9/2001 art. 157: procedural"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "ley_9_2001_suelo_madrid",
+          "article_ref": "Artículo 157"
+        }
+      ],
+      "covers": [
+        "procedural",
+        "regional"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-M35",
+      "type": "non_surface_rule",
+      "tier": "municipal",
+      "use_case": "general",
+      "queries": {
+        "es": "Vivienda en una buhardilla con techos bajos.",
+        "en": "A home in an attic with low ceilings."
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Art. 7.3.5 sets clear heights (250 / 220 cm), not areas"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.5"
+        }
+      ],
+      "covers": [
+        "height-rule",
+        "attic"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-M36",
+      "type": "non_surface_rule",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "es": "¿Qué caudal de ventilación necesitan los dormitorios de una vivienda?",
+        "en": "What ventilation flow do the bedrooms of a dwelling need?"
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "CTE DB-HS 3: flow rates, not areas"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "cte_db_hs",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "ventilation",
+        "non-surface"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-M37",
+      "type": "non_surface_rule",
+      "tier": "national",
+      "use_case": "general",
+      "queries": {
+        "es": "Ocupación de cálculo para la evacuación de una residencia de 80 plazas.",
+        "en": "Design occupancy for evacuating an 80-place residence."
+      },
+      "capacity": {
+        "beds": 80
+      },
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "CTE DB-SI 3 occupancy densities serve evacuation sizing, not a minimum area"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "cte_db_si",
+          "article_ref": "*"
+        }
+      ],
+      "covers": [
+        "fire",
+        "non-surface"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-M38",
+      "type": "out_of_corpus",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "es": "Guardería para 40 niños en Tetuán.",
+        "en": "A nursery for 40 children in Tetuán."
+      },
+      "capacity": {
+        "persons": 40
+      },
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "No nursery standard in the corpus"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [],
+      "covers": [
+        "childcare",
+        "out-of-corpus"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-M39",
+      "type": "negative",
+      "tier": null,
+      "use_case": "general",
+      "queries": {
+        "es": "Nave industrial de unos 1500 m2 en Villaverde.",
+        "en": "An industrial warehouse of about 1500 square metres in Villaverde."
+      },
+      "capacity": null,
+      "user_values": [
+        1500
+      ],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Industrial use, no regulatory area"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [],
+      "covers": [
+        "industrial",
+        "echo-guard"
+      ],
+      "note": ""
+    },
+    {
+      "id": "DQ-M40",
+      "type": "procedural",
+      "tier": "municipal",
+      "use_case": "student_housing",
+      "queries": {
+        "es": "¿Cómo se clasifica el alojamiento colectivo de estudiantes en las normas urbanísticas de Madrid?",
+        "en": "How is collective student accommodation classified in Madrid's planning norms?"
+      },
+      "capacity": null,
+      "user_values": [],
+      "expect": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "basis": "Art. 7.3.1: classification (residencia comunitaria), no area"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.1"
+        }
+      ],
+      "covers": [
+        "classification",
+        "question-form"
+      ],
+      "note": ""
+    }
+  ]
+}

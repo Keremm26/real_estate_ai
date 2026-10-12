@@ -1,0 +1,1939 @@
+{
+  "meta": {
+    "description": "Hand-curated full-pipeline benchmark for MURENA (London). Same design as benchmark_queries_turin.json: each query runs end to end through all agents; ground truth is the expected agent activation and the regulatory expectation.",
+    "schema": "pipeline-v1 (see benchmark_queries_turin.json). id PQ-Lnn. slots.landmark = key of meta.landmarks (coordinates the pipeline's geocoder returns for that name in the London context). rule_family / heuristic_stratum as in downstream_queries_london.json; regulatory ranges follow its value_basis.",
+    "country": "UK",
+    "dataset": "data/metadata/estates_london.parquet (domestic EPCs only: one residential typology)",
+    "landmarks": {
+      "king's cross": [
+        51.5324,
+        -0.123
+      ],
+      "university college london": [
+        51.5242,
+        -0.133
+      ],
+      "queen mary university of london": [
+        51.5247,
+        -0.0393
+      ],
+      "london school of economics": [
+        51.5146,
+        -0.1165
+      ],
+      "imperial college london": [
+        51.499,
+        -0.1756
+      ],
+      "king's college london": [
+        51.5031,
+        -0.09
+      ],
+      "canary wharf": [
+        51.5049,
+        -0.019
+      ],
+      "whitechapel": [
+        51.5175,
+        -0.066
+      ],
+      "brixton": [
+        51.4634,
+        -0.1148
+      ],
+      "camden town": [
+        51.5393,
+        -0.1428
+      ],
+      "stratford": [
+        51.5413,
+        -0.0035
+      ],
+      "shoreditch": [
+        51.5267,
+        -0.0799
+      ],
+      "royal london hospital": [
+        51.5175,
+        -0.0599
+      ],
+      "greenwich": [
+        51.4821,
+        -0.0045
+      ],
+      "clapham junction": [
+        51.4645,
+        -0.1705
+      ],
+      "hackney central": [
+        51.5471,
+        -0.0569
+      ]
+    },
+    "composition": "40 queries: 24 with an applicable rule, 3 'either', 13 without a rule. Strata on rule queries: {'law_at_or_below_heuristic': 15, 'law_above_heuristic': 9}.",
+    "caveats": [
+      "Author-constructed; regulatory ranges follow downstream_queries_london.json value_basis.",
+      "Feasibility (non-empty results) is checked on the dataset with the slots as SQL-like filters within 3 km.",
+      "Tower Hamlets items: the 3 km radius also covers neighbouring boroughs, where only the national minimum applies; the expectation follows the borough the user names.",
+      "The London dataset holds domestic certificates only, so non-residential requests (office, hotel, nursery) have no matching typology."
+    ]
+  },
+  "queries": [
+    {
+      "id": "PQ-L01",
+      "lang": "en",
+      "query": "Find a house in London to convert into a licensed HMO for 6 tenants.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "simple",
+      "slots": {
+        "typology": null,
+        "landmark": null,
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "hmo",
+        "capacity": {
+          "persons": 6
+        }
+      },
+      "expected_agents": [
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 30.66,
+        "value_max": 48.82,
+        "user_values": [],
+        "basis": "SI 2018/616: N=6, mix not stated"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-L01",
+      "covers": [
+        "regulatory-only",
+        "hmo"
+      ],
+      "note": "The regulatory threshold is the only filter."
+    },
+    {
+      "id": "PQ-L02",
+      "lang": "en",
+      "query": "Find a property near King's Cross for a shared house for 6 university students, each in a single room.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "king's cross",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_hmo",
+        "capacity": {
+          "persons": 6,
+          "single_rooms": 6,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 39.06,
+        "value_max": 48.83,
+        "user_values": [],
+        "basis": "SI 2018/616: 6 single rooms x 6.51"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-L05",
+      "covers": [
+        "student",
+        "hmo",
+        "location"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L03",
+      "lang": "en",
+      "query": "HMO for 8 tenants in single rooms near Brixton, close to public transport.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": null,
+        "landmark": "brixton",
+        "surface": null,
+        "energy_classes": null,
+        "services": [
+          "mobility"
+        ],
+        "intended_use": "hmo",
+        "capacity": {
+          "persons": 8,
+          "single_rooms": 8,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "proximity",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 52.08,
+        "value_max": 65.1,
+        "user_values": [],
+        "basis": "8 x 6.51"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": null,
+      "covers": [
+        "hmo",
+        "mobility",
+        "location"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L04",
+      "lang": "en",
+      "query": "House share for 7 people with 3 single rooms and 2 double rooms near Clapham Junction, EPC rating C or better.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": null,
+        "landmark": "clapham junction",
+        "surface": null,
+        "energy_classes": [
+          "A",
+          "B",
+          "C"
+        ],
+        "services": [],
+        "intended_use": "hmo",
+        "capacity": {
+          "persons": 7,
+          "single_rooms": 3,
+          "double_rooms": 2
+        }
+      },
+      "expected_agents": [
+        "location",
+        "energy",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 39.97,
+        "value_max": 49.96,
+        "user_values": [],
+        "basis": "3 x 6.51 + 2 x 10.22"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-L04",
+      "covers": [
+        "hmo",
+        "mixed-rooms",
+        "energy"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L05",
+      "lang": "en",
+      "query": "Student house near Imperial College London for 6 students in three double bedrooms.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "imperial college london",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_hmo",
+        "capacity": {
+          "persons": 6,
+          "single_rooms": 0,
+          "double_rooms": 3
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 30.66,
+        "value_max": 38.33,
+        "user_values": [],
+        "basis": "3 double rooms x 10.22"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-L06",
+      "covers": [
+        "student",
+        "double-room-rate"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L06",
+      "lang": "en",
+      "query": "Hi! My brother and I are starting a small letting business. We'd like to buy a terraced house near University College London and rent it to 6 students. Budget is tight, we care about transport links and a garden would be nice. What should we look for?",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "university college london",
+        "surface": null,
+        "energy_classes": null,
+        "services": [
+          "mobility"
+        ],
+        "intended_use": "student_hmo",
+        "capacity": {
+          "persons": 6
+        }
+      },
+      "expected_agents": [
+        "location",
+        "proximity",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 30.66,
+        "value_max": 48.82,
+        "user_values": [],
+        "basis": "N=6, mix not stated (Camden: national rule)"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-L07",
+      "covers": [
+        "long-query",
+        "student",
+        "location-noise"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L07",
+      "lang": "en",
+      "query": "An HMO for ten tenants near Hackney Central, all in single rooms.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "hackney central",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "hmo",
+        "capacity": {
+          "persons": 10,
+          "single_rooms": 10,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 65.1,
+        "value_max": 81.38,
+        "user_values": [],
+        "basis": "10 x 6.51"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": null,
+      "covers": [
+        "number-in-words",
+        "hmo"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L08",
+      "lang": "en",
+      "query": "Lisenced HMO for 5 tenents near Stratford.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "stratford",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "hmo",
+        "capacity": {
+          "persons": 5
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 25.55,
+        "value_max": 40.69,
+        "user_values": [],
+        "basis": "N=5, mix not stated"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-L08",
+      "covers": [
+        "typos"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L09",
+      "lang": "en",
+      "query": "HMO for 6 tenants near Camden Town... actually make that 8, all in single rooms.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "camden town",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "hmo",
+        "capacity": {
+          "persons": 8,
+          "single_rooms": 8,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 52.08,
+        "value_max": 65.1,
+        "user_values": [
+          6
+        ],
+        "basis": "Corrected capacity: 8 x 6.51"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-L10",
+      "covers": [
+        "self-correction"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L10",
+      "lang": "en",
+      "query": "HMO near Shoreditch for 6 tenants in single bedrooms; I'd like every bedroom to be at least 15 square metres.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "shoreditch",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "hmo",
+        "capacity": {
+          "persons": 6,
+          "single_rooms": 6,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 39.06,
+        "value_max": 48.83,
+        "user_values": [
+          15,
+          90
+        ],
+        "basis": "6 x 6.51; the user's 15 m2 per room is a preference"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-L12",
+      "covers": [
+        "echo-guard"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L11",
+      "lang": "mixed",
+      "query": "Cerco una casa near University College London per 5 studenti, each one in a single room.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "university college london",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "student_hmo",
+        "capacity": {
+          "persons": 5,
+          "single_rooms": 5,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 32.55,
+        "value_max": 40.69,
+        "user_values": [],
+        "basis": "5 x 6.51"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-L24",
+      "covers": [
+        "code-switching",
+        "student"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L12",
+      "lang": "en",
+      "query": "A house near Stratford for 5 working tenants, not students, each in a single room.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "stratford",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "hmo",
+        "capacity": {
+          "persons": 5,
+          "single_rooms": 5,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 32.55,
+        "value_max": 40.69,
+        "user_values": [],
+        "basis": "5 x 6.51"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-L11",
+      "covers": [
+        "negation"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L13",
+      "lang": "en",
+      "query": "HMO for 6 tenants in single rooms near Hackney Central, EPC rating C or better, close to shops and public transport.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": null,
+        "landmark": "hackney central",
+        "surface": null,
+        "energy_classes": [
+          "A",
+          "B",
+          "C"
+        ],
+        "services": [
+          "commercial",
+          "mobility"
+        ],
+        "intended_use": "hmo",
+        "capacity": {
+          "persons": 6,
+          "single_rooms": 6,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "energy",
+        "proximity",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 39.06,
+        "value_max": 48.83,
+        "user_values": [],
+        "basis": "6 x 6.51"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": null,
+      "covers": [
+        "five-constraints",
+        "hmo"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L14",
+      "lang": "en",
+      "query": "Licensed HMO near Whitechapel, Tower Hamlets, for 6 tenants in single bedrooms with a shared kitchen.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "whitechapel",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "hmo_th",
+        "capacity": {
+          "persons": 6,
+          "single_rooms": 6,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 51.0,
+        "value_max": 75.62,
+        "user_values": [],
+        "basis": "TH: 6 x 8.5 (+ kitchen 9.5); national would give 39.06"
+      },
+      "rule_family": "hmo_th",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-L13",
+      "covers": [
+        "precedence",
+        "borough-standard"
+      ],
+      "note": "The 3 km radius also covers neighbouring boroughs; the expectation follows the stated borough."
+    },
+    {
+      "id": "PQ-L15",
+      "lang": "en",
+      "query": "HMO near Queen Mary University of London in Mile End for 4 people living as two couples in two double bedrooms.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "queen mary university of london",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "hmo_th",
+        "capacity": {
+          "persons": 4,
+          "single_rooms": 0,
+          "double_rooms": 2
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 26.0,
+        "value_max": 41.88,
+        "user_values": [],
+        "basis": "TH (Mile End is in Tower Hamlets): 2 x 13 (+ kitchen 7.5)"
+      },
+      "rule_family": "hmo_th",
+      "heuristic_stratum": "law_at_or_below_heuristic",
+      "mirrors": "DQ-L14",
+      "covers": [
+        "borough-standard",
+        "implicit-borough"
+      ],
+      "note": "The borough is implied by the place, not named."
+    },
+    {
+      "id": "PQ-L16",
+      "lang": "en",
+      "query": "Five bedsits near the Royal London Hospital in Tower Hamlets, each with its own kitchen facilities inside the room, one person per bedsit.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "royal london hospital",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "bedsit_th",
+        "capacity": {
+          "persons": 5,
+          "single_rooms": 5,
+          "double_rooms": 0
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 65,
+        "value_max": 81.25,
+        "user_values": [],
+        "basis": "TH bedsits with kitchen within the room: 5 x 13"
+      },
+      "rule_family": "hmo_th_bedsit",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-L15",
+      "covers": [
+        "bedsit",
+        "borough-standard"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L17",
+      "lang": "en",
+      "query": "Find a property near Canary Wharf to convert into a two-bedroom flat for four people.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "canary wharf",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "dwelling",
+        "capacity": {
+          "persons": 4,
+          "bedrooms": 2
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 70,
+        "value_max": 79,
+        "user_values": [],
+        "basis": "Table 3.1 2b4p 70..79"
+      },
+      "rule_family": "lp_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-L17",
+      "covers": [
+        "dwelling",
+        "space-standard"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L18",
+      "lang": "en",
+      "query": "One-bedroom flat for a couple near the London School of Economics, EPC rating B or C.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "london school of economics",
+        "surface": null,
+        "energy_classes": [
+          "B",
+          "C"
+        ],
+        "services": [],
+        "intended_use": "dwelling",
+        "capacity": {
+          "persons": 2,
+          "bedrooms": 1
+        }
+      },
+      "expected_agents": [
+        "location",
+        "energy",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 50,
+        "value_max": 58,
+        "user_values": [],
+        "basis": "Table 3.1 1b2p 50..58"
+      },
+      "rule_family": "lp_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-L18",
+      "covers": [
+        "dwelling",
+        "energy"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L19",
+      "lang": "en",
+      "query": "Studio flat for one person near King's College London, with a shower room instead of a bathroom.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "king's college london",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "studio",
+        "capacity": {
+          "persons": 1,
+          "bedrooms": 1,
+          "shower_room": true
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 37,
+        "value_max": 48.75,
+        "user_values": [],
+        "basis": "Table 3.1 1b1p 39, 37 with a shower room"
+      },
+      "rule_family": "lp_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-L19",
+      "covers": [
+        "studio"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L20",
+      "lang": "en",
+      "query": "Three-bedroom family home for five people near Greenwich, close to schools.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "greenwich",
+        "surface": null,
+        "energy_classes": null,
+        "services": [
+          "education"
+        ],
+        "intended_use": "dwelling",
+        "capacity": {
+          "persons": 5,
+          "bedrooms": 3
+        }
+      },
+      "expected_agents": [
+        "location",
+        "proximity",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 86,
+        "value_max": 99,
+        "user_values": [],
+        "basis": "Table 3.1 3b5p 86 / 93 / 99"
+      },
+      "rule_family": "lp_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-L20",
+      "covers": [
+        "family",
+        "education"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L21",
+      "lang": "en",
+      "query": "Two-storey house with four bedrooms for six people near Clapham Junction.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "clapham junction",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "dwelling",
+        "capacity": {
+          "persons": 6,
+          "bedrooms": 4,
+          "storeys": 2
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 106,
+        "value_max": 132.5,
+        "user_values": [],
+        "basis": "Table 3.1 4b6p, 2 storeys: 106"
+      },
+      "rule_family": "lp_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-L21",
+      "covers": [
+        "storeys-stated"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L22",
+      "lang": "en",
+      "query": "Find a building near Shoreditch to convert into flats with two bedrooms for three people.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "shoreditch",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "dwelling",
+        "capacity": {
+          "persons": 3,
+          "bedrooms": 2
+        }
+      },
+      "expected_agents": [
+        "location",
+        "regulatory"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 61,
+        "value_max": 70,
+        "user_values": [],
+        "basis": "Table 3.1 2b3p 61..70 per unit"
+      },
+      "rule_family": "lp_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-L22",
+      "covers": [
+        "conversion",
+        "per-unit"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L23",
+      "lang": "en",
+      "query": "Two-bedroom flat for four people near Brixton, at least 100 square metres.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "brixton",
+        "surface": {
+          "min": 100,
+          "max": null
+        },
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "dwelling",
+        "capacity": {
+          "persons": 4,
+          "bedrooms": 2
+        }
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "regulatory"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 70,
+        "value_max": 79,
+        "user_values": [
+          100
+        ],
+        "basis": "Table 3.1 2b4p; the user's 100 m2 is a preference"
+      },
+      "rule_family": "lp_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": "DQ-L23",
+      "covers": [
+        "echo-guard",
+        "user-bound-above-regulation"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L24",
+      "lang": "en",
+      "query": "Two-bedroom flat for four people near Camden Town, between 50 and 60 square metres.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "camden town",
+        "surface": {
+          "min": 50,
+          "max": 60
+        },
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "dwelling",
+        "capacity": {
+          "persons": 4,
+          "bedrooms": 2
+        }
+      },
+      "expected_agents": [
+        "location",
+        "building",
+        "regulatory"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": true,
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 70,
+        "value_max": 79,
+        "user_values": [
+          50,
+          60
+        ],
+        "basis": "Table 3.1 2b4p 70..79: the user's bounds are below the space standard"
+      },
+      "rule_family": "lp_dwelling",
+      "heuristic_stratum": "law_above_heuristic",
+      "mirrors": null,
+      "covers": [
+        "conflict-user-vs-regulation"
+      ],
+      "note": "No result can satisfy both: tests how the pipeline resolves it."
+    },
+    {
+      "id": "PQ-L25",
+      "lang": "en",
+      "query": "Purpose-built student accommodation block for 200 students near Stratford.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "stratford",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "pbsa",
+        "capacity": {
+          "persons": 200
+        }
+      },
+      "expected_agents": [
+        "location"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity",
+        "regulatory"
+      ],
+      "regulatory": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 1022.0,
+        "value_max": 1627.5,
+        "user_values": [],
+        "basis": "No PBSA space standard in the corpus; if the HMO minima are applied"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": null,
+      "mirrors": "DQ-L25",
+      "covers": [
+        "pbsa"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L26",
+      "lang": "en",
+      "query": "A house share for 4 young professionals near Canary Wharf.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "canary wharf",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "house_share",
+        "capacity": {
+          "persons": 4
+        }
+      },
+      "expected_agents": [
+        "location"
+      ],
+      "optional_agents": [
+        "building",
+        "regulatory"
+      ],
+      "regulatory": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 20.44,
+        "value_max": 32.55,
+        "user_values": [],
+        "basis": "Below the mandatory-licensing size"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": null,
+      "mirrors": "DQ-L26",
+      "covers": [
+        "licensing-threshold"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L27",
+      "lang": "en",
+      "query": "Supported shared housing for 6 elderly residents near the Royal London Hospital, close to healthcare services.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "royal london hospital",
+        "surface": null,
+        "energy_classes": null,
+        "services": [
+          "healthcare"
+        ],
+        "intended_use": "supported_housing",
+        "capacity": {
+          "persons": 6
+        }
+      },
+      "expected_agents": [
+        "location",
+        "proximity"
+      ],
+      "optional_agents": [
+        "building",
+        "regulatory"
+      ],
+      "regulatory": {
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 30.66,
+        "value_max": 48.82,
+        "user_values": [],
+        "basis": "No senior standard; if treated as an HMO"
+      },
+      "rule_family": "hmo_national",
+      "heuristic_stratum": null,
+      "mirrors": "DQ-L27",
+      "covers": [
+        "senior",
+        "healthcare"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L28",
+      "lang": "en",
+      "query": "Flat near King's Cross with an EPC rating of B or better.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "simple",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "king's cross",
+        "surface": null,
+        "energy_classes": [
+          "A",
+          "B"
+        ],
+        "services": [],
+        "intended_use": null,
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "energy"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "Energy preference only"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "energy",
+        "no-rule"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L29",
+      "lang": "en",
+      "query": "House of at least 120 square metres near Greenwich.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "simple",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "greenwich",
+        "surface": {
+          "min": 120,
+          "max": null
+        },
+        "energy_classes": null,
+        "services": [],
+        "intended_use": null,
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "building"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [
+          120
+        ],
+        "basis": "User surface, no regulation"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "echo-without-capacity",
+        "no-rule"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L30",
+      "lang": "en",
+      "query": "Property near Brixton close to parks and public transport.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "brixton",
+        "surface": null,
+        "energy_classes": null,
+        "services": [
+          "green",
+          "mobility"
+        ],
+        "intended_use": null,
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "proximity"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "Services only"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "proximity",
+        "no-rule"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L31",
+      "lang": "en",
+      "query": "A hotel with 40 rooms near King's Cross.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "king's cross",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "hotel",
+        "capacity": {
+          "rooms": 40
+        }
+      },
+      "expected_agents": [
+        "location"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "No hotel standard in the corpus"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "out-of-corpus"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L32",
+      "lang": "en",
+      "query": "Office of at least 300 square metres in Shoreditch.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "shoreditch",
+        "surface": {
+          "min": 300,
+          "max": null
+        },
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "office",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "building"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [
+          300
+        ],
+        "basis": "Office use: no regulatory area"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "office",
+        "echo-guard"
+      ],
+      "note": "The London dataset is domestic only: the building agent finds no office typology."
+    },
+    {
+      "id": "PQ-L33",
+      "lang": "en",
+      "query": "Find a house near Camden Town to turn into an HMO.",
+      "suites": [
+        "benchmark",
+        "sensitivity"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "camden town",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "hmo",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "No capacity: no building-level threshold"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "no-capacity"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L34",
+      "lang": "en",
+      "query": "Flat near Whitechapel with an EPC rating of A or B, close to schools.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "whitechapel",
+        "surface": null,
+        "energy_classes": [
+          "A",
+          "B"
+        ],
+        "services": [
+          "education"
+        ],
+        "intended_use": null,
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "energy",
+        "proximity"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "No rule"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "energy",
+        "education"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L35",
+      "lang": "en",
+      "query": "Student accommodation in Tower Hamlets with wheelchair-accessible rooms near Queen Mary University of London.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "queen mary university of london",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "pbsa",
+        "capacity": null
+      },
+      "expected_agents": [
+        "location"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "5% wheelchair-accessible rooms: a share, not an area"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "non-surface",
+        "accessibility"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L36",
+      "lang": "en",
+      "query": "Converting a shop to residential near Whitechapel under permitted development.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "whitechapel",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": null,
+        "capacity": null
+      },
+      "expected_agents": [
+        "location"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "Article 4 / Class MA: procedural"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "procedural"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L37",
+      "lang": "en",
+      "query": "A day nursery for 30 children near Hackney Central.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": null,
+        "landmark": "hackney central",
+        "surface": null,
+        "energy_classes": null,
+        "services": [],
+        "intended_use": "nursery",
+        "capacity": {
+          "persons": 30
+        }
+      },
+      "expected_agents": [
+        "location"
+      ],
+      "optional_agents": [
+        "building",
+        "proximity"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "No nursery standard in the corpus"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "out-of-corpus",
+        "childcare"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L38",
+      "lang": "en",
+      "query": "Flat near Canary Wharf built after 2000 with an EPC rating of B.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "canary wharf",
+        "surface": null,
+        "energy_classes": [
+          "B"
+        ],
+        "services": [],
+        "intended_use": null,
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "energy",
+        "building"
+      ],
+      "optional_agents": [],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "Construction period and energy only"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "construction-period",
+        "energy"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L39",
+      "lang": "en",
+      "query": "Home near Greenwich close to green spaces and schools, EPC rating C or better.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "complex",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "greenwich",
+        "surface": null,
+        "energy_classes": [
+          "A",
+          "B",
+          "C"
+        ],
+        "services": [
+          "green",
+          "education"
+        ],
+        "intended_use": null,
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "energy",
+        "proximity"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "No rule"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "four-agents"
+      ],
+      "note": ""
+    },
+    {
+      "id": "PQ-L40",
+      "lang": "en",
+      "query": "Large house near Clapham Junction close to sports facilities.",
+      "suites": [
+        "benchmark"
+      ],
+      "complexity": "medium",
+      "slots": {
+        "typology": "Abitazioni adibite a residenza con carattere continuativo",
+        "landmark": "clapham junction",
+        "surface": null,
+        "energy_classes": null,
+        "services": [
+          "sport"
+        ],
+        "intended_use": null,
+        "capacity": null
+      },
+      "expected_agents": [
+        "location",
+        "proximity"
+      ],
+      "optional_agents": [
+        "building"
+      ],
+      "regulatory": {
+        "activate": false,
+        "target_column": null,
+        "operator": null,
+        "value_min": null,
+        "value_max": null,
+        "user_values": [],
+        "basis": "'Large' is relative (75th percentile), no regulation"
+      },
+      "rule_family": null,
+      "heuristic_stratum": null,
+      "mirrors": null,
+      "covers": [
+        "relative-size",
+        "sport"
+      ],
+      "note": ""
+    }
+  ]
+}

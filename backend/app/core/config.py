@@ -173,6 +173,10 @@ class Settings(BaseSettings):
     ENERGY_MATCH_DIR: str
     PLOT_DIR: str
 
+    # City this process runs on (app/core/cities.py): selects the dataset, the
+    # RAG jurisdiction, the geocoding context and the map centre.
+    CITY: str = "turin"
+
     # Dataset paths
     DATASET_FULL: str
     IMMOBILI_MAPPING_PATH: str
@@ -222,13 +226,22 @@ class Settings(BaseSettings):
     # ==========================================================================
     @property
     def dataset_options(self) -> Dict[str, str]:
-        """Return dataset options mapping.
+        """Return dataset options mapping: 'full' is the active city's dataset
+        (Turin: DATASET_FULL).
 
         Note: Only 'full' is actively used.
         """
+        from app.core.cities import CITIES
         return {
-            "full": self.DATASET_FULL,
+            "full": CITIES[self.CITY].dataset or self.DATASET_FULL,
         }
+
+    def set_city(self, city: str) -> None:
+        """Select the city this process runs on (a key of app.core.cities.CITIES)."""
+        from app.core.cities import CITIES
+        if city not in CITIES:
+            raise ValueError(f"Unknown city '{city}' (known: {', '.join(CITIES)})")
+        self.CITY = city
 
     @property
     def agent_models(self) -> Dict[str, str]:

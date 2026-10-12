@@ -57,7 +57,7 @@ class EnergyScoreCalculator:
         """
         self.ape_data_path = (
             ape_data_path
-            or Path(settings.DATASET_FULL)
+            or Path(settings.dataset_options["full"])   # the active city's dataset
         )
         self._distributions: Dict[float, Dict[str, float]] = {}
         self._global_distribution: Dict[str, float] = {}
