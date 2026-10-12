@@ -1,0 +1,327 @@
+{
+  "city": "madrid",
+  "generated_at": "2026-10-12T13:44:18",
+  "output": "data/metadata/estates_madrid.parquet",
+  "rows": 35693,
+  "units": 32043,
+  "building_rows": 3650,
+  "source_kinds": {
+    "derived": 9,
+    "raw": 8,
+    "constant": 1,
+    "concept": 7,
+    "geo": 9,
+    "empty": 2
+  },
+  "stats": {
+    "raw_rows": 69364,
+    "in_municipality": 34215,
+    "dropped_unknown_type": 35,
+    "sheet_codes": 1753,
+    "rows_without_parcel_ref": 16,
+    "blanked_floor_area_out_of_vocab_range": 3,
+    "missing_construction_year": 303,
+    "coordinate_source": {
+      "parcel": 33861,
+      "postcode": 311,
+      "None": 8
+    },
+    "steps": {
+      "certificates": 34180,
+      "with_date": 34180,
+      "inside_zones": 33945,
+      "units": 32043,
+      "building_rows": 3650
+    }
+  },
+  "columns": [
+    {
+      "column": "id",
+      "source": "derived",
+      "fill_units": 1.0
+    },
+    {
+      "column": "meta_immobile",
+      "source": "derived",
+      "fill_units": 1.0
+    },
+    {
+      "column": "numero_immobili_per_catasto",
+      "source": "derived",
+      "fill_units": 1.0
+    },
+    {
+      "column": "id_list",
+      "source": "derived",
+      "fill_units": 0.0
+    },
+    {
+      "column": "lista_file_ape",
+      "source": "raw:edif_codreg",
+      "fill_units": 1.0
+    },
+    {
+      "column": "list_file_ape_filtered",
+      "source": "raw:edif_codreg",
+      "fill_units": 1.0
+    },
+    {
+      "column": "list_file_ape_filtered_parsed",
+      "source": "raw:edif_codreg",
+      "fill_units": 1.0
+    },
+    {
+      "column": "codice_comune",
+      "source": "constant",
+      "fill_units": 1.0
+    },
+    {
+      "column": "foglio",
+      "source": "raw:edif_refcat[7:14]",
+      "fill_units": 1.0
+    },
+    {
+      "column": "particella",
+      "source": "raw:edif_refcat[0:7]",
+      "fill_units": 0.988
+    },
+    {
+      "column": "subalterno",
+      "source": "raw:edif_refcat[14:18]",
+      "fill_units": 0.817
+    },
+    {
+      "column": "superficie_di_riferimento_mq",
+      "source": "concept:floor_area",
+      "fill_units": 1.0
+    },
+    {
+      "column": "indirizzo",
+      "source": "raw:edif_direc",
+      "fill_units": 1.0
+    },
+    {
+      "column": "numero_civico",
+      "source": "raw:edif_direc",
+      "fill_units": 0.966
+    },
+    {
+      "column": "latitudine",
+      "source": "geo:catastro parcel / postcode centroid",
+      "fill_units": 1.0
+    },
+    {
+      "column": "longitudine",
+      "source": "geo:catastro parcel / postcode centroid",
+      "fill_units": 1.0
+    },
+    {
+      "column": "zona_omi",
+      "source": "geo:barrio",
+      "fill_units": 1.0
+    },
+    {
+      "column": "tipologia_bene_immobile",
+      "source": "concept:building_type (+crosswalk)",
+      "fill_units": 1.0
+    },
+    {
+      "column": "epoca_costruzione",
+      "source": "concept:construction_year",
+      "fill_units": 0.991
+    },
+    {
+      "column": "data_decorrenza",
+      "source": "concept:registration_date",
+      "fill_units": 1.0
+    },
+    {
+      "column": "classe_energetica_ape",
+      "source": "concept:energy_class",
+      "fill_units": 1.0
+    },
+    {
+      "column": "epglnren_ape",
+      "source": "concept:primary_energy_total (per m²)",
+      "fill_units": 1.0
+    },
+    {
+      "column": "epglren_ape",
+      "source": "empty",
+      "fill_units": 0.0
+    },
+    {
+      "column": "emissioni_co2",
+      "source": "concept:co2_emissions_total (per m²)",
+      "fill_units": 1.0
+    },
+    {
+      "column": "classe_target_ape",
+      "source": "empty",
+      "fill_units": 0.0
+    },
+    {
+      "column": "commerciale",
+      "source": "geo:OSM POIs (Turin formula, percentile)",
+      "fill_units": 1.0
+    },
+    {
+      "column": "educazione",
+      "source": "geo:OSM POIs (Turin formula, percentile)",
+      "fill_units": 1.0
+    },
+    {
+      "column": "mobilita",
+      "source": "geo:OSM POIs (Turin formula, percentile)",
+      "fill_units": 1.0
+    },
+    {
+      "column": "sanita",
+      "source": "geo:OSM POIs (Turin formula, percentile)",
+      "fill_units": 1.0
+    },
+    {
+      "column": "sport",
+      "source": "geo:OSM POIs (Turin formula, percentile)",
+      "fill_units": 1.0
+    },
+    {
+      "column": "verde",
+      "source": "geo:OSM POIs (Turin formula, percentile)",
+      "fill_units": 1.0
+    },
+    {
+      "column": "ape_score_classe",
+      "source": "derived:concept:energy_class",
+      "fill_units": 1.0
+    },
+    {
+      "column": "ape_score_impianto",
+      "source": "derived:concept:heating_system_type+main_heating_fuel",
+      "fill_units": 1.0
+    },
+    {
+      "column": "ape_score_involucro",
+      "source": "derived:raw:cal_calefdem",
+      "fill_units": 1.0
+    },
+    {
+      "column": "ape_score_rinnovabili",
+      "source": "derived:concept:pv_electricity_production_total+renewable_energy_share, raw:termica_calef",
+      "fill_units": 1.0
+    },
+    {
+      "column": "ape_score_total",
+      "source": "derived",
+      "fill_units": 1.0
+    }
+  ],
+  "distributions": {
+    "tipologia_bene_immobile": {
+      "Abitazioni adibite a residenza con carattere continuativo": 29458,
+      "Attività commerciali e assimilabili": 2186,
+      "Uffici e assimilabili": 399
+    },
+    "classe_energetica_ape": {
+      "A": 699,
+      "B": 733,
+      "C": 1823,
+      "D": 4898,
+      "E": 18013,
+      "F": 2633,
+      "G": 3243
+    },
+    "ape_score_total": {
+      "4": 4195,
+      "6": 8884,
+      "8": 7549,
+      "10": 6764,
+      "12": 2980,
+      "14": 744,
+      "16": 588,
+      "18": 210,
+      "20": 129
+    },
+    "zona_omi_count": 131
+  },
+  "concept_cells": [
+    {
+      "concept": "municipality",
+      "status": "preserved",
+      "fill_rate": 0.999,
+      "range_ok": null
+    },
+    {
+      "concept": "postal_code",
+      "status": "preserved",
+      "fill_rate": 0.999,
+      "range_ok": null
+    },
+    {
+      "concept": "floor_area",
+      "status": "preserved",
+      "fill_rate": 0.999,
+      "range_ok": 1.0
+    },
+    {
+      "concept": "building_type",
+      "status": "preserved",
+      "fill_rate": 0.999,
+      "range_ok": null
+    },
+    {
+      "concept": "construction_year",
+      "status": "preserved",
+      "fill_rate": 0.986,
+      "range_ok": 1.0
+    },
+    {
+      "concept": "registration_date",
+      "status": "preserved",
+      "fill_rate": 0.999,
+      "range_ok": null
+    },
+    {
+      "concept": "energy_class",
+      "status": "preserved",
+      "fill_rate": 0.999,
+      "range_ok": null
+    },
+    {
+      "concept": "primary_energy_total",
+      "status": "preserved",
+      "fill_rate": 0.999,
+      "range_ok": 1.0
+    },
+    {
+      "concept": "co2_emissions_total",
+      "status": "preserved",
+      "fill_rate": 0.999,
+      "range_ok": 1.0
+    },
+    {
+      "concept": "heating_system_type",
+      "status": "preserved",
+      "fill_rate": 0.929,
+      "range_ok": null
+    },
+    {
+      "concept": "main_heating_fuel",
+      "status": "preserved",
+      "fill_rate": 0.929,
+      "range_ok": null
+    },
+    {
+      "concept": "pv_electricity_production_total",
+      "status": "preserved",
+      "fill_rate": 0.137,
+      "range_ok": 1.0
+    },
+    {
+      "concept": "renewable_energy_share",
+      "status": "preserved",
+      "fill_rate": 0.072,
+      "range_ok": 1.0
+    }
+  ]
+}

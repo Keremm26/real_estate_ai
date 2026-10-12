@@ -177,11 +177,15 @@ def parse_numeric(nonmiss: pd.Series) -> tuple[bool, str | None, pd.Series | Non
     if ok.mean() < 0.9:  # <90% clean numbers -> not a numeric column
         return False, None, None
 
+    # The decimal separator is the one that comes last in a number ("135.44",
+    # "1.234,56"); the style most values vote for wins. Whether a style merely
+    # parses is no evidence: "135.44" also parses as comma style (-> 13544).
     ok_core = core[ok]
-    has_comma = ok_core.str.contains(",", regex=False).mean()
-    dot_ok = _to_num(ok_core, "dot").notna().mean()
-    comma_ok = _to_num(ok_core, "comma").notna().mean()
-    style = "comma" if (comma_ok >= dot_ok and has_comma > 0) else "dot"
+    last_comma = ok_core.str.rfind(",")
+    last_dot = ok_core.str.rfind(".")
+    comma_votes = (last_comma > last_dot).sum()
+    dot_votes = (last_dot > last_comma).sum()
+    style = "comma" if comma_votes > dot_votes else "dot"
 
     full_core, full_ok = _numeric_cores(nonmiss)
     return True, style, _to_num(full_core[full_ok], style).dropna()

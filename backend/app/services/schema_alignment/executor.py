@@ -140,15 +140,29 @@ def _cell_for(rev: dict, cid: str, city: str) -> dict | None:
     return None
 
 
-def materialize_city(city: str, profile: dict, rev: dict, vmeta: dict,
-                     concepts: list[str]) -> tuple[pd.DataFrame, list[dict]]:
+def read_city_raw(city: str, profile: dict, rev: dict, concepts: list[str],
+                  extra_columns: tuple[str, ...] = ()) -> pd.DataFrame:
+    """Raw source columns the concepts need (plus ``extra_columns``, e.g. row keys
+    a downstream build joins on), read with the profile's encoding/delimiter."""
     raw_path = Path(RAW_DIR) / profile["source_file"]
     enc = profile.get("encoding") or detect_encoding(raw_path)
     delim = profile.get("delimiter") or detect_delimiter(raw_path, enc)
-    needed = _needed_columns(rev, concepts, city)
-    df = pd.read_csv(raw_path, sep=delim, dtype=str, na_filter=False, keep_default_na=False,
-                     encoding=enc, engine="c", on_bad_lines="skip",
-                     usecols=lambda c: c in needed)
+    needed = _needed_columns(rev, concepts, city) | set(extra_columns)
+    return pd.read_csv(raw_path, sep=delim, dtype=str, na_filter=False, keep_default_na=False,
+                       encoding=enc, engine="c", on_bad_lines="skip",
+                       usecols=lambda c: c in needed)
+
+
+def materialize_city(city: str, profile: dict, rev: dict, vmeta: dict,
+                     concepts: list[str]) -> tuple[pd.DataFrame, list[dict]]:
+    df = read_city_raw(city, profile, rev, concepts)
+    return apply_cells(df, city, profile, rev, vmeta, concepts)
+
+
+def apply_cells(df: pd.DataFrame, city: str, profile: dict, rev: dict, vmeta: dict,
+                concepts: list[str]) -> tuple[pd.DataFrame, list[dict]]:
+    """Apply each concept's reviewed TransformRule to the raw frame ``df``.
+    Returns the concept table (same index as ``df``) and the per-cell report."""
     style = profile["_style"]
     out = pd.DataFrame(index=df.index)
     report: list[dict] = []

@@ -190,6 +190,7 @@ synthetic_test_suite/
 
 backend/data/database/users.db
 backend/data/metadata/estates.parquet
+backend/data/metadata/estates_*.parquet
 backend/data/metadata/pois_by_category.json
 backend/data/metadata/pois.json
 backend/data/agent_logs
