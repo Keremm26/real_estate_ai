@@ -93,6 +93,7 @@ def repair_column_aliases(
     sql: str,
     db_schema: Dict[str, Any],
     column_aliases: Optional[Dict[str, Set[str]]] = None,
+    categorical_values: Optional[Dict[str, Set[str]]] = None,
 ) -> RepairResult:
     """Rename alias-mismatched columns in ``sql`` to their real dataset names.
 
@@ -100,6 +101,12 @@ def repair_column_aliases(
         sql: the LLM-generated SQL.
         db_schema: schema dict (``{"types": {col: dtype}}`` or ``{col: dtype}``).
         column_aliases: alias map; defaults to the shared ``COLUMN_ALIASES``.
+        categorical_values: dataset column -> its actual values. When given, a
+            value that contains commas and was split by the LLM into several
+            literals of an IN list (``IN ('Collegi', 'luoghi di ricovero', ...)``
+            for the label ``'Collegi, luoghi di ricovero, ...'``) is merged back
+            into the exact dataset value (literal grounding, see
+            ``_merge_split_literals``).
 
     Returns:
         A RepairResult. ``sql`` is the (possibly unchanged) query; ``changed`` is
@@ -178,14 +185,61 @@ def repair_column_aliases(
     if text_cols:
         new_expr = new_expr.transform(_cast)
 
+    merged: List[Dict[str, str]] = []
+    if categorical_values:
+        new_expr = new_expr.transform(lambda n: _merge_split_literals(n, categorical_values, merged))
+
     result.unresolved_columns = sorted(unresolved)
-    if seen_repairs or casts:
+    if seen_repairs or casts or merged:
         result.sql = new_expr.sql(dialect="duckdb")
         result.changed = True
         result.repairs = [{"from": k, "to": v} for k, v in sorted(seen_repairs.items())]
         result.repairs += [{"from": c, "to": f"TRY_CAST({c} AS DOUBLE)"} for c in sorted(casts)]
+        result.repairs += merged
 
     return result
+
+
+def _norm_value(s: str) -> str:
+    return " ".join(s.split()).casefold()
+
+
+def _merge_split_literals(node: exp.Expression, categorical_values: Dict[str, Set[str]],
+                          merged: List[Dict[str, str]]) -> exp.Expression:
+    """Literal grounding for ``column IN (...)``: consecutive string literals
+    whose ', '-join equals an actual value of the column (case- and spacing-
+    insensitive) are replaced by that value. Only exact reconstructions are
+    made: single literals and fragments that form no dataset value stay as
+    they are."""
+    if not isinstance(node, exp.In) or not isinstance(node.this, exp.Column):
+        return node
+    values = categorical_values.get(node.this.name)
+    items = node.expressions
+    if not values or len(items) < 2 or not all(isinstance(i, exp.Literal) and i.is_string for i in items):
+        return node
+    by_norm = {_norm_value(v): v for v in values if "," in v}
+    if not by_norm:
+        return node
+    texts = [i.this for i in items]
+    out, i = [], 0
+    while i < len(texts):
+        hit = None
+        for j in range(len(texts), i + 1, -1):          # longest run of >= 2 literals first
+            key = _norm_value(", ".join(texts[i:j]))
+            if key in by_norm:
+                hit = (j, by_norm[key])
+                break
+        if hit:
+            merged.append({"from": ", ".join(repr(x) for x in texts[i:hit[0]]), "to": repr(hit[1]),
+                           "kind": "split_literal"})
+            out.append(hit[1])
+            i = hit[0]
+        else:
+            out.append(texts[i])
+            i += 1
+    if len(out) == len(texts):
+        return node
+    return exp.In(this=node.this.copy(), expressions=[exp.Literal.string(v) for v in out])
 
 
 def _schema_types(db_schema: Dict[str, Any]) -> Dict[str, Any]:

@@ -56,6 +56,26 @@ def retry_with_backoff(
     return decorator
 
 
+def _record_agent_error(agent_name: str, function: str, error: Exception, query: Any) -> None:
+    """Append the error to $AGENT_ERROR_LOG (JSON lines) when set. The agents
+    return a fallback on error, so in an evaluation run a failed call would
+    otherwise look like 'found nothing'; tests/audit_runs.py reads this file."""
+    import json
+    import os
+    from datetime import datetime
+
+    path = os.environ.get("AGENT_ERROR_LOG")
+    if not path:
+        return
+    try:
+        with open(path, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"time": datetime.now().isoformat(timespec="seconds"), "agent": agent_name,
+                                "function": function, "error": f"{type(error).__name__}: {error}"[:300],
+                                "query": query if isinstance(query, str) else None}, ensure_ascii=False) + "\n")
+    except OSError:
+        pass
+
+
 def handle_agent_error(fallback_value: Any = None):
     """
     Decorator to handle exceptions in Agent methods safely.
@@ -97,6 +117,7 @@ def handle_agent_error(fallback_value: Any = None):
                         "traceback": traceback.format_exc(),
                     },
                 )
+                _record_agent_error(agent_name, func.__name__, e, kwargs.get("query"))
 
                 # If a fallback is provided, return it
                 if fallback_value is not None:

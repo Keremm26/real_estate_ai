@@ -113,6 +113,54 @@ def test_no_schema_means_no_repair():
     assert not res.changed
 
 
+LABELS = {"tipologia_bene_immobile": {
+    "Collegi, luoghi di ricovero, case di pena, caserme, conventi",
+    "Abitazioni adibite a residenza con carattere continuativo",
+    "Uffici e assimilabili",
+}}
+COLLEGI = "Collegi, luoghi di ricovero, case di pena, caserme, conventi"
+
+
+def test_split_label_is_merged_back():
+    sql = ("SELECT * FROM ESTATES WHERE tipologia_bene_immobile IN ('Collegi', 'luoghi di ricovero', "
+           "'case di pena', 'caserme', 'conventi')")
+    res = repair_column_aliases(sql, DB_SCHEMA, categorical_values=LABELS)
+    assert res.changed and f"IN ('{COLLEGI}')" in res.sql
+    assert res.repairs[-1]["kind"] == "split_literal"
+
+
+def test_split_label_next_to_a_valid_label():
+    sql = ("SELECT * FROM ESTATES WHERE tipologia_bene_immobile IN "
+           "('Abitazioni adibite a residenza con carattere continuativo', 'Collegi', 'luoghi di ricovero', "
+           "'case di pena', 'caserme', 'conventi')")
+    res = repair_column_aliases(sql, DB_SCHEMA, categorical_values=LABELS)
+    assert f"'Abitazioni adibite a residenza con carattere continuativo', '{COLLEGI}'" in res.sql
+
+
+def test_fragments_that_form_no_label_are_left_alone():
+    sql = "SELECT * FROM ESTATES WHERE tipologia_bene_immobile IN ('Collegi', 'caserme')"
+    res = repair_column_aliases(sql, DB_SCHEMA, categorical_values=LABELS)
+    assert not res.changed and res.sql == sql
+
+
+def test_correct_labels_and_no_values_are_untouched():
+    sql = f"SELECT * FROM ESTATES WHERE tipologia_bene_immobile IN ('{COLLEGI}', 'Uffici e assimilabili')"
+    assert not repair_column_aliases(sql, DB_SCHEMA, categorical_values=LABELS).changed
+    split = "SELECT * FROM ESTATES WHERE tipologia_bene_immobile IN ('Collegi', 'luoghi di ricovero')"
+    assert not repair_column_aliases(split, DB_SCHEMA).changed       # no categorical values given
+
+
+def test_merged_label_matches_rows():
+    df = pd.DataFrame({"tipologia_bene_immobile": [COLLEGI, "Uffici e assimilabili"], "id": [1, 2]})
+    sql = ("SELECT id FROM ESTATES WHERE tipologia_bene_immobile IN ('Collegi', 'luoghi di ricovero', "
+           "'case di pena', 'caserme', 'conventi')")
+    con = duckdb.connect()
+    con.register("ESTATES", df)
+    assert len(con.execute(sql).df()) == 0                          # the split literals match nothing
+    fixed = repair_column_aliases(sql, DB_SCHEMA, categorical_values=LABELS).sql
+    assert con.execute(fixed).df()["id"].tolist() == [1]
+
+
 if __name__ == "__main__":
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     passed = 0

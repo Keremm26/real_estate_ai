@@ -147,6 +147,10 @@ class Settings(BaseSettings):
         return self.OPENAI_API_BASE, self.OPENAI_API_KEY
 
 
+    # Seconds before an LLM request is abandoned (and retried by the client).
+    # Without it a request that never returns blocks an evaluation run forever.
+    LLM_REQUEST_TIMEOUT_S: float = 300.0
+
     # Agent Temperature - 0.0 for fully deterministic outputs (consistency)
     # Set to 0.0 to eliminate non-determinism, higher values allow creativity
     AGENT_TEMPERATURE: float = 0.0

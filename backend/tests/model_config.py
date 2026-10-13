@@ -18,6 +18,10 @@ MODEL_OPTIONS = {
         "model": "gpt-5.4-mini",
         "supports_structured_output": True,
     },
+    "gemma-4": {                         # institutional vLLM (RedHatAI/gemma-4-31B-it-FP8-block)
+        "model": "gemma-4",
+        "supports_structured_output": False,
+    },
     "gpt-oss-120b": {
         "model": "gemma-4",
         "supports_structured_output": False,

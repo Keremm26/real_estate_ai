@@ -47,6 +47,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from app.core.config import settings
 from app.services.llm.rag import config
 from app.services.llm.rag.eval import regulatory_scoring as rs
 from app.services.llm.rag.eval.run import _doc_key_to_name, _hit_matches, _label
@@ -254,6 +255,7 @@ def run(arms: List[str], repeats: int, json_out: Optional[str], queries_path: Pa
         out = Path(json_out)
         out.write_text(json.dumps({
             "meta": {"queries_file": Path(queries_path).name, "country": country, "arms": arms,
+                     "model": settings.AGENT_LLM_MODEL,
                      "langs": langs, "repeats": repeats, "routing": routing, "n_items": len(queries),
                      "embed_model": config.EMBED_MODEL, "top_k": config.DEFAULT_TOP_K,
                      "query_framing": config.QUERY_FRAMING, "quant_only": config.QUANT_ONLY},
@@ -275,9 +277,12 @@ def main(argv=None) -> int:
                    help="router = LLM use-case router (production); oracle = item's use case")
     p.add_argument("--json", default=None, help="write full results to this JSON path (+ _summary.md)")
     p.add_argument("--queries", default=str(QUERIES_PATH), help="downstream query set")
+    p.add_argument("--model", default=None, help="agent model, e.g. gemma-4 (default: settings.AGENT_LLM_MODEL)")
     p.add_argument("--dry-run", action="store_true", help="retrieval only, no LLM calls")
     p.add_argument("--ablate", action="store_true", help="also run the retrieval-config ablation (embedding only)")
     args = p.parse_args(argv)
+    if args.model:                              # agents + use-case router run on this model
+        settings.set_llm_model(args.model)
     arms = [a.strip().lower() for a in args.arms.split(",") if a.strip()]
     bad = [a for a in arms if a not in config.RETRIEVAL_MODES]
     if bad:

@@ -106,6 +106,7 @@ EVALUATION_MODEL = "gpt-5.4"
 MODEL_CONCURRENCY_LIMITS = {
     "gpt-5.4": 2,
     "gpt-5.4-mini": 4,
+    "gemma-4": 8,          # institutional vLLM (shared server): moderate
     "gpt-oss-120b": 48,
     "gemma3-27b": 48,
     "qwen3-8b": 48,
@@ -302,6 +303,9 @@ def configure_run(query_set: str = "legacy", arm: Optional[str] = None, city: st
     if city != "turin":
         suite_root = suite_root.with_name(f"{suite_root.name}_{city}")
     suite_root.mkdir(parents=True, exist_ok=True)
+    # Failed agent / LLM calls of this run (agents fall back silently otherwise);
+    # tests/audit_runs.py maps them to result files so they can be re-run.
+    os.environ.setdefault("AGENT_ERROR_LOG", str(suite_root / "agent_errors.jsonl"))
     return suite_root
 
 

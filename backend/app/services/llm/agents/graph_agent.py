@@ -1566,6 +1566,8 @@ class GraphOrchestratorAgent(BaseAgent):
         dataset columns but resolve (via the shared alias map) to one that is —
         e.g. ``surface_area`` -> ``superficie_di_riferimento_mq``. This is the
         exact failure observed in v1, caught before execution instead of after.
+        It also grounds literals: a typology label the LLM split at its commas is
+        merged back into the exact dataset value (ir_sql_repair._merge_split_literals).
 
         Columns that do not resolve are left alone (a genuine invalid column is a
         job for the deterministic fallback, not for repair). Runs in "repair" mode
@@ -1587,7 +1589,12 @@ class GraphOrchestratorAgent(BaseAgent):
         if not sql.strip():
             return
 
-        result = repair_column_aliases(sql, state.get("db_schema", {}) or {})
+        # Literal grounding: the dataset's actual typology labels, so a label the
+        # LLM split at its commas (IN ('Collegi', 'luoghi di ricovero', ...)) is
+        # merged back into the exact value instead of matching nothing.
+        typologies = (state.get("dataset_metadata") or {}).get("typologies") or []
+        categorical = {"tipologia_bene_immobile": set(typologies)} if typologies else None
+        result = repair_column_aliases(sql, state.get("db_schema", {}) or {}, categorical_values=categorical)
         if not result.changed:
             return
 

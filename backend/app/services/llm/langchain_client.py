@@ -12,6 +12,42 @@ load_dotenv()
 _langfuse_client = None
 
 
+class _FailedCallRecorder:
+    """LangChain callback: when a chat call finally fails (after the client's
+    retries), append model, error and the prompt (which contains the user query)
+    to $AGENT_ERROR_LOG, so tests/audit_runs.py can find the affected result
+    files even where an agent catches the error and returns a fallback."""
+
+    def __new__(cls, model_name: str):
+        from langchain_core.callbacks import BaseCallbackHandler
+
+        class _Recorder(BaseCallbackHandler):
+            def __init__(self):
+                self.prompts = {}
+
+            def on_chat_model_start(self, serialized, messages, *, run_id, **kwargs):
+                text = "\n".join(str(getattr(m, "content", m)) for batch in messages for m in batch)
+                self.prompts[run_id] = text[-6000:]
+
+            def on_llm_end(self, response, *, run_id, **kwargs):
+                self.prompts.pop(run_id, None)
+
+            def on_llm_error(self, error, *, run_id, **kwargs):
+                import json
+                from datetime import datetime
+                try:
+                    with open(os.environ["AGENT_ERROR_LOG"], "a", encoding="utf-8") as f:
+                        f.write(json.dumps({"time": datetime.now().isoformat(timespec="seconds"),
+                                            "agent": f"llm:{model_name}", "function": "call",
+                                            "error": f"{type(error).__name__}: {error}"[:300],
+                                            "query": None, "prompt": self.prompts.pop(run_id, "")},
+                                           ensure_ascii=False) + "\n")
+                except (OSError, KeyError):
+                    pass
+
+        return _Recorder()
+
+
 @lru_cache(maxsize=8)
 def _get_llm_internal(
     model_name: str, 
@@ -50,7 +86,12 @@ def _get_llm_internal(
         api_key=api_key or "sk-dummy",  # Fallback for local servers without auth
         temperature=temperature,
         base_url=openai_api_base,
+        # A request that never returns would block an evaluation run forever:
+        # give up after LLM_REQUEST_TIMEOUT_S (the client then retries).
+        timeout=settings.LLM_REQUEST_TIMEOUT_S,
     )
+    if os.environ.get("AGENT_ERROR_LOG"):       # evaluation runs: record failed calls
+        client_kwargs["callbacks"] = [_FailedCallRecorder(model_name)]
 
     lower_base = (openai_api_base or "").lower()
     # Ollama exposes an OpenAI-compatible API but does not understand vLLM's
