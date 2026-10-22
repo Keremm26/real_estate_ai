@@ -19,7 +19,7 @@ import json
 import logging
 import re
 from functools import lru_cache
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, List, Tuple
 
 from app.services.llm.rag import config
 from app.services.llm.rag.metadata import USE_CASE_DESCRIPTIONS
@@ -82,3 +82,50 @@ def route_use_case(query: str) -> Tuple[str, Dict[str, Any]]:
     if error:
         trace["error"] = error
     return use_case, trace
+
+
+# Area routing: some documents apply to only part of a city slice (a borough's
+# own standards). One short call places the request in one of those areas or in
+# none; anything unclear, unplaced or failed counts as none, so area-scoped rules
+# reach the prompt only for requests located in their area.
+_AREA_SYSTEM = """You decide where the property in a real-estate search request is located, relative to these areas:
+
+{areas}
+
+Rules:
+- Answer an area only when the request places the property inside it: it names the area itself, or a neighbourhood, street, station or landmark that lies inside it.
+- If the request places the property elsewhere, or does not say where it is, answer "none".
+- Answer with ONLY a JSON object: {{"area": "<area or none>", "reason": "<the words in the request that decided it>"}}"""
+
+
+@lru_cache(maxsize=512)
+def _route_area_cached(query: str, model: str, areas: Tuple[str, ...]) -> Tuple[str, str, str]:
+    """(area or "", reason, error) — cached per (query, model, areas)."""
+    from app.services.llm.langchain_client import get_llm  # lazy: avoid import cycle
+
+    system = _AREA_SYSTEM.format(areas="\n".join(f'- "{a}"' for a in areas))
+    try:
+        reply = get_llm(model_name=model, temperature=0.0).invoke([("system", system), ("user", query)])
+        answer = _parse(getattr(reply, "content", "") or "")
+    except Exception as e:  # noqa: BLE001 — model unreachable: degrade, don't crash
+        logger.warning(f"Area routing failed, treating the request as outside the scoped areas: {e}")
+        return "", "", str(e)
+    area = str(answer.get("area", "")).strip()
+    if area in areas:
+        return area, str(answer.get("reason", ""))[:200], ""
+    if area.lower() == "none":
+        return "", str(answer.get("reason", ""))[:200], ""
+    return "", "", f"answer outside vocabulary: {answer!r}"
+
+
+def route_area(query: str, areas: List[str]) -> Tuple[str, Dict[str, Any]]:
+    """Return ``(area, routing_trace)``: one of ``areas``, or "" when the request
+    is located in none of them (or the answer is unusable)."""
+    from app.core.config import settings  # lazy: rag must import without app settings
+
+    model = settings.AGENT_LLM_MODEL
+    area, reason, error = _route_area_cached(query, model, tuple(areas))
+    trace = {"area": area or "none", "areas": list(areas), "model": model, "reason": reason}
+    if error:
+        trace["error"] = error
+    return area, trace

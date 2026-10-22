@@ -26,6 +26,7 @@ from app.utils.scoring import (
     calculate_continuous_score,
     calculate_discrete_score,
     calculate_equality_score,
+    calculate_pass_fail_score,
     calculate_range_score,
     is_numeric_column,
     normalize_operator,
@@ -35,6 +36,20 @@ from app.utils.scoring import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def _continuous_scoring() -> bool:
+    """REGULATORY_SCORING=continuous restores the earlier graded score (more
+    points the further a building exceeds the legal minimum, up to 2x)."""
+    return os.environ.get("REGULATORY_SCORING") == "continuous"
+
+
+def legal_gate_score(vals: pd.Series, target: float, op: str) -> pd.Series:
+    """Pass/fail score for a legal limit (the default regulatory scoring): 100
+    when the value satisfies it, 0 otherwise. A legal requirement is met or not;
+    margin beyond the limit is no "more legal", so legal buildings are not
+    reordered by size (size preferences belong to the building agent)."""
+    return calculate_pass_fail_score(vals, target, op)
 
 
 def load_regulatory_context(
@@ -81,11 +96,22 @@ def load_regulatory_context(
         else:
             use_case = rag_config.DEFAULT_USE_CASE
 
+    # Area routing: only where the slice has documents limited to part of the
+    # city (e.g. one London borough), place the request in one of those areas.
+    area, area_routing = None, None
+    if rag_config.AREA_ROUTING:
+        from app.services.llm.rag.manifest import scoped_areas
+        areas = scoped_areas(country)
+        if areas:
+            from app.services.llm.rag.router import route_area
+            area, area_routing = route_area(query, areas)
+
     try:
         docs, sources, trace = retrieve_with_trace(
             query, country=country, use_case=use_case, mode=mode,
             # extraction-oriented knobs (rag mode only; see rag config)
             frame=rag_config.QUERY_FRAMING, quantitative_only=rag_config.QUANT_ONLY,
+            area=area,
         )
     except Exception as e:  # store/embedder unavailable — degrade, don't crash the agent
         logger.warning(f"Regulatory retrieval failed (mode={mode}): {e}")
@@ -94,6 +120,8 @@ def load_regulatory_context(
                  "n_chunks": 0, "context_chars": 0, "hits": [], "error": str(e)}
     if routing is not None:
         trace["use_case_routing"] = routing
+    if area_routing is not None:
+        trace["area_routing"] = area_routing
     return docs, sources, [], trace
 
 
@@ -358,13 +386,19 @@ class RegulatoryAgent(BaseAgent):
             if is_numeric and op in CONTINUOUS_OPERATORS | {"==", "BETWEEN"}:
                 vals = pd.to_numeric(df_ranked[col], errors="coerce").fillna(0)
 
-                # Use centralized utility for continuous variables
+                # Pass/fail by default; graded only with REGULATORY_SCORING=continuous
                 if op in CONTINUOUS_OPERATORS:
-                    exclusive = req.get("exclusive", False)
-                    req_score = calculate_continuous_score(vals, target_num, op, exclusive)
+                    if _continuous_scoring():
+                        exclusive = req.get("exclusive", False)
+                        req_score = calculate_continuous_score(vals, target_num, op, exclusive)
+                    else:
+                        req_score = legal_gate_score(vals, target_num, op)
                 elif op == "BETWEEN":
                     low, high = to_range(target_val)
-                    req_score = calculate_range_score(df_ranked[col], low, high)
+                    if _continuous_scoring():
+                        req_score = calculate_range_score(df_ranked[col], low, high)
+                    else:
+                        req_score = ((vals >= low) & (vals <= high)).astype(float) * 100.0
                 else:  # ==  (robust spread from global stats, see calculate_equality_score)
                     req_score = calculate_equality_score(vals, target_num, (global_stats or {}).get(col))
 
@@ -417,7 +451,12 @@ class RegulatoryAgent(BaseAgent):
                     
                     is_match = req_score > 0
                     rank_pos = _rank_position(is_match)
-                
+
+                # A legal category is met or not: any listed value passes in full
+                # (calculate_discrete_score grades list positions, a preference notion).
+                if not _continuous_scoring():
+                    req_score = (req_score > 0).astype(float) * 100.0
+
                 # Transparency Metadata for Categorical
                 
                 pos_col = f"regulatory_rank_position_{col}"

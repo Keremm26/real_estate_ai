@@ -60,6 +60,7 @@ def _metadata(spec: DocSpec, article_ref: str, has_quantitative: bool) -> ChunkM
         effective_date=spec["effective_date"],
         repealed_date=spec.get("repealed_date"),
         superseded_by=spec.get("superseded_by"),
+        scope_area=spec.get("scope_area", "all"),
         has_quantitative=has_quantitative,
     )
 

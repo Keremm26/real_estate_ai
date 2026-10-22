@@ -67,6 +67,9 @@
       "Author-constructed; regulatory ranges follow downstream_queries_madrid.json value_basis.",
       "Feasibility (non-empty results) is checked on the dataset with the slots as SQL-like filters within 3 km.",
       "The pipeline's geocoder misplaces 'Universidad Politécnica de Madrid' (~12 km north) and does not resolve 'Campus Sur UPM'; neither is used."
+    ],
+    "changelog": [
+      "2026-10-21: PQ-M29, PQ-M32, PQ-M34, PQ-M35, PQ-M36, PQ-M39, PQ-M40 activate false -> either [40, 50]: PGOUM 7.3.4.1 sets a minimum dwelling (40 m2) that does not depend on occupancy, and 7.3.11.2 / FAQ 20.b apply it to a residencia comunitaria as a whole, so a dwelling or student-residence request without a number of people may also be answered with 40 (the decline labels followed the Turin logic, where the minimum depends on the number of inhabitants; inconsistent with DQ-M22 / PQ-M21 'studio for one' = 40). Turin and London set minimums per inhabitant or bedspace only, so their no-capacity items keep 'decline'. Found reviewing the 2026-10-21 study."
     ]
   },
   "queries": [
@@ -1413,18 +1416,19 @@
         "energy"
       ],
       "optional_agents": [
-        "building"
+        "building",
+        "regulatory"
       ],
       "regulatory": {
-        "activate": false,
-        "target_column": null,
-        "operator": null,
-        "value_min": null,
-        "value_max": null,
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40,
+        "value_max": 50.0,
         "user_values": [],
-        "basis": "Energy preference only"
+        "basis": "Dwelling without a number of people: art. 7.3.4.1 sets the minimum dwelling (40 m2 useful) whatever the occupancy; declining is also right"
       },
-      "rule_family": null,
+      "rule_family": "es_dwelling",
       "heuristic_stratum": null,
       "mirrors": null,
       "covers": [
@@ -1552,19 +1556,21 @@
         "location",
         "building"
       ],
-      "optional_agents": [],
+      "optional_agents": [
+        "regulatory"
+      ],
       "regulatory": {
-        "activate": false,
-        "target_column": null,
-        "operator": null,
-        "value_min": null,
-        "value_max": null,
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40,
+        "value_max": 50.0,
         "user_values": [
           120
         ],
-        "basis": "User surface, no regulation"
+        "basis": "Dwelling without a number of people: art. 7.3.4.1 sets the minimum dwelling (40 m2 useful) whatever the occupancy; declining is also right (the user's 120 m2 is a preference)"
       },
-      "rule_family": null,
+      "rule_family": "es_dwelling",
       "heuristic_stratum": null,
       "mirrors": null,
       "covers": [
@@ -1638,18 +1644,19 @@
         "building"
       ],
       "optional_agents": [
-        "proximity"
+        "proximity",
+        "regulatory"
       ],
       "regulatory": {
-        "activate": false,
-        "target_column": null,
-        "operator": null,
-        "value_min": null,
-        "value_max": null,
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40,
+        "value_max": 50.0,
         "user_values": [],
-        "basis": "No capacity: no building-level threshold"
+        "basis": "No number of rooms or beds: a residencia comunitaria as a whole meets the minimum dwelling (7.3.11.2 -> 7.3.4.1, FAQ 20.b: >= 40 m2) whatever the capacity; declining is also right"
       },
-      "rule_family": null,
+      "rule_family": "es_res_comunitaria",
       "heuristic_stratum": null,
       "mirrors": "DQ-M28",
       "covers": [
@@ -1680,18 +1687,19 @@
       ],
       "optional_agents": [
         "building",
-        "proximity"
+        "proximity",
+        "regulatory"
       ],
       "regulatory": {
-        "activate": false,
-        "target_column": null,
-        "operator": null,
-        "value_min": null,
-        "value_max": null,
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40,
+        "value_max": 50.0,
         "user_values": [],
-        "basis": "7.3.11.4 forbids basement units: a prohibition, not an area"
+        "basis": "7.3.11.4 forbids basement units (a prohibition, not an area); the whole-residence minimum (7.3.11.2 -> 7.3.4.1: >= 40 m2) still applies; declining is also right"
       },
-      "rule_family": null,
+      "rule_family": "es_res_comunitaria",
       "heuristic_stratum": null,
       "mirrors": "DQ-M31",
       "covers": [
@@ -1720,18 +1728,19 @@
         "location"
       ],
       "optional_agents": [
-        "building"
+        "building",
+        "regulatory"
       ],
       "regulatory": {
-        "activate": false,
-        "target_column": null,
-        "operator": null,
-        "value_min": null,
-        "value_max": null,
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40,
+        "value_max": 50.0,
         "user_values": [],
-        "basis": "7.3.5 clear heights, not areas"
+        "basis": "7.3.5 sets clear heights, not areas; as a dwelling it must still reach the 40 m2 minimum (7.3.4.1); declining is also right"
       },
-      "rule_family": null,
+      "rule_family": "es_dwelling",
       "heuristic_stratum": null,
       "mirrors": "DQ-M35",
       "covers": [
@@ -1851,17 +1860,19 @@
         "energy",
         "building"
       ],
-      "optional_agents": [],
+      "optional_agents": [
+        "regulatory"
+      ],
       "regulatory": {
-        "activate": false,
-        "target_column": null,
-        "operator": null,
-        "value_min": null,
-        "value_max": null,
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40,
+        "value_max": 50.0,
         "user_values": [],
-        "basis": "Construction period and energy only"
+        "basis": "Dwelling without a number of people: art. 7.3.4.1 sets the minimum dwelling (40 m2 useful) whatever the occupancy; declining is also right"
       },
-      "rule_family": null,
+      "rule_family": "es_dwelling",
       "heuristic_stratum": null,
       "mirrors": null,
       "covers": [
@@ -1894,18 +1905,19 @@
         "proximity"
       ],
       "optional_agents": [
-        "building"
+        "building",
+        "regulatory"
       ],
       "regulatory": {
-        "activate": false,
-        "target_column": null,
-        "operator": null,
-        "value_min": null,
-        "value_max": null,
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40,
+        "value_max": 50.0,
         "user_values": [],
-        "basis": "'Large' is relative, no regulation"
+        "basis": "Dwelling without a number of people: art. 7.3.4.1 sets the minimum dwelling (40 m2 useful) whatever the occupancy; declining is also right ('large' is relative)"
       },
-      "rule_family": null,
+      "rule_family": "es_dwelling",
       "heuristic_stratum": null,
       "mirrors": null,
       "covers": [

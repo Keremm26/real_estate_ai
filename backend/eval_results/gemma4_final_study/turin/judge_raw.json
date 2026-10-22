@@ -1,0 +1,1106 @@
+{
+  "PQ-48__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3385,
+      "output": 399
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the same 10 properties, all residential and all well above the minimum surface. They differ only in order, so fit to the request is the same.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "The required surface is 475-875 m². The properties are the same in both lists and all are at least 525 m², so all meet the lower bound. M07143 (886 m²) slightly exceeds the upper range in both lists. Legal adequacy is identical.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The orderings are almost the same. A puts M07018 (0.84 km) before M07107 (0.64 km), which is closer and has better indices, so B's order is slightly better there. A puts M07864 (1.32 km, farthest) at 9 and M07174 (0.60 km, closer) at 10, while B puts M07174 at 9 and M07864 last. B's order is more consistent with proximity to the campus.",
+        "verdict": "B"
+      },
+      "rationale": "The lists contain identical properties. B's ordering is slightly better because it ranks the closer M07107 above M07018 and puts the farthest property last. The advantage is small.",
+      "overall": "B"
+    }
+  },
+  "PQ-50__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3347,
+      "output": 529
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists meet the surface minimum. A has 8 residential properties out of 10, plus 2 offices and 1 industrial unit (the offices are counted among the 10 as well: 7 residential, 2 offices, 1 industrial). B has 8 residential and 2 commercial units at the station. Distances are similar. The distance is measured from a landmark, and B's top entries are slightly closer. A's M11807 has very low mobility and education indices, and B's M03701 has the same weakness. B's residential units are closer to a co-housing size (about 200 m² against 280 m²), though larger is not a defect.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "All properties in both lists exceed the 116-145 m² minimum, so both are legally adequate on surface. Some A units are offices or industrial, and B has commercial units, so use suitability is uncertain on both sides. A has 3 non-residential units and B has 2.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "A opens with a residential property, then two offices at ranks 2-3, which is poor for co-housing. B's top 5 are all residential, but its commercial station units sit at ranks 6-7, which is a mild issue. B's order is better overall.",
+        "verdict": "B"
+      },
+      "rationale": "Both lists satisfy the surface requirement. B has more residential properties, better ranking with residential units first, and comparable or closer distances. A mixes offices and an industrial unit into its top 10, with offices at ranks 2-3. B is the better list to hand over.",
+      "overall": "B"
+    }
+  },
+  "PQ-10__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3416,
+      "output": 399
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain residential units near the University with energy class at least D. A's units are all of a plausible monolocale size (39-47 m²) and close by (0.46-0.82 km). B's units also satisfy class and distance, and a few are slightly closer (0.36-0.41 km), but they are mostly small studios of 30-37 m², which are poorly suited to two people.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum surface is 38 m². All 10 of A's properties are 39 m² or larger, so all are adequate. In B only id 32866 (40 m²) is adequate; the other 9 are 30-37 m² and fall below the minimum.",
+        "verdict": "A"
+      },
+      "ranking_quality": {
+        "reason": "A has all adequate properties, with the top ones being compliant and well placed. B puts non-compliant units (32, 34, 30 m²) in the top 3 and its single compliant unit at rank 4.",
+        "verdict": "A"
+      },
+      "rationale": "A returns only legally adequate units for two people, all near the University and in a good energy class. B is almost entirely below the 38 m² minimum, so it fails the intended use.",
+      "overall": "A"
+    }
+  },
+  "PQ-16__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3456,
+      "output": 424
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Positions 1-7 are identical. A's items 8-10 (31 m², 172 m², 30 m²) are tiny residential units, with classes A1, C, B, close to the campus but far too small for 24 students. B's items 8-10 (230, 306, 274 m²) are class C or better and mid-distance (1.69-2.74 km), and fit the capacity better.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "Threshold is 228-372 m². A has 3 properties below the minimum (31, 172, 30 m²), so 3 of 10 are legally inadequate. B has none below 228 m² (230, 306, 274 all pass), so all 10 are at least at the lower bound.",
+        "verdict": "B"
+      },
+      "ranking_quality": {
+        "reason": "Top 7 are identical. In the tail, B places legally adequate properties while A places clearly unsuitable tiny units, so B's ranking is better overall.",
+        "verdict": "B"
+      },
+      "rationale": "The lists share the first seven entries. The difference lies in ranks 8-10: A fills them with units of 30-172 m² that cannot legally house 24 students, while B offers 230-306 m² properties in suitable energy classes. B is clearly better.",
+      "overall": "B"
+    }
+  },
+  "PQ-45__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3436,
+      "output": 469
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain residential properties near Porta Susa and share 8 of 10 items. A's unique item M06815 (Via Cernaia 24) is 0.58 km away, which is closer than B's unique item M08026 (Via Don Minzoni, 1.10 km, farthest in either list). A is slightly better on proximity.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum is 570–870 m². Every property in both lists exceeds 570 m². A's M06815 at 706 m² clears the lower bound. B's M08026 at 843 m² also clears it. Both lists are fully adequate, though the upper range of 870 m² is not a hard cap.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The two lists have the same top 4. A places M06808 (836 m²) and M05055 (850 m²) at ranks 5–6, close to each other and near the station. B swaps them and puts M08026, which is farther away, at rank 9 ahead of M06868 (0.70 km). A's ordering is slightly better because its extra item is closer. The difference is small.",
+        "verdict": "A"
+      },
+      "rationale": "The lists are nearly identical and both are legally adequate. A's unique property, M06815, is much closer to Porta Susa than B's M08026, so A fits the request slightly better and ranks marginally better.",
+      "overall": "A"
+    }
+  },
+  "PQ-20__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3436,
+      "output": 427
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain residential properties with good energy class near Parco Valentino. A's items 4-10 are small apartments (57-94 m²) that cannot house 20 people. B's items are all large residences, though some are farther away (1.4-1.8 km) and one is a convent/institutional type, which is arguably still plausible for co-housing.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum is 216 m². In A, only 3 of 10 properties (622, 430, 404) meet it; 7 are far below. In B, all 10 are at least 255 m², so all are legally adequate.",
+        "verdict": "B"
+      },
+      "ranking_quality": {
+        "reason": "A places the three large adequate properties on top, then fills with seven inadequate small units. B ranks adequate, close properties first, and all subsequent ones are adequate too. B's ordering is not perfect (e.g., the 259 m² unit at 1.84 km ranks above closer ones), but it is still better overall.",
+        "verdict": "B"
+      },
+      "rationale": "B returns ten legally adequate, well-matched properties, while A has seven undersized units that cannot serve a 20-person co-housing. Both share the same top three, but B's remaining items are useful and A's are not.",
+      "overall": "B"
+    }
+  },
+  "PQ-42__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3561,
+      "output": 382
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Lists are identical for ranks 1-9. At rank 10, A has a 64 m² A4 unit on Via Giacosa, B has an 89 m² A3 unit on Corso Moncalieri. Both match type and energy class, with similar distance and indices, so B's item fits the request slightly better because it can house six people.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "All items in both lists are legally adequate (89 m² or more, above the 76 m² minimum) except A's rank 10, which at 64 m² is below the 76 m² minimum and unsuitable for six people. B has no such unit.",
+        "verdict": "B"
+      },
+      "ranking_quality": {
+        "reason": "The top 9 are identical. At position 10, A places a legally inadequate unit, while B places an adequate one, so B's ranking is better.",
+        "verdict": "B"
+      },
+      "rationale": "The lists differ only in the last slot. A's 64 m² apartment fails the legal minimum of 76 m² for six people, while B's 89 m² A3 apartment is adequate and meets the energy requirement. B is therefore better.",
+      "overall": "B"
+    }
+  },
+  "PQ-42__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3561,
+      "output": 358
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Lists are identical for ranks 1-9. At rank 10, A has id 68307 (89 m², A3, 1.50 km, high greenery 84.77), while B has id 54953 (64 m², A4, 1.33 km). Both fit type/energy/location, but A's item fits the user's needs better given the family size.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "All of A's properties are at least 89 m², above the 76 m² minimum. B's rank 10 is 64 m², below 76 m², so it is not legally adequate for six people.",
+        "verdict": "A"
+      },
+      "ranking_quality": {
+        "reason": "Top 9 are identical in order. The only difference is the last slot, where A has a legally suitable property and B has an unsuitable one, so A's ordering is better.",
+        "verdict": "A"
+      },
+      "rationale": "The lists differ only at rank 10. A's 89 m² unit meets the legal minimum and the energy preference, whereas B's 64 m² unit is too small for six people. A is therefore better.",
+      "overall": "A"
+    }
+  },
+  "PQ-15__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3154,
+      "output": 329
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the same 10 properties, all residential, office or commercial buildings of roughly 580-607 m². Only the order differs, at positions 8 and 9.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "All properties exceed the 285-435 m² range, so every one is adequate on surface. The two lists are identical on this criterion.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The only difference is that A places the residential property M02776 at rank 8 and the commercial M07943 at rank 9, while B swaps them. For a student residence a residential building is a better fit than a commercial one with energy class G, so A's order is slightly better. The difference is small.",
+        "verdict": "A"
+      },
+      "rationale": "The lists are identical except for the swap at ranks 8 and 9. A puts the residential property ahead of the G-class commercial one, which suits a student residence slightly better. The edge is marginal.",
+      "overall": "A"
+    }
+  },
+  "PQ-41__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3572,
+      "output": 454
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists share most items. A includes two commercial buildings below the legal minimum (M07962 at 437 m², M08110 at 471 m²) plus M07943, a commercial property. B replaces the two small commercial properties with two large residential buildings (M06868, M08141), which suit a student residence better. B also keeps one commercial property (M07943). Distances are similar.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum surface is 562 m². In A, M07962 (437 m²) and M08110 (471 m²) fall below it, so 2 of 10 are inadequate. All 10 properties in B are at least 580 m², so all are adequate. The lower bound is met everywhere, and B's larger ones (1,107 m², 912 m²) are comfortably above the upper bound.",
+        "verdict": "B"
+      },
+      "ranking_quality": {
+        "reason": "A ranks an inadequate 437 m² commercial property at position 5, above adequate residential ones. B's top 5 are all legally adequate and its order is sensible, with a few distant items later on.",
+        "verdict": "B"
+      },
+      "rationale": "B avoids the two legally inadequate, undersized commercial properties that A includes, and it adds large residential buildings that better fit a student residence. B's ranking also has no unsuitable property in the upper positions.",
+      "overall": "B"
+    }
+  },
+  "PQ-22__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3368,
+      "output": 429
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the same 10 apartments, all residential, 58-62 m², within 0.07-0.41 km of Palazzo Nuovo. They match the request equally well.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "The same properties appear in both lists. All are 58-62 m², above the 56 m² dwelling minimum and within the 38-70 m² range, so both are equally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The orderings differ only slightly. A puts 44099 (0.18 km, class E, 58 m²) at 5 and 44086 (class D, 0.25 km) at 9. B puts 1690 at 5, 44099 at 6 and 44086 at 10. Proximity is a key criterion, and A places the closer 44099 higher. A also puts the class D property 44086 above the class G property 43997, which is a slight advantage. The differences are small, but A is marginally better.",
+        "verdict": "A"
+      },
+      "rationale": "The lists contain identical properties, so request fit and legal adequacy are tied. A orders them slightly better, with closer and better-energy-class properties higher (44099 above 1690, 44086 above 43997), so A is marginally preferred.",
+      "overall": "A"
+    }
+  },
+  "PQ-32__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3476,
+      "output": 357
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain only hotel-type properties near Porta Nuova. A includes four small units (133, 173, 304, 62 m²) that are too small for a 30-guest hostel. B has all properties of adequate size, though some are farther away (1.05-1.63 km).",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum is about 333-420 m². A has four of its ten properties below that threshold (133, 173, 304, 62 m²), so they are unsuitable. All ten in B exceed 420 m², so all are legally adequate.",
+        "verdict": "B"
+      },
+      "ranking_quality": {
+        "reason": "A puts four undersized properties in its top four positions, which is poor ranking. B opens with the nearest, large, high-energy-class properties, and all of its entries are viable.",
+        "verdict": "B"
+      },
+      "rationale": "B is entirely legally adequate and ranks suitable properties at the top. A fills its top slots with properties too small for 30 guests, which makes it less useful despite their closer proximity.",
+      "overall": "B"
+    }
+  },
+  "PQ-13__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3388,
+      "output": 477
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "The user asked for 50-80 m² near Palazzo Nuovo. List B matches this surface range on all 10 items, all within 0.18 km. List A ignores the surface range entirely (703-5,140 m²), although it does match the student-residence purpose better in type (colleges) and capacity.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "The reference says the legal minimum is 570 m² or more for 60 students. All of List A's properties exceed 570 m², so they are legally adequate. All of List B's properties are 50-72 m², far below the minimum, so none is adequate for 60 students.",
+        "verdict": "A"
+      },
+      "ranking_quality": {
+        "reason": "List A puts the largest, most suitable college-type buildings at the top, which fits the legal requirement, although the 703 m² item sits lower than some larger ones, which is acceptable. List B ranks small units that are all legally inadequate, so its order has no real value for the actual need.",
+        "verdict": "A"
+      },
+      "rationale": "The user's stated surface (50-80 m²) conflicts with the legal requirement for 60 students (570-1,050 m² or more). Only List A returns properties that could legally house a 60-student residence, and it includes college-type buildings near the landmark. List B follows the literal surface range but returns units that are unusable for the stated capacity. List A is therefore more useful, since it serves the real purpose.",
+      "overall": "A"
+    }
+  },
+  "PQ-15__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3154,
+      "output": 358
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the same 10 properties, all large enough, with residential-type properties and two offices. The only difference is the position of the commercial property M07943 (rank 8 in A, rank 9 in B).",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "All properties exceed the 435 m² upper bound (580-607 m²), so every one is legally adequate on surface. No difference.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The orders are identical for ranks 1-7. B places the commercial property (energy class G, low greenery, least suited to a residence) at rank 9, below the residential M02776, while A puts it at rank 8 above M02776. B's ordering is slightly better, since residential properties should rank above a commercial one, though the difference is small.",
+        "verdict": "B"
+      },
+      "rationale": "The lists are the same set with nearly identical order. B ranks the commercial, class G property lower, behind residential properties, which is marginally better for a student residence. The difference is minor but it favors B.",
+      "overall": "B"
+    }
+  },
+  "PQ-16__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3456,
+      "output": 380
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists share the same top 7. For positions 8-10, A has residential properties of 230, 306 and 274 m², all in class C or better and at a similar distance from the campus. B has 31, 172 and 30 m² units, which are too small for 24 students, even though they are closer to the campus.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "The legal minimum is 228 m² or more. All 10 properties in A meet it, including 230 m² at the lower bound. In B, positions 8-10 (31, 172 and 30 m²) are below the minimum and not legally adequate.",
+        "verdict": "A"
+      },
+      "ranking_quality": {
+        "reason": "The first 7 positions are identical. A's remaining three are suitable, whereas B places three unsuitable small units in the bottom slots. A's ranking is therefore better overall.",
+        "verdict": "A"
+      },
+      "rationale": "The lists are identical in positions 1-7. A fills the last three with legally adequate properties (at least 230 m²), while B fills them with units of 30-172 m² that cannot house 24 students. A serves the user better.",
+      "overall": "A"
+    }
+  },
+  "PQ-03__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3477,
+      "output": 422
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists share the same top 5 and are all residential buildings with energy class A and close to Palazzo Nuovo. List A fills ranks 6-10 with small units (234, 65, 61, 65 m²) that are not suited to a 50-student residence, while List B fills them with whole buildings that are plausible (957, 1228 m², etc.), one of them very close (0.24 km).",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "The legal minimum is 475 m². In List A, 5 of 10 properties qualify (M11559, M11534, M06401, M10128, 42012, plus 38587, so 6) and 4 fall below it (234, 65, 61, 65 m²). In List B, all 10 properties exceed 475 m².",
+        "verdict": "B"
+      },
+      "ranking_quality": {
+        "reason": "The top 5 are identical. In List A, the sub-threshold 44985 sits at rank 6, ahead of the adequate 38587. In List B, all ranks are legally adequate, and the order is sensible.",
+        "verdict": "B"
+      },
+      "rationale": "List B is entirely legally adequate and relevant, whereas List A includes four units too small for 50 students and ranks one of them above a suitable building.",
+      "overall": "B"
+    }
+  },
+  "PQ-21__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3374,
+      "output": 399
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain residential units near Molinette. A's properties are closer on average (0.18-0.66 km) and mostly in the well-served C2 zone. B includes farther items (up to 0.80 km) and weaker-service ones such as M10395 (mobility 35, greenery 7). A's surfaces (198-272 m²) suit 8 residents without being excessively large.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "All properties in both lists far exceed the 96-120 m² minimum for 8 people, so both are legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "A ranks the closest and best-served units first (0.18 km, 0.37 km) but places M10931, with poor services, fourth. B's top is mixed: M10782 has a low greenery index and M10814 is energy class G, and M10395 at 7th has poor services. A's ordering is more coherent.",
+        "verdict": "A"
+      },
+      "rationale": "Both satisfy the legal size requirement. A is closer to the hospital and better served overall, with fewer poor-service outliers and a more sensible ranking, so A serves the user better.",
+      "overall": "A"
+    }
+  },
+  "PQ-09__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3426,
+      "output": 365
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the identical 10 properties, all residential, 117-122 m², within 0.13-0.29 km of Crocetta. Fit is the same.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "All properties exceed the 76-95 m² minimum, so both lists are legally adequate for a family of 6.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The only difference is that A puts 46353 (class F) first and 50877 (class A1) third, while B puts 50877 first and 46353 second. No energy class was requested, but the A1 property is arguably better and also closer (0.19 vs 0.23 km). 50877 has a lower education index, though, so the ordering is nearly a wash. B's ordering is slightly more defensible, but the difference is minor.",
+        "verdict": "B"
+      },
+      "rationale": "The two lists contain the same properties and both meet the legal minimum. They differ only in order at the top. B promotes the A1, closest property to first place, which is a slight edge, but the difference is small.",
+      "overall": "B"
+    }
+  },
+  "PQ-03__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3477,
+      "output": 415
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "All items in both lists are residential with energy class A or better. List A has 10 properties of adequate size and good mobility, with distances of 0.24 to 1.04 km. List B has several tiny units (61-65 m², 234 m²) that do not fit a 50-student residence.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "Minimum required surface is 475 m². Every property in List A (smallest 513 m²) meets it. In List B, 5 of 10 fall below the minimum (234, 65, 61, 65 m²; only 4 are below, plus the rest are fine), so it contains clearly unsuitable properties.",
+        "verdict": "A"
+      },
+      "ranking_quality": {
+        "reason": "Both lists share the same top 5, which are all adequate. After that, A continues with adequate properties, while B places a 234 m² unit at rank 6 and tiny units at ranks 8-10.",
+        "verdict": "A"
+      },
+      "rationale": "The two lists are identical for the first five items. Beyond that, List A keeps offering legally adequate, well-connected buildings, whereas List B fills its remaining slots with undersized units (61-234 m²) that cannot host 50 students. List A is clearly better.",
+      "overall": "A"
+    }
+  },
+  "PQ-13__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3388,
+      "output": 421
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "A matches the literal 50-80 m² surface and sits very close to Palazzo Nuovo, but these are single apartments and cannot house 60 students. B conflicts with the stated surface but fits the real intent of a residence for 60 students: large buildings, including colleges, close to the landmark.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "The reference requires at least 570 m². Every property in A (50-72 m²) is far below the minimum and legally unsuitable. All of B's properties (703-5,140 m²) meet the minimum; a few exceed 1,050 m², but they are still adequate.",
+        "verdict": "B"
+      },
+      "ranking_quality": {
+        "reason": "A's ranking is irrelevant because every item is unsuitable. B puts large college-type properties first, followed by large residential buildings close to the landmark, so it is reasonable, though the nearest properties are not at the top.",
+        "verdict": "B"
+      },
+      "rationale": "The user's 50-80 m² range contradicts the legal minimum for 60 students. A follows the literal range and returns only apartments that are legally inadequate. B returns properties that satisfy the legal minimum and are near Palazzo Nuovo, so it is the more useful list.",
+      "overall": "B"
+    }
+  },
+  "PQ-20__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3436,
+      "output": 431
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain residential properties with good energy class near the park. A's items are all energy class C or better and mostly sized for a group, though several are 1.4-1.8 km away. B's items are closer (0.65-0.96 km), but 7 of 10 are tiny apartments that cannot serve a 20-person co-housing.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "A: all 10 exceed 216 m² (255 to 5,140 m²), so all are legally adequate; item 8 is a convent/collegio type but large. B: only 3 of 10 (622, 430, 404 m²) meet the 216 m² minimum; the other 7 (57-94 m²) are inadequate.",
+        "verdict": "A"
+      },
+      "ranking_quality": {
+        "reason": "A ranks adequate, close properties first and all are suitable, with larger or farther ones lower. B places the 3 adequate ones on top, which is good, but the rest of the list is filled with unsuitable units.",
+        "verdict": "A"
+      },
+      "rationale": "Both lists share the top three adequate properties. After that, A continues with legally adequate, well-sized properties, while B fills slots 4-10 with small 57-94 m² flats that fail the legal minimum. A is clearly better.",
+      "overall": "A"
+    }
+  },
+  "PQ-19__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3232,
+      "output": 364
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "The request names no location or energy class, only a studentato with 30 rooms. List A is mostly residential buildings of 440-556 m² with high education indexes, plus one hotel-type building (556 m²) that fits a student residence well. List B is residential or small collegio/hotel properties of 248-412 m², which are too small for 30 rooms.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "The reference requires at least 440 m². All 10 properties in A are 440 m² or larger, so all are adequate. None of B's properties reach 440 m² (maximum 412), so all are inadequate.",
+        "verdict": "A"
+      },
+      "ranking_quality": {
+        "reason": "A's order is not strictly optimal, since the 556 m² hotel sits third and the largest residential building is eighth, but every item is legally valid. B's order is irrelevant because every item fails the surface minimum.",
+        "verdict": "A"
+      },
+      "rationale": "A returns only properties that meet the legal minimum surface for the studentato, while B returns none that do. A is clearly better.",
+      "overall": "A"
+    }
+  },
+  "PQ-17__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3456,
+      "output": 431
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists are residential. A has 10 properties all ≥1,240 m² within 1.8–2.8 km, though one is a hotel (11,619 m², class B), which is plausible for conversion. B has three closer properties (0.81–1.01 km), but 7 of its 10 are tiny units (32–419 m²) that can't house 100 students. Only B1 is both close and big enough.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "Threshold is at least 950 m². A: all 10 meet it (min 1,240 m²). B: only 4 meet it (1,055; 2,149; 2,485; 2,805); 6 are far below (419, 311, 306, 40, 110, 32).",
+        "verdict": "A"
+      },
+      "ranking_quality": {
+        "reason": "A's top items are all legally adequate, and it places the nearer ones first. B's top has one excellent match (M12218), but ranks 2 and 3 are inadequate and small units fill the bottom ranks, with adequate ones interleaved.",
+        "verdict": "A"
+      },
+      "rationale": "A returns only legally adequate properties of suitable size, though they are farther away. B contains one very good close property but is mostly filled with units too small for 100 students. A is the better list to hand over.",
+      "overall": "A"
+    }
+  },
+  "PQ-48__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3385,
+      "output": 400
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the same 10 properties, all residential and near the campus, with similar distances. Only the order differs, so fit is identical.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "The same properties appear in both lists and all exceed the 475 m² minimum, so both are equally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The orderings are nearly identical, differing in only two places. A puts M07107 (831 m², 0.64 km) before M07018 (748 m², 0.84 km); that is slightly preferable because it is closer and has better indices, though its energy class is G versus E. A also places M07174 (525 m², 0.60 km, close to the campus) at 9 and M07864 (1.32 km, in another zone) at 10, whereas B reverses them. M07864 is farther away, so A's order is slightly better. The differences are small.",
+        "verdict": "A"
+      },
+      "rationale": "The lists contain the same properties and are equally adequate on fit and legal grounds. A's ordering is marginally better because the closer M07174 ranks above the farther M07864 in a different zone, but the difference is small.",
+      "overall": "A"
+    }
+  },
+  "PQ-22__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3368,
+      "output": 360
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the same 10 apartments, all residential, 58-62 m², within 0.41 km of Palazzo Nuovo. Fit is identical.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "All properties are 58-62 m², above the 56 m² dwelling minimum and within or above the 38-70 range. Both lists are equally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The lists differ only slightly in order. B puts the energy class D property (44086, 0.25 km) at 9 and the class G (43997) last, which is sensible. A places the class G property at 9 above the class D one at 10. B moves 44099 (0.18 km, class E) up to 5. B's ordering is slightly better on distance and energy class, but the difference is small.",
+        "verdict": "B"
+      },
+      "rationale": "The two lists contain the same properties, so request fit and legal adequacy are tied. B ranks marginally better by placing the worst energy class (G) last and a closer property higher.",
+      "overall": "B"
+    }
+  },
+  "PQ-05__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3377,
+      "output": 454
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Positions 1-8 are identical. A's last two (M07895, 6,270 m² museum, 1.42 km; M07809, 1,502 m² residence, 1.44 km) are farther away but large enough and in F/G classes. B's last two (33 m² and 91 m²) are near the campus with F class, but far too small for a 120-bed residence.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "Both lists share the same first 8, where M07607 (1,262 m²) is above the 1,140 m² minimum. A's items 9-10 (6,270 m² and 1,502 m²) exceed the lower bound and are adequate. B's items 9-10 (33 m² and 91 m²) are well below 1,140 m² and legally inadequate.",
+        "verdict": "A"
+      },
+      "ranking_quality": {
+        "reason": "The top 8 are identical, so ranking differs only in the tail. A's tail contains usable properties, while B's tail is filled with unusable tiny units, so A's list is better overall.",
+        "verdict": "A"
+      },
+      "rationale": "The lists are identical for the first eight positions. The difference lies in positions 9-10: A offers properties meeting the minimum surface, B offers 33 m² and 91 m² units that cannot house 120 beds. A is therefore more useful and legally adequate.",
+      "overall": "A"
+    }
+  },
+  "PQ-12__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3411,
+      "output": 347
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the same 10 properties. Surfaces run from 128 to 196 m², and the distances and services are the same. Properties 188, 181 and 196 m² are within 100-200.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "The sets are identical. All surfaces (128-196 m²) are above the 95 m² minimum, so both lists are legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The orders are nearly identical. Only positions 3 and 4 are swapped: A puts 46108 (181 m², class C) before 46109 (196 m², class D), and B does the reverse. 46108 has the better energy class and is closer to the middle of the surface range, while 46109 is larger, which is slightly more comfortable for 10 students. The difference is negligible.",
+        "verdict": "tie"
+      },
+      "rationale": "The lists contain the same properties and differ only by a swap of two adjacent items, so the difference is negligible.",
+      "overall": "tie"
+    }
+  },
+  "PQ-21__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3374,
+      "output": 563
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain residential properties near Molinette (all under 0.8 km) and far above the 96-120 m² threshold. A has a few very close ones (0.09, 0.26, 0.31 km), but also some entries with poor service indices (M10395 at 0.80 km, mobility 35). B includes M10931 with very poor mobility and education indices (9.61/8.87), which is a bad fit for proximity to services. Overall they are similar; A is slightly closer on average to the hospital with a few weak entries, B is more compact in size.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "All properties in both lists exceed the 96-120 m² reference range (smallest are 198 m² in B and 270 m² in A), so all are legally adequate. Very large units are not a legal problem.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "A's top 3 are close to the hospital (0.31, 0.65, 0.09 km) with decent service indices, but the order is not strictly by distance. B places a poor-service property (M10931) at rank 4 above better ones, but its top 3 are good and close. A's order is somewhat better in distance terms, though A also puts the weak M10395 at 7. Roughly even.",
+        "verdict": "tie"
+      },
+      "rationale": "Both lists satisfy the legal minimum with every property. Differences are minor: A has closer properties but very large surfaces (270-369 m²) that may be more than needed for 8 seniors; B has more appropriately sized units (198-272 m²) and several with good greenery and services, but includes one with very poor services. Without a clear advantage, the lists are about equal.",
+      "overall": "tie"
+    }
+  },
+  "PQ-05__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3377,
+      "output": 423
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Ranks 1-8 are identical. A's last two entries are tiny (33 m² and 91 m²) and cannot serve a 120-bed residence, though they are very close to the campus. B's entries 9-10 are large (6,270 m² and 1,502 m²), farther away (about 1.4 km), but plausible for the use and in F/G class.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "The legal minimum is at least 1,140 m². In A, ranks 9 and 10 (33 m², 91 m²) fall below it, so 2 of 10 are inadequate. In B, all 10 meet the minimum: 6,270 and 1,502 m² are both above it.",
+        "verdict": "B"
+      },
+      "ranking_quality": {
+        "reason": "The top 8 are identical in order, so the difference lies only in positions 9-10. B fills them with legally adequate properties, while A fills them with unusable ones.",
+        "verdict": "B"
+      },
+      "rationale": "The lists are identical for ranks 1-8. The only difference is in ranks 9-10: A has two tiny properties (33 m², 91 m²) that fail the legal minimum, while B has two properties that satisfy the surface requirement. B is therefore better.",
+      "overall": "B"
+    }
+  },
+  "PQ-18__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3425,
+      "output": 332
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the same 10 properties; only positions 9 and 10 are swapped. Fit to the request is identical.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "The same properties appear in both lists, and all exceed 1,050 m², so all are legally adequate on surface.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The lists differ only in the last two positions. A ranks M07991 (class D, 1.00 km, mobility 98.10) ninth and M04589 (class F, 1.02 km) tenth. B reverses them. M07991 is slightly better on energy class and distance, so A's order is marginally better, but the difference is negligible.",
+        "verdict": "A"
+      },
+      "rationale": "The lists are identical except for the order of the last two items. A puts the slightly better property (M07991: better energy class, closer, higher mobility) ahead of M04589, so A has a very slight edge in ranking.",
+      "overall": "A"
+    }
+  },
+  "PQ-17__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3456,
+      "output": 365
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "A is closer to Molinette (0.81-1.9 km) but 6 of its 10 items are tiny (32-419 m²) and cannot house 100 students. B is a bit farther (1.8-2.8 km) but every item is a plausible large building, including one hotel-type property that suits a residence.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum is 950 m². In A only 4 of 10 meet it (M12218, M09850, 52669, M09429). In B all 10 exceed 950 m² (1,240 to 11,619 m²).",
+        "verdict": "B"
+      },
+      "ranking_quality": {
+        "reason": "A puts undersized properties at ranks 2 and 3 and ends with five unsuitable ones. B is consistently adequate, ordered by distance, with the closest large buildings at the top.",
+        "verdict": "B"
+      },
+      "rationale": "B returns only legally adequate, large buildings reasonably near Molinette. A has the single nearest adequate property but is filled with units far too small for 100 students. B is more usable.",
+      "overall": "B"
+    }
+  },
+  "PQ-49__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3466,
+      "output": 436
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain exactly the same 10 properties, so they match the request equally well. Only the order differs.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "The sets are identical. Properties M08151 (629 m²) and M09074 (617 m²) are below 665 m² in both lists, and M11534 (758 m²) is adequate. Legal adequacy of the sets is the same.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The first 7 positions are identical. List A places M06966 (1,117 m², A1, adequate) at 8, ahead of the inadequate M09074 (617 m²) at 9 and the adequate 38587 (2,195 m²) at 10. List B places M09074 (inadequate) at 8, then 38587 and M06966 at 9 and 10. In B the inadequate property ranks above two adequate ones, while in A it ranks above only one adequate one. A is slightly better, though both have the inadequate M08151 at 6 ahead of the adequate M11534.",
+        "verdict": "A"
+      },
+      "rationale": "The lists contain the same properties and differ only in the order of the last three. A puts the legally adequate M06966 ahead of the undersized M09074, so A's ranking is marginally better.",
+      "overall": "A"
+    }
+  },
+  "PQ-14__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3368,
+      "output": 354
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain only hotel-type properties near Piazza Castello, so type and place match. B includes tiny properties (304, 173, 133 m²) that are poor fits for 40 students. A has 9 items, all sizeable.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum is 380 m². In A, all but none fall below it except none: the smallest is 556 m², so all 9 pass. In B, three properties (304, 173, 133 m²) fall below the minimum and are legally inadequate.",
+        "verdict": "A"
+      },
+      "ranking_quality": {
+        "reason": "The top 4 are identical. After that, A continues with adequate properties, while B places inadequate small properties at ranks 5, 6 and 9, above or among larger suitable ones.",
+        "verdict": "A"
+      },
+      "rationale": "A shares the same strong top four as B but then lists only legally adequate properties. B pads its list with three properties far below the 380 m² minimum, which hurts fit, legal adequacy and ranking.",
+      "overall": "A"
+    }
+  },
+  "PQ-10__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3416,
+      "output": 361
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain residential units near the university with energy class A or better. A's units are mostly small studios (30-40 m²) at about 0.77 km, and one is class C, which still meets the D minimum. B's units are similar in location and energy class, and their sizes suit a studio for two better.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum is 38 m². In A only one property (40 m²) meets it, and the other nine (30-37 m²) fall below it. In B all ten are 39 m² or larger, so all are legally adequate.",
+        "verdict": "B"
+      },
+      "ranking_quality": {
+        "reason": "A puts illegal units (32, 34, 30 m²) at ranks 1-3 and its only compliant unit at rank 4. B's top positions are all compliant, and it opens with the 40 m² and 44 m² units.",
+        "verdict": "B"
+      },
+      "rationale": "B returns only units that meet the 38 m² minimum for a studio for two, while A is almost entirely below it. B is clearly better on all criteria.",
+      "overall": "B"
+    }
+  },
+  "PQ-04__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3219,
+      "output": 432
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Lists are identical for ranks 1-8. All are offices, within 0.8 km of Porta Nuova. A's 9-10 are duplicate-address Bogino 23 (682 m², class F, 0.79 km). B's rank 9 is Via Arsenale (759 m², 0.52 km, class D) and rank 10 is one Bogino unit. B's extra property is a closer, larger, better-class office and adds diversity.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "All properties exceed the 475 m² minimum; all are legally adequate. Surfaces of about 682-766 m² are within or above the 475-725 range, so no difference.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "Top 8 are identical. B's position 9 (759 m², 0.52 km, class D) is a stronger candidate than A's 9 (682 m², class F, 0.79 km), and B avoids placing two near-duplicate listings of the same building.",
+        "verdict": "B"
+      },
+      "rationale": "The lists share the first eight entries and all items are legally adequate. B replaces a redundant duplicate Bogino listing with a better, closer, larger office on Via Arsenale, giving more variety and slightly better quality.",
+      "overall": "B"
+    }
+  },
+  "PQ-19__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3232,
+      "output": 411
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "The request is for a student residence with no stated location, surface or energy class. Both lists are mostly residential dwellings. A includes a collegio/convent (id 45248) and a hotel, which are closer in type, but they are small. B includes a hotel (556 m²) and residences that are large enough to hold the requested rooms. Overall B is a more plausible fit for the capacity.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "The legal minimum is 440 m². Every property in A is below it (max 412 m²), so none is legally adequate. All 10 in B are at or above 440 m² (440-556 m²), so all meet the lower bound.",
+        "verdict": "B"
+      },
+      "ranking_quality": {
+        "reason": "A's top item is the collegio at 248 m², the smallest and inadequate, and the other items are all inadequate too. B puts large, compliant properties at the top, including the hotel at rank 3, and all items are compliant. B's ranking is acceptable, though the hotel could have been placed higher.",
+        "verdict": "B"
+      },
+      "rationale": "A has no legally adequate property, since all are under 440 m². B has only properties meeting the minimum surface, so B serves the user far better.",
+      "overall": "B"
+    }
+  },
+  "PQ-45__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3436,
+      "output": 564
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain nearly identical residential properties within about 1.1 km of Porta Susa. A has M08026 at 1.10 km as its 9th entry. B replaces it with M06815 at 0.58 km, which is closer to Porta Susa, although it is smaller.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "All of A's properties are 836 m² or larger, which meets the 570-870 m² minimum range. B has the same properties except for M06815 at 706 m². That falls within the range, so it is legally adequate at least for the lower room-mix values. Both lists are legally adequate, and the difference is negligible.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The top 4 are identical in both lists. A places M05055 (850 m², 0.81 km) before M06808 (836 m², 0.78 km), and B reverses them, a trivial difference. B puts M06815, which is close at 0.58 km and mostly adequate, in last place even though it is arguably better than several entries above it. A's last entries are farther away or have poorer energy class. The two are about equal, with a slight edge to B for including the closer property, though B ranks it poorly.",
+        "verdict": "tie"
+      },
+      "rationale": "The lists overlap in 9 of 10 items. The only substantive difference is A's M08026 (1.10 km, energy class F, 843 m²) versus B's M06815 (0.58 km, energy class F, 706 m²). Both are legally adequate, since 706 m² is above the 570 m² minimum, though it may be tight for some room mixes. B's property is closer to Porta Susa, so B is slightly better.",
+      "overall": "B"
+    }
+  },
+  "PQ-32__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3476,
+      "output": 364
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain only hotel-type buildings near Porta Nuova. A's properties are all large enough for a 30-guest hostel and nearly all lie within 1.6 km. B puts four tiny units (62-304 m²) at the top, which cannot hold 30 guests in dormitories, though the rest of B overlaps with A.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "The regulatory minimum is about 333-420 m². All of A's properties (556 m² and up) meet it. B has 4 of 10 below the threshold (133, 173, 304, 62 m²), so they are legally unsuitable.",
+        "verdict": "A"
+      },
+      "ranking_quality": {
+        "reason": "A ranks large, close, adequate properties first. B ranks the four undersized units at the top, so the least suitable properties come first.",
+        "verdict": "A"
+      },
+      "rationale": "A consists entirely of properties that are large enough and near the station. B's top four are too small for 30 guests under the regulatory minimum, which undermines both its fit and its ranking.",
+      "overall": "A"
+    }
+  },
+  "PQ-49__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3466,
+      "output": 485
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the same 10 properties, all residential and all within about 1.8 km of the Politecnico. Energy class C or better is met by all of them. Request fit is identical.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "The same set of properties appears in both lists. Three of them fall below the 665 m² minimum: M08151 (629), M11534 (758, which is adequate) and M09074 (617). So only M08151 and M09074 are inadequate, and both lists include them. The sets are identical.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "Ranks 1-6 are identical in both lists. In A, the adequate M11534 (758) is at rank 7, then the inadequate M09074 (617) at 8, then the adequate 38587 (2195) and M06966 (1117) at 9 and 10. In B, the adequate M11534 is at 7 and M06966 at 8, then the inadequate M09074 at 9, then 38587 at 10. B pushes the inadequate property lower and places more legally adequate ones ahead of it, so B's ranking is better.",
+        "verdict": "B"
+      },
+      "rationale": "The lists contain identical properties, so request fit and legal adequacy are tied. The only difference is order. B ranks the legally inadequate M09074 (617 m²) below the adequate M06966, while A puts it above two adequate properties. B is slightly better.",
+      "overall": "B"
+    }
+  },
+  "PQ-12__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3411,
+      "output": 349
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the same 10 properties, all residential, 128-196 m², within about 0.7 km of the Politecnico. Fit is identical.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "The sets are identical and all properties exceed the 95 m² minimum. The legal upper bound of 175 m² is a soft limit and the request allows up to 200 m². Both lists are equally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The orders differ only at positions 3 and 4. B puts 46108 (181 m², class C) ahead of 46109 (196 m², class D). 46108 has the better energy class and a surface closer to the 175 m² legal upper bound, so B's order is marginally better. The difference is small.",
+        "verdict": "B"
+      },
+      "rationale": "The lists hold identical properties and differ only by swapping positions 3 and 4. B's order is slightly better because it ranks the better-energy-class, closer-to-range property first.",
+      "overall": "B"
+    }
+  },
+  "PQ-18__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3425,
+      "output": 319
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the same 10 properties, so they match the request equally well. Only positions 9 and 10 are swapped.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "The sets are identical and every property exceeds the 750-1,050 m² minimum, so the lists are equally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The orders are identical for positions 1-8. At 9 and 10, A puts M04589 (class F, 1.02 km) before M07991 (class D, 1.00 km). B reverses them, which is slightly better because M07991 has a better energy class, is slightly closer, and has a higher mobility index. The difference is small.",
+        "verdict": "B"
+      },
+      "rationale": "The lists differ only in the order of the last two items. B ranks M07991 above M04589, which is marginally better. The effect is negligible, but B has a slight edge.",
+      "overall": "B"
+    }
+  },
+  "PQ-09__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3426,
+      "output": 361
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the same 10 residential properties, all 117-122 m² and within about 0.13-0.29 km of Crocetta. They match the request equally well.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "Every property in both lists is far above the 76-95 m² minimum, so both are legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The lists differ only in the order of the top three. A puts 50877 first (energy class A1, 0.19 km, the best energy class and among the closest), then 46353 (class F) and 50533 (class D). B puts 46353 (class F) first, then 50533, with 50877 third. A's order is slightly better on energy and distance, though no energy class was requested, so the difference is small. The remaining positions are identical.",
+        "verdict": "A"
+      },
+      "rationale": "The two lists contain identical properties that all satisfy the request and the legal minimum. Only the order of the top three differs. A leads with the A1, closest property, which is a mildly better ordering.",
+      "overall": "A"
+    }
+  },
+  "PQ-14__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3368,
+      "output": 368
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists are hotels near Piazza Castello. A includes small hotels (304, 173, 133 m²) that don't fit a 40-student residence. B has 9 items, all hotels, with larger surfaces; item 9 is 1.81 km away, which is a bit far but still plausible.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "Minimum is 380 m². A has 3 properties below it (304, 173, 133), so 3 of 10 are inadequate. B has all 9 above 380 m², so all are adequate.",
+        "verdict": "B"
+      },
+      "ranking_quality": {
+        "reason": "Both start with the same four adequate properties. A then puts three undersized properties at ranks 5, 6 and 9, ahead of or among adequate large ones. B keeps all adequate ones in the top ranks with no inadequate ones.",
+        "verdict": "B"
+      },
+      "rationale": "B shares A's strong top 4 but avoids the legally inadequate small hotels and adds other suitable large hotels. A wastes slots on unsuitable properties.",
+      "overall": "B"
+    }
+  },
+  "PQ-50__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3347,
+      "output": 478
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "The request is for a property between Porta Nuova and Porta Susa for co-housing, which implies residential use. A has 8 residential properties and 2 commercial ones at Porta Nuova station, and its distances are 0.02-0.52 km. B has 7 residential, 2 office and 1 industrial property. Its distances are 0.27-0.52 km, and its surfaces of about 280 m² are far larger than needed. A is slightly better on residential share and proximity.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum is 116-145 m². Every property in both lists is at least 200 m², so all of them pass the surface requirement. Both lists also include some non-residential properties, which is a use concern rather than a surface one. Overall the difference is negligible.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "A puts 5 residential properties first, then 2 commercial ones at ranks 6-7, then residential again. This is mostly good. B puts offices at ranks 2-3 and an industrial property at rank 8, which interrupts the residential ones. A's ordering is better.",
+        "verdict": "A"
+      },
+      "rationale": "Both lists are legally adequate because every property is well above 145 m². A has more residential properties, is closer to the stations, and has fewer unsuitable types near the top. B includes offices and an industrial property and is oversized. A is better overall.",
+      "overall": "A"
+    }
+  },
+  "PQ-04__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3219,
+      "output": 402
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Lists share the first 8 items. A's 9th is 44783 (759 m², 0.52 km, class D) and 10th is 44343 (682 m², 0.79 km). B's 9th and 10th are 44343 and 44342, both 682 m², 0.79 km, class F. All are offices. A's 9th is closer and has a better energy class than B's two, so A fits slightly better.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "All properties exceed the 475 m² minimum and fall within or above the 475–725 range, so all are legally adequate. No difference.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The top 8 are identical. A's positions 9-10 are a closer, better-rated property and then a farther one. B's positions 9-10 are two farther, class F listings, apparently duplicates at the same address. A is slightly better.",
+        "verdict": "A"
+      },
+      "rationale": "Both lists are legally adequate and identical in the first eight. A's extra item 44783 is closer (0.52 km) with a better energy class than B's duplicate Bogino listing, which adds little diversity. A is slightly better.",
+      "overall": "A"
+    }
+  },
+  "PQ-41__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3572,
+      "output": 372
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists share most properties and have similar profiles (F/G class, near Politecnico). B includes two extra small commercial properties (437 and 471 m²) that are poor fits. A has M06868 and M08141, large residential buildings that fit the request better.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "The legal minimum is at least 562 m². All of A's properties are 580 m² or larger, so all are adequate. B includes M07962 (437 m²) and M08110 (471 m²), both below the minimum and so inadequate.",
+        "verdict": "A"
+      },
+      "ranking_quality": {
+        "reason": "Both lists open with the same four adequate residential properties. B then places an inadequate 437 m² property at rank 5 and another inadequate one at rank 8, above adequate properties. A keeps all adequate properties and ranks them sensibly.",
+        "verdict": "A"
+      },
+      "rationale": "A contains only legally adequate properties. B includes two undersized commercial properties, one of them ranked fifth, which makes B clearly worse for a 45-bed student residence.",
+      "overall": "A"
+    }
+  }
+}

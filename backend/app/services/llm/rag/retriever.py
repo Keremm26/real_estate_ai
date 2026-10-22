@@ -32,14 +32,16 @@ _EMPTY = ("No regulatory documents available.", [])
 # Metadata keys surfaced in the per-hit trace (kept small: the trace is stored
 # in the run's gemini_responses / agent_trace, not the chunk text itself).
 _TRACE_KEYS = ("doc_name", "article_ref", "jurisdiction_level", "use_case", "doc_type", "source_url",
-               "status", "effective_date")
+               "status", "effective_date", "scope_area", "cited_by")
 
 
 def _cascade_where(country: str, use_case: str, *, quantitative_only: bool = False,
-                   include_superseded: bool = False) -> Dict[str, Any]:
+                   include_superseded: bool = False, area: Optional[str] = None) -> Dict[str, Any]:
     """Jurisdiction cascade filter: this country, plus general baselines, and
     (unless ``include_superseded``) only rules currently in force.
-    ``quantitative_only`` narrows to chunks carrying a numeric threshold."""
+    ``quantitative_only`` narrows to chunks carrying a numeric threshold.
+    ``area`` = where the router placed the request: documents scoped to an area
+    are kept only for that area ("" = in none of them); None = no area filter."""
     use_cases = list(dict.fromkeys([use_case, "general"]))  # dedupe, keep order
     clauses: List[Dict[str, Any]] = [
         {"country": country},
@@ -49,6 +51,8 @@ def _cascade_where(country: str, use_case: str, *, quantitative_only: bool = Fal
         clauses.append({"status": "in_force"})
     if quantitative_only:
         clauses.append({"has_quantitative": True})
+    if area is not None:
+        clauses.append({"scope_area": {"$in": ["all", area]}} if area else {"scope_area": "all"})
     return {"$and": clauses}
 
 
@@ -62,6 +66,8 @@ def search(
     frame: bool = False,
     quantitative_only: bool = False,
     include_superseded: bool = False,
+    area: Optional[str] = None,
+    follow_citations: Optional[bool] = None,
 ) -> List[Dict[str, Any]]:
     """Structured retrieval: return ranked hits (metadata + text), not formatted text.
 
@@ -74,6 +80,8 @@ def search(
     config.QUERY_FRAMING / QUANT_ONLY); they only affect ``rag`` mode — ``dump``
     stays the pure "everything in scope" baseline. ``include_superseded`` lets
     repealed documents compete (evaluation only; never set in production).
+    ``follow_citations`` (default config.FOLLOW_CITATIONS) appends the chunks
+    the top-k cite, each with ``cited_by`` (see citations.py).
     """
     mode = (mode or config.RETRIEVAL_MODE).lower()
     if mode not in config.RETRIEVAL_MODES:
@@ -87,21 +95,26 @@ def search(
 
     if mode == "dump":
         # baseline: every in-scope chunk, no ranking
-        res = col.get(where=_cascade_where(country, use_case, include_superseded=include_superseded))
+        res = col.get(where=_cascade_where(country, use_case, include_superseded=include_superseded, area=area))
         docs = res.get("documents") or []
         metas = res.get("metadatas") or []
         return [{**md, "text": doc, "distance": None} for doc, md in zip(docs, metas)]
 
     # rag: semantic top-k within the cascade scope
     where = _cascade_where(country, use_case, quantitative_only=quantitative_only,
-                           include_superseded=include_superseded)
+                           include_superseded=include_superseded, area=area)
     embed_text = f"{query}\n{config.QUERY_FRAMING_TEXT}" if frame else query
     qvec = embed_query(embed_text)
     res = col.query(query_embeddings=[qvec], n_results=top_k, where=where)
     docs = (res.get("documents") or [[]])[0]
     metas = (res.get("metadatas") or [[]])[0]
     dists = (res.get("distances") or [[]])[0] or [None] * len(docs)
-    return [{**md, "text": doc, "distance": dist} for doc, md, dist in zip(docs, metas, dists)]
+    hits = [{**md, "text": doc, "distance": dist} for doc, md, dist in zip(docs, metas, dists)]
+    if config.FOLLOW_CITATIONS if follow_citations is None else follow_citations:
+        from app.services.llm.rag.citations import follow
+        hits += follow(hits, query_embedding=qvec, country=country, limit=config.CITATION_MAX,
+                       where=_cascade_where(country, use_case, include_superseded=include_superseded, area=area))
+    return hits
 
 
 def _validity(hit: Dict[str, Any]) -> str:
@@ -120,7 +133,10 @@ def _format(hits: List[Dict[str, Any]]) -> Tuple[str, List[str]]:
     for hit in hits:
         doc = hit.get("doc_name", "?")
         art = hit.get("article_ref", "")
-        tags = "; ".join(t for t in (hit.get("jurisdiction_level", ""), _validity(hit)) if t)
+        scope = hit.get("scope_area")
+        where = f"applies only in {scope}" if scope and scope != "all" else ""
+        cited = f"cited by {hit['cited_by']}" if hit.get("cited_by") else ""
+        tags = "; ".join(t for t in (hit.get("jurisdiction_level", ""), where, _validity(hit), cited) if t)
         blocks.append(f"--- {doc} {art} ({tags}) ---\n{hit.get('text', '')}\n")
         sources.append(f"{doc} {art} ({hit.get('source_url', '')})")
     return "\n".join(blocks), sources
@@ -154,6 +170,7 @@ def retrieve_with_trace(
     mode: Optional[str] = None,
     frame: bool = False,
     quantitative_only: bool = False,
+    area: Optional[str] = None,
 ) -> Tuple[str, List[str], Dict[str, Any]]:
     """``retrieve()`` plus a JSON-serialisable trace of what was retrieved.
 
@@ -167,15 +184,18 @@ def retrieve_with_trace(
     """
     mode = (mode or config.RETRIEVAL_MODE).lower()
     hits = search(query, country=country, use_case=use_case, top_k=top_k, mode=mode,
-                  frame=frame, quantitative_only=quantitative_only)
+                  frame=frame, quantitative_only=quantitative_only, area=area)
     docs_str, sources = _format(hits) if hits else _EMPTY
     trace = {
         "mode": mode,
         "country": country,
         "use_case": use_case,
+        "area": area,
         "top_k": top_k if mode == "rag" else None,
         "framed": bool(frame) if mode == "rag" else False,
         "quantitative_only": bool(quantitative_only) if mode == "rag" else False,
+        "follow_citations": config.FOLLOW_CITATIONS if mode == "rag" else False,
+        "n_cited": sum(1 for h in hits if h.get("cited_by")),
         "n_chunks": len(hits),
         "context_chars": len(docs_str) if hits else 0,
         "hits": [

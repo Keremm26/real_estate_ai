@@ -108,7 +108,8 @@ def _breakdown(records: List[Dict[str, Any]], field: str) -> Dict[str, Dict[str,
 
 
 def _summary_md(aggs: Dict[str, Dict[str, Any]], breakdowns: Dict[str, Dict[str, Any]],
-                meta: Dict[str, Any], n_items: int, langs: List[str], repeats: int, routing: str) -> str:
+                meta: Dict[str, Any], n_items: int, langs: List[str], repeats: int, routing: str,
+                queries_file: str = QUERIES_PATH.name) -> str:
     arms = list(aggs)
     head = "| metric | " + " | ".join(arms) + " |"
     sep = "|---|" + "---|" * len(arms)
@@ -136,7 +137,7 @@ def _summary_md(aggs: Dict[str, Dict[str, Any]], breakdowns: Dict[str, Dict[str,
         "",
         "Notes: *none* is the pre-RAG production state (no documents reach the agent): any requirement it",
         "emits comes from model priors, so its grounding is structurally 0. Items and ranges are defined in",
-        "`downstream_queries_turin.json` (author-constructed; see its meta.caveats).",
+        f"`{queries_file}` (author-constructed; see its meta.caveats).",
         "",
     ]
     return "\n".join(lines)
@@ -262,8 +263,79 @@ def run(arms: List[str], repeats: int, json_out: Optional[str], queries_path: Pa
             "aggregate": aggs, "breakdowns": breakdowns, "retrieval_ablation": ablation, "runs": records,
         }, indent=2, ensure_ascii=False), encoding="utf-8")
         summary = out.with_name(out.stem + "_summary.md")
-        summary.write_text(_summary_md(aggs, breakdowns, meta, len(queries), langs, repeats, routing), encoding="utf-8")
+        summary.write_text(_summary_md(aggs, breakdowns, meta, len(queries), langs, repeats, routing,
+                                       Path(queries_path).name), encoding="utf-8")
         print(f"\nWrote {out}\nWrote {summary}")
+    return 0
+
+
+def rescore(results_path: Path, queries_path: Path) -> int:
+    """Re-apply the query file's current expectations and the current scoring
+    rules to a saved results JSON (no LLM calls): the answers and retrieval stay
+    as they were; the main requirement is re-chosen from the stored answer and
+    every field that depends on it or on the expectation is recomputed. The runs
+    keep the retrieved chunks as '<doc_name[:28]> <article_ref>', so
+    source_in_context (and the grounding of a changed main requirement) is
+    recomputed only where that maps back to one document (and the item's sources
+    need no chunk text); otherwise the stored value is kept."""
+    from app.core.constants import REGULATORY_AGENT_COLUMNS
+    data = json.loads(results_path.read_text(encoding="utf-8"))
+    gold = json.loads(Path(queries_path).read_text(encoding="utf-8"))
+    by_id = {q["id"]: q for q in gold["queries"]}
+    key2name = _doc_key_to_name()
+    by_prefix: Dict[str, List[str]] = defaultdict(list)
+    for name in set(key2name.values()):
+        by_prefix[name[:28]].append(name)
+
+    def hits_of(rec: Dict[str, Any]) -> Optional[List[Dict[str, Any]]]:
+        hits = []
+        for s in rec.get("retrieved") or []:
+            pre = next((p for p in by_prefix if s == p or s.startswith(p + " ")), None)
+            if pre is None or len(by_prefix[pre]) != 1:
+                return None
+            hits.append({"doc_name": by_prefix[pre][0], "article_ref": s[len(pre) + 1:]})
+        return hits
+
+    for rec in data["runs"]:
+        q = by_id[rec["id"]]
+        e = q["expect"]
+        hits = hits_of(rec)
+        found, reqs = rs.parse_output(rec.get("raw_text") or "")
+        main = rs.main_requirement(reqs, REGULATORY_AGENT_COLUMNS, e.get("target_column"))
+        regulation = (main.get("regulation") if main else None) or None
+        if regulation != rec.get("main_regulation") or (rs.to_float(main.get("value")) if main else None) != rec.get("main_value"):
+            rec["activated"] = bool(found and main is not None)
+            rec["main_value"] = rs.to_float(main.get("value")) if main else None
+            rec["main_target"] = main.get("target_column") if main else None
+            rec["main_operator"] = main.get("operator") if main else None
+            rec["main_regulation"] = regulation
+            rec["target_ok"] = (main.get("target_column") == e.get("target_column")) if (main and e.get("target_column")) else None
+            rec["operator_ok"] = (str(main.get("operator", "")).strip() == e.get("operator")) if (main and e.get("operator")) else None
+            rec["echo"] = rs.is_echo(rec["main_value"], q.get("user_values") or [])
+            if hits is not None:
+                rec["main_doc_grounded"] = rs.doc_grounded(regulation or "", hits) if rec["activated"] else None
+            prec = q.get("precedence")
+            rec["winner_cited"] = (rs.winner_cited(regulation, prec, key2name) if rec["activated"]
+                                   else (None if not prec else False))
+        rec["expect_activate"] = e.get("activate")
+        rec["tier"] = q.get("tier")
+        rec["value_in_range"], rec["activation_ok"] = rs.outcome(
+            e, rec["activated"], rec["main_value"], rec["main_doc_grounded"])
+        if hits is not None and not any(s.get("anchor") for s in q.get("sources") or []):
+            rec["source_in_context"] = rs.source_in_context(q.get("sources") or [], hits, key2name)
+
+    m = data["meta"]
+    arms, langs, repeats, routing = m["arms"], m["langs"], m["repeats"], m["routing"]
+    records = data["runs"]
+    data["aggregate"] = {arm: _aggregate([r for r in records if r["arm"] == arm], repeats) for arm in arms}
+    data["breakdowns"] = {arm: {f: _breakdown([r for r in records if r["arm"] == arm], f) for f in ("lang", "type", "tier")}
+                          for arm in arms}
+    m["rescored"] = f"{time.strftime('%Y-%m-%d %H:%M')} against {Path(queries_path).name}"
+    results_path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    summary = results_path.with_name(results_path.stem + "_summary.md")
+    summary.write_text(_summary_md(data["aggregate"], data["breakdowns"], gold["meta"], m["n_items"], langs,
+                                   repeats, routing, Path(queries_path).name), encoding="utf-8")
+    print(f"Rescored {results_path} against {Path(queries_path).name}\nWrote {summary}")
     return 0
 
 
@@ -280,7 +352,11 @@ def main(argv=None) -> int:
     p.add_argument("--model", default=None, help="agent model, e.g. gemma-4 (default: settings.AGENT_LLM_MODEL)")
     p.add_argument("--dry-run", action="store_true", help="retrieval only, no LLM calls")
     p.add_argument("--ablate", action="store_true", help="also run the retrieval-config ablation (embedding only)")
+    p.add_argument("--rescore", default=None, metavar="RESULTS_JSON",
+                   help="re-apply the --queries expectations to a saved results JSON (no LLM calls) and rewrite it")
     args = p.parse_args(argv)
+    if args.rescore:
+        return rescore(Path(args.rescore), Path(args.queries))
     if args.model:                              # agents + use-case router run on this model
         settings.set_llm_model(args.model)
     arms = [a.strip().lower() for a in args.arms.split(",") if a.strip()]

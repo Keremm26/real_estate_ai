@@ -79,6 +79,11 @@ class ChunkMetadata(BaseModel):
     repealed_date: Optional[str] = None
     superseded_by: Optional[str] = None
 
+    # --- geographic scope (filtered on when the router places the request) ---
+    # "all" = applies everywhere the country slice applies; otherwise the area
+    # (e.g. a London borough) the document is limited to.
+    scope_area: str = "all"
+
     # --- signals ---
     has_quantitative: bool = False                 # contains numeric thresholds
 
@@ -103,6 +108,7 @@ class ChunkMetadata(BaseModel):
             "source_url": self.source_url,
             "lang": self.lang,
             "status": self.status,
+            "scope_area": self.scope_area,
             "has_quantitative": self.has_quantitative,
         }
         if self.city:

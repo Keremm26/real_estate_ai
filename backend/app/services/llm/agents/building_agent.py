@@ -17,7 +17,9 @@ from app.utils.decorators import handle_agent_error, log_llm_usage
 from app.utils.json_parser import safe_extract_json
 from app.utils.scoring import (
     CONTINUOUS_OPERATORS,
+    calculate_closeness_score,
     calculate_continuous_score,
+    calculate_pass_fail_score,
     calculate_discrete_score,
     calculate_equality_score,
     calculate_range_score,
@@ -174,7 +176,13 @@ class BuildingAgent(BaseAgent):
                 numeric_col = is_numeric_column(df_ranked[col])
                 T = to_number(target_val)
 
-                if numeric_col and op == "BETWEEN":
+                if numeric_col and req.get("closeness") and T is not None:
+                    # a size guessed from a capacity is a target: closest scores best
+                    req_score = calculate_closeness_score(series, T)
+                elif numeric_col and req.get("pass_fail") and op in CONTINUOUS_OPERATORS and T is not None:
+                    # a size the user stated is met or not: no extra credit for being bigger
+                    req_score = calculate_pass_fail_score(series, T, op)
+                elif numeric_col and op == "BETWEEN":
                     low, high = to_range(target_val)
                     req_score = calculate_range_score(df_ranked[col], low, high)
                 elif numeric_col and op in CONTINUOUS_OPERATORS:

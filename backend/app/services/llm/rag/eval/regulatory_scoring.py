@@ -49,12 +49,18 @@ def usable(req: Dict[str, Any], allowed: List[str]) -> bool:
 
 def main_requirement(reqs: List[Dict[str, Any]], allowed: List[str],
                      expected_col: Optional[str]) -> Optional[Dict[str, Any]]:
-    """The requirement that would drive the ranking: first usable one on the
-    expected column, else the first usable one at all."""
+    """The requirement that drives the result. Every minimum on the expected
+    column applies at once (each becomes an SQL floor), so the largest one
+    binds; otherwise the first usable one on that column, else the first usable
+    one at all."""
     candidates = [r for r in reqs if usable(r, allowed)]
-    for r in candidates:
-        if expected_col and r.get("target_column") == expected_col:
-            return r
+    on_col = [r for r in candidates if expected_col and r.get("target_column") == expected_col]
+    mins = [r for r in on_col
+            if str(r.get("operator", "")).strip() in (">=", ">") and to_float(r.get("value")) is not None]
+    if mins:
+        return max(mins, key=lambda r: to_float(r.get("value")))
+    if on_col:
+        return on_col[0]
     return candidates[0] if candidates else None
 
 
@@ -158,6 +164,23 @@ def winner_cited(regulation: Optional[str], precedence: Optional[Dict[str, Any]]
 # --------------------------------------------------------------------------
 # one output -> one scored record
 # --------------------------------------------------------------------------
+def outcome(expect: Dict[str, Any], activated: bool, value: Optional[float],
+            main_grounded: Optional[bool]) -> Tuple[Optional[bool], bool]:
+    """(value_in_range, activation_ok) of an answer under an expectation: the
+    only parts of a scored record that depend on the expectation."""
+    lo, hi, act = expect.get("value_min"), expect.get("value_max"), expect.get("activate")
+    in_range = None
+    if lo is not None and hi is not None and (act is True or (act == "either" and activated)):
+        in_range = value is not None and lo <= value <= hi
+    if act is True:
+        activation_ok = activated
+    elif act is False:
+        activation_ok = not activated
+    else:  # 'either': declining is fine; activating is fine only if grounded and in range
+        activation_ok = (not activated) or bool(main_grounded and in_range is not False)
+    return in_range, activation_ok
+
+
 def score_output(
     expect: Dict[str, Any],
     raw_text: str,
@@ -189,15 +212,9 @@ def score_output(
     value = to_float(main.get("value")) if main else None
     regulation = (main.get("regulation") if main else None) or None
 
-    lo, hi = expect.get("value_min"), expect.get("value_max")
-    in_range = None
-    if lo is not None and hi is not None and expect.get("activate") is True:
-        in_range = (value is not None) and (lo <= value <= hi)
-    elif lo is not None and hi is not None and expect.get("activate") == "either" and activated:
-        in_range = value is not None and lo <= value <= hi
-
     expect_act = expect.get("activate")
     main_grounded = doc_grounded(regulation or "", hits) if activated else None
+    in_range, activation_ok = outcome(expect, activated, value, main_grounded)
 
     per_req = []
     for r in reqs:
@@ -210,13 +227,6 @@ def score_output(
             "doc_grounded": doc_grounded(str(r.get("regulation") or ""), hits),
             "value_grounded": vg_any, "value_grounded_frac": vg_frac,
         })
-
-    if expect_act is True:
-        activation_ok = activated
-    elif expect_act is False:
-        activation_ok = not activated
-    else:  # 'either': declining is fine; activating is fine only if grounded and in range
-        activation_ok = (not activated) or bool(main_grounded and in_range is not False)
 
     routed = (routing or {}).get("use_case") if routing else None
     return {

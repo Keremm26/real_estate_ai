@@ -153,6 +153,8 @@ def city_range(family, cap):
         if rooms:
             return prog(rooms), 1.25 * prog(rooms)
         n = cap.get("beds") or n
+        if not n:                                            # no capacity: the 7.3.4.1 minimum, whatever the occupancy
+            return 40, 1.25 * 40
         return prog(math.ceil(n / 2)), 1.25 * prog(n)
     if family == "es_res_compartida":                       # 7.3.11.3: 20 s + 25 d + 20
         su, du = cap.get("single_units"), cap.get("double_units")

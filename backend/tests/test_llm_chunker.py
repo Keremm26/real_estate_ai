@@ -142,6 +142,28 @@ def test_local_runs():
     assert lc._capturing_depth(r"^([a-z(])\)") == 1                                  # '(' inside a class
 
 
+def _top(pattern, raw):
+    ms = list(re.compile(pattern, re.M).finditer(raw))
+    return [lc._mref(m) for m in lc._drop_nested_lists(ms)]
+
+
+def test_top_level_nested_lists():
+    def seq(*ns):
+        return "\n".join(f"{n}. text" for n in ns)
+    # Madrid FAQ: the numbered points of answer 20 are not questions 1-4
+    assert _top(r"^(\d+)\.\s", seq(19, 20, 1, 2, 3, 4, 21, 22)) == ["19", "20", "21", "22"]
+    assert _top(r"^(\d+)\.\s", seq(7, 1, 2, 9)) == ["7", "9"]                       # one repealed number
+    # left as they were: numbering restarted per Titolo, an index before the
+    # bodies, a list in the last unit, a list reaching the unit's own number
+    assert _top(r"^(\d+)\.\s", seq(1, 2, 3, 1, 2, 3, 4)) == ["1", "2", "3", "1", "2", "3", "4"]
+    assert _top(r"^(\d+)\.\s", seq(1, 2, 3, 1, 2, 3)) == ["1", "2", "3", "1", "2", "3"]
+    assert _top(r"^(\d+)\.\s", seq(5, 6, 1, 2)) == ["5", "6", "1", "2"]
+    assert _top(r"^(\d+)\.\s", seq(2, 1, 2, 3)) == ["2", "1", "2", "3"]
+    # identifiers that are not plain numbers carry no such sequence
+    arts = "\n".join(f"Art. {n} t" for n in (20, 1, 21))
+    assert _top(r"^(Art\.\s\d+)", arts) == ["Art. 20", "Art. 1", "Art. 21"]
+
+
 def test_index_fitted_regex_is_retried_from_the_body():
     """A root regex that matches only the index leaves every body in one piece;
     the retry is sampled from that piece and the better answer wins."""
@@ -165,6 +187,90 @@ def test_index_fitted_regex_is_retried_from_the_body():
     assert samples[1][0].startswith("Art. 4")                      # retry sampled from the swallowing piece
     assert [c.article_ref for c in chunks] == ["Art. 1", "Art. 2", "Art. 3", "Art. 4"]
     assert all(len(c.text) > 300 for c in chunks)                 # index line merged with its body
+
+
+def test_too_narrow_identifier_is_retried_with_the_missed_headers():
+    """A root regex whose identifier pattern is narrower than the document's
+    (two letters required, so 'Policy D1' / 'Policy H15' are body text of the
+    previous policy) is flagged by the headers it leaves unmatched; the retry
+    shows those lines and the general answer wins."""
+    ids = ["SD1", "SD2", "D1", "D2", "D3", "H15", "HC1"]
+    doc = "THE PLAN\n" + "\n".join(f"Policy {i} Title of {i}\n{_FILLER}" for i in ids)
+    answers = [{"marker_regex": r"^(Policy [A-Z]{2}\d+)", "unit_name": "policy"},          # misses D1..H15
+               {"marker_regex": r"^(Policy [A-Z]{1,2}\d+)", "unit_name": "policy"}]
+    samples = []
+
+    def fake(sample, *, parent=None, parent_ref="", feedback=""):
+        samples.append((sample, feedback))
+        return dict(answers[min(len(samples) - 1, 1)])
+
+    orig = (lc.detect_structure, config.CHUNK_TARGET_CHARS)
+    lc.detect_structure, config.CHUNK_TARGET_CHARS = fake, 0
+    try:
+        chunks = lc.chunk_document_llm(doc)
+    finally:
+        lc.detect_structure, config.CHUNK_TARGET_CHARS = orig
+    assert "narrower" in samples[1][1]                                  # feedback names the problem
+    assert "Policy H15 Title of H15" in samples[1][0]                   # and quotes the missed headers
+    assert [c.article_ref for c in chunks] == [f"Policy {i}" for i in ids]
+    # a regex that already covers every identifier is not flagged
+    assert lc._missed_headers(doc, re.compile(r"^(Policy [A-Z]{1,2}\d+)", re.M)) == []
+
+
+def test_regex_that_misses_its_own_examples_is_retried():
+    """The model's example headers are checked against its regex: an extra
+    required prefix (the GPDO case: '^\\[?F\\d*Class' vs 'Class A') matches only
+    the amended classes, so the answer is retried and the general one wins."""
+    classes = ["A", "AA", "B", "C", "D"]
+    doc = "SCHEDULE 2\n" + "\n".join(
+        (f"F1Class {c} – change of use {c}" if c in ("C", "D") else f"Class {c} – change of use {c}") + f"\n{_FILLER}"
+        for c in classes)
+    examples = ["Class A – change of use A", "Class AA – change of use AA"]
+    answers = [{"marker_regex": r"^\[?F\d*Class\s+([A-Z]{1,2})", "unit_name": "class", "example_headers": examples},
+               {"marker_regex": r"^\[?(?:F\d*)?Class\s+([A-Z]{1,2})", "unit_name": "class", "example_headers": examples}]
+    samples = []
+
+    def fake(sample, *, parent=None, parent_ref="", feedback=""):
+        samples.append((sample, feedback))
+        return dict(answers[min(len(samples) - 1, 1)])
+
+    orig = (lc.detect_structure, config.CHUNK_TARGET_CHARS)
+    lc.detect_structure, config.CHUNK_TARGET_CHARS = fake, 0
+    try:
+        chunks = lc.chunk_document_llm(doc)
+    finally:
+        lc.detect_structure, config.CHUNK_TARGET_CHARS = orig
+    assert "example headers you gave yourself" in samples[1][1]
+    assert len(chunks) == len(classes)                                  # every class is its own chunk
+    assert lc._unmatched_examples({"example_headers": ["1", "A "]}, re.compile(r"^(\d+|[A-Z])\s", re.M)) == ()
+
+
+def test_identifiers_cut_mid_token_never_win():
+    """A retry whose capture group is one character long ('Articolo\\s+[\\dA-Z]')
+    finds the lettered articles the first answer skipped but turns 'Articolo 77'
+    into '7', merging 7 and 70-79: it is rejected, and the first answer stays."""
+    ids = ["1", "2", "7", "10", "11", "12", "70", "77", "A", "B", "C"]
+    doc = "REGOLAMENTO\n" + "\n".join(f"Articolo {i} - Titolo {i}\n{_FILLER}" for i in ids)
+    answers = [{"marker_regex": r"^(Articolo \d+)", "unit_name": "articolo"},                # skips A, B, C
+               {"marker_regex": r"^(Articolo\s+[\dA-Z])", "unit_name": "articolo"}]          # cuts 10, 77, ...
+    samples = []
+
+    def fake(sample, *, parent=None, parent_ref="", feedback=""):
+        samples.append((sample, feedback))
+        return dict(answers[min(len(samples) - 1, 1)])
+
+    orig = (lc.detect_structure, config.CHUNK_TARGET_CHARS)
+    lc.detect_structure, config.CHUNK_TARGET_CHARS = fake, 0
+    try:
+        chunks = lc.chunk_document_llm(doc)
+    finally:
+        lc.detect_structure, config.CHUNK_TARGET_CHARS = orig
+    refs = [c.article_ref for c in chunks]
+    assert "Art. 77" in refs and "Art. 10" in refs                    # the first answer was kept
+    assert len(refs) == len(set(refs))
+    cut = lc._cut_identifiers(doc, re.compile(answers[1]["marker_regex"], re.M))
+    assert len(cut) == 5 and cut[0].startswith("Articolo 1")           # 10, 11, 12, 70, 77 cut
+    assert lc._cut_identifiers(doc, re.compile(r"^(Articolo\s+(?:\d+|[A-Z]))", re.M)) == []
 
 
 def test_kept_preamble_is_not_split_into_colliding_refs():

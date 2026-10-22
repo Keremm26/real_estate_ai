@@ -286,7 +286,8 @@ def _normalise_llm_ref(raw: str, index: int) -> str:
 # line start") and in PDF text page numbers, dates and table rows satisfy it
 # too; nothing lexical separates "4 Nelle rappresentazioni" (a comma) from
 # "27 fogli, a colori;" (a row) — the run does. Top-level numbering is global
-# and may have gaps (repealed articles, "Class AA"), so it is not filtered.
+# and may have gaps (repealed articles, "Class AA"), so it is not filtered —
+# except a numbered list it resumes after (_drop_nested_lists).
 _ORDINALS = {"bis": 1, "ter": 2, "quater": 3, "quinquies": 4, "sexies": 5,
              "septies": 6, "octies": 7, "novies": 8, "decies": 9}
 _ROMAN_MULTI = re.compile(r"^[ivxl]{2,}$", re.IGNORECASE)
@@ -384,6 +385,38 @@ def _local_runs(matches: List["re.Match"], text_len: int) -> List["re.Match"]:
     return [matches[i] for i in keep]
 
 
+def _number(m: "re.Match") -> Optional[int]:
+    ref = _mref(m).strip().rstrip(".)")
+    return int(ref) if ref.isdigit() else None
+
+
+def _drop_nested_lists(matches: List["re.Match"]) -> List["re.Match"]:
+    """Top level: a numbered list inside a unit ('20.' … '1.', '2.', '3.',
+    '4.' … '21.') matches the same loose regex as the units, and merge-by-ref
+    would fold its items into units 1-4. It shows in the sequence: the numbers
+    drop below the current unit's, stay below it, and the units' own numbering
+    resumes right after (20 -> 21). A restart that does not resume (numbering
+    per Titolo), an index before the bodies, a gap, a list in the last unit and
+    non-numeric identifiers are left as they were."""
+    nums = [_number(m) for m in matches]
+    keep: List["re.Match"] = []
+    cur: Optional[int] = None
+    i = 0
+    while i < len(matches):
+        if cur is not None and nums[i] is not None and nums[i] < cur:
+            j = i
+            while j < len(matches) and nums[j] is not None and nums[j] < cur:
+                j += 1
+            if j < len(matches) and nums[j] is not None and 0 < nums[j] - cur <= _MAX_GAP:
+                i = j                      # the list stays in the current unit's body
+                continue
+        keep.append(matches[i])
+        if nums[i] is not None:
+            cur = nums[i]
+        i += 1
+    return keep
+
+
 # ==========================================================================
 # Splitting one unit and judging the result
 # ==========================================================================
@@ -397,13 +430,17 @@ class Assessment:
     collisions: int = 0  # refs assembled from several substantial pieces (numbering restarts)
     top_share: float = 0.0  # share of the unit held by the largest piece
     bare_refs: Tuple[str, ...] = ()
+    missed: Tuple[str, ...] = ()  # lines that begin like the matched headers but are not matched
+    bad_examples: Tuple[str, ...] = ()  # the model's own example headers its regex does not match
 
     def better_than(self, other: "Assessment") -> bool:
         # A unit's refs should be unique: a regex that has to merge "1.2" from
         # six sections sits below the level asked for, however few bare
         # headers it leaves.
-        return (self.ok, not self.suspicious, -self.bare, -self.collisions, -self.top_share) > \
-               (other.ok, not other.suspicious, -other.bare, -other.collisions, -other.top_share)
+        return (self.ok, not self.suspicious, -len(self.missed), -len(self.bad_examples),
+                -self.bare, -self.collisions, -self.top_share) > \
+               (other.ok, not other.suspicious, -len(other.missed), -len(other.bad_examples),
+                -other.bare, -other.collisions, -other.top_share)
 
 
 _BARE_CHARS = 60      # a piece shorter than this is a header without a body
@@ -427,8 +464,7 @@ def _split(text: str, rx, *, local: bool) -> Tuple[str, Pieces]:
     piece — the previous behaviour — silently dropped the rest (47% of CTE
     DB-SUA, 44% of the NUEA). Merging is lossless."""
     matches = list(rx.finditer(text))
-    if local:
-        matches = _local_runs(matches, len(text))
+    matches = _local_runs(matches, len(text)) if local else _drop_nested_lists(matches)
     if len(matches) < 2:
         return text, []
     merged: Dict[str, List[str]] = {}
@@ -475,6 +511,48 @@ def _assess(groups: Pieces, span: int, *, root: bool) -> Assessment:
     return a
 
 
+_MISSED_MIN = 3       # this many unmatched look-alike headers = the identifier pattern is too narrow
+_HEAD_WORD = re.compile(r"[^\W\d_]{2,}\.?")   # a heading word: "Policy", "Art.", "Artículo", "Class"
+_IDENT = re.compile(r"(?:[A-Z]{1,3}\d*[A-Za-z]?|\d+(?:\.\d+)*[a-z]?|[IVXLC]+)[.:)]?")   # D1, H15, SI, 7.3.4, IV
+
+
+def _missed_headers(text: str, rx) -> List[str]:
+    """Lines that begin like the headers ``rx`` matched — the same heading word,
+    then an identifier — but that ``rx`` does not match. Their presence means the
+    identifier pattern is narrower than the document's own (two letters required
+    where most identifiers have one; numbers required where some are letters)."""
+    words = set()
+    for m in rx.finditer(text):
+        first = text[m.start(): m.start() + 80].split(maxsplit=1)
+        if first and _HEAD_WORD.fullmatch(first[0]):
+            words.add(first[0])
+    if not words:
+        return []
+    missed = []
+    for line in text.splitlines():
+        tok = line.split()
+        if len(tok) >= 2 and tok[0] in words and _IDENT.fullmatch(tok[1]) and not rx.match(line):
+            missed.append(line.strip())
+    return list(dict.fromkeys(missed))
+
+
+_CUT_SHARE = 0.2      # this share of identifiers cut mid-token = the capture group is too short
+_CUT_MIN = 3
+
+
+def _cut_identifiers(text: str, rx) -> List[str]:
+    """Header matches whose captured identifier stops in the middle of a token —
+    the next character continues it ('Articolo 7|7' from a one-character capture).
+    Every such header gets a truncated ref, and different units then share it."""
+    cut = []
+    for m in rx.finditer(text):
+        g = next((i for i in range(1, (rx.groups or 0) + 1) if m.group(i)), 0)
+        end = m.end(g)
+        if end < len(text) and text[end].isalnum() and m.group(g)[-1:].isalnum():
+            cut.append(text[m.start(): end + 8].split("\n")[0])
+    return cut
+
+
 _CONTEXT_CHARS = 160
 
 
@@ -488,6 +566,16 @@ def _children(unit: ArticleChunk, rx, *, root: bool) -> Tuple[Optional[List[Arti
     a = _assess(groups, len(unit.text), root=root)
     if not a.ok:
         return None, a
+    # Top-level identifiers are global, so a header written like the matched
+    # ones but left unmatched is a missed boundary, not a sub-unit or list item.
+    missed = _missed_headers(unit.text, rx) if root else []
+    if len(missed) >= _MISSED_MIN:
+        a.suspicious, a.missed = True, tuple(missed)
+        a.why = (a.why + " " if a.why else "") + (
+            f"Your regex skips {len(missed)} lines that begin like the headers it matched but carry a "
+            f"different identifier (e.g. {', '.join(repr(m[:60]) for m in missed[:4])}): its "
+            "identifier pattern is narrower than the document's. Generalise it so it matches every "
+            "identifier of this level — see the lines quoted below.")
     pairs = [(ref, "\n".join(pieces)) for ref, pieces in groups]
     if root:
         return [ArticleChunk(ref, body, bool(_QUANT_RE.search(body))) for ref, body in pairs], a
@@ -520,12 +608,39 @@ def _apply(spec: Optional[dict], units: List[ArticleChunk], parent: Optional[dic
     if parent and spec["marker_regex"] == parent["marker_regex"]:
         return Assessment(False, False, "You returned the regex of the level ABOVE. Return the level "
                           "below it, or null if this unit has no finer structure.")
+    # Identifiers cut mid-token merge different units under one truncated ref:
+    # unusable however few headers it skips, so an answer like this never wins
+    # over a usable one. Judged here (answers), not in _children (chunking with
+    # an already accepted spec stays as it was).
+    cut = [c for u in units for c in _cut_identifiers(u.text, rx)]
+    n_matches = sum(1 for u in units for _ in rx.finditer(u.text)) or 1
+    if len(cut) >= _CUT_MIN and len(cut) >= _CUT_SHARE * n_matches:
+        return Assessment(False, False, (
+            f"Your capture group cuts {len(cut)} identifiers in the middle "
+            f"(e.g. {', '.join(repr(c[:40]) for c in cut[:3])}): the next character still belongs to "
+            "the identifier. Capture the whole identifier (all its digits or letters)."))
     best: Optional[Assessment] = None
     for u in units:
         _, a = _children(u, rx, root=root)
         if best is None or a.better_than(best):
             best = a
+    # The model states what the headers look like; a regex that does not match
+    # its own examples (an extra prefix, [A-Z] without accented capitals, one
+    # letter where "bis" occurs) misses every header written like them.
+    bad = _unmatched_examples(spec, rx)
+    if bad:
+        best.suspicious, best.bad_examples = True, bad
+        best.why = (best.why + " " if best.why else "") + (
+            f"Your regex does not match these example headers you gave yourself: "
+            f"{', '.join(repr(e[:60]) for e in bad[:4])}. Fix it so it matches every header written like them.")
     return best  # type: ignore[return-value]
+
+
+def _unmatched_examples(spec: dict, rx) -> Tuple[str, ...]:
+    """The spec's own example_headers that its regex does not match at a line start
+    (a trailing space is added: examples come stripped, regexes often expect a gap)."""
+    examples = [e.strip() for e in (spec.get("example_headers") or []) if isinstance(e, str) and e.strip()]
+    return tuple(e for e in examples if not rx.match(e + " "))
 
 
 def _retry_sample(spec: dict, units: List[ArticleChunk], a: Assessment, *, root: bool) -> str:
@@ -546,6 +661,9 @@ def _retry_sample(spec: dict, units: List[ArticleChunk], a: Assessment, *, root:
         if lines:
             sample += "\n\n[Lines mentioning the identifiers of the bare headers]\n\n" + \
                       "\n".join(lines[:40])[: config.CHUNK_SAMPLE_CHARS]
+    if a.missed:
+        sample += "\n\n[Lines that look like headers of this level but your regex does not match]\n\n" + \
+                  "\n".join(a.missed[:40])[: config.CHUNK_SAMPLE_CHARS]
     return sample
 
 

@@ -75,6 +75,31 @@ def requirement_is_scorable(
     return True
 
 
+def calculate_pass_fail_score(series: pd.Series, target: float, operator: str) -> pd.Series:
+    """A threshold that is met or not (a legal minimum, a size the user stated):
+    100 when the value satisfies it, 0 otherwise — no extra credit for margin, so
+    buildings that all meet it are not reordered by size."""
+    vals = pd.to_numeric(series, errors="coerce").fillna(0)
+    t = float(target)
+    ok = {">=": vals >= t, ">": vals > t, "<=": vals <= t, "<": vals < t}[normalize_operator(operator)]
+    return ok.astype(float) * 100.0
+
+
+def calculate_closeness_score(series: pd.Series, target: float, factor: float = 3.0) -> pd.Series:
+    """A size that is a target, not a minimum (a surface guessed from a capacity):
+    100 at the target, falling with the size RATIO in either direction — half or
+    double the target scores about 37, a third or three times scores 0. A ratio
+    keeps the tolerance proportional: 50 m2 off matters for a flat, not for a
+    residence (the IQR spread of calculate_equality_score is dataset-wide)."""
+    vals = pd.to_numeric(series, errors="coerce")
+    t = float(target)
+    if t <= 0:
+        return pd.Series(0.0, index=series.index)
+    ratio = (vals / t).where(vals > 0)
+    score = (1.0 - np.abs(np.log(ratio)) / np.log(factor)).clip(0, 1) * 100.0
+    return score.fillna(0.0).round(1)
+
+
 def calculate_range_score(series: pd.Series, low: float, high: float) -> pd.Series:
     """BETWEEN: 100 inside [low, high], decaying linearly to 0 at one range
     width outside it (a 85 m2 property scores 83 for 'tra 50 e 80 mq')."""

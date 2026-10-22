@@ -106,7 +106,7 @@ def ids_for(path: Path, n, key="queries"):
     return [q["id"] for q in json.loads(path.read_text(encoding="utf-8"))[key]][:n]
 
 
-def downstream(city, model, out_dir: Path, n, force) -> None:
+def downstream(city, model, out_dir: Path, n, force, repeats: int = 1) -> None:
     out = out_dir / f"downstream_{city}_{model}.json"
     if out.exists() and not force:
         log(f"downstream {city}: {out.name} exists, skipped")
@@ -119,7 +119,7 @@ def downstream(city, model, out_dir: Path, n, force) -> None:
         errlog = out_dir / f"downstream_{city}_{model}_errors.jsonl"
         errlog.unlink(missing_ok=True)
         cmd = [PY, "-m", "app.services.llm.rag.eval.downstream", "--model", model, "--queries", qfile,
-               "--langs", LANGS[city], "--json", out]
+               "--langs", LANGS[city], "--json", out, "--repeats", str(repeats)]
         ids = ids_for(qfile, n)
         if ids:
             cmd += ["--ids", ",".join(ids)]
@@ -171,6 +171,8 @@ def main(argv=None) -> int:
     p.add_argument("--skip-judge", action="store_true")
     p.add_argument("--skip-smoke", action="store_true")
     p.add_argument("--force-downstream", action="store_true", help="re-run downstream even if its file exists")
+    p.add_argument("--downstream-repeats", type=int, default=1,
+                   help="repeat each downstream run N times (use 3 with LLM_TEMPERATURE > 0, like the suite's 3 trials)")
     p.add_argument("--max-concurrent", default=None, help="suite concurrency (default: the model's limit)")
     p.add_argument("--ids-per-city", type=int, default=None, help="rehearsal: first N items per city only")
     p.add_argument("--downstream-dir", default=str(BACKEND / "eval_results" / "downstream"))
@@ -195,7 +197,7 @@ def main(argv=None) -> int:
         run([PY, "tests/smoke_run.py", "--model", args.model, "--cities", ",".join(cities)])
     if not args.skip_downstream:
         for city in cities:
-            downstream(city, args.model, out_dir, args.ids_per_city, args.force_downstream)
+            downstream(city, args.model, out_dir, args.ids_per_city, args.force_downstream, args.downstream_repeats)
     if not args.skip_pipeline:
         for city in cities:
             for arm in ("none", "rag"):

@@ -106,7 +106,7 @@ EVALUATION_MODEL = "gpt-5.4"
 MODEL_CONCURRENCY_LIMITS = {
     "gpt-5.4": 2,
     "gpt-5.4-mini": 4,
-    "gemma-4": 8,          # institutional vLLM (shared server): moderate
+    "gemma-4": 16,         # institutional vLLM (shared server): throughput still scales at 16
     "gpt-oss-120b": 48,
     "gemma3-27b": 48,
     "qwen3-8b": 48,
@@ -300,6 +300,8 @@ def configure_run(query_set: str = "legacy", arm: Optional[str] = None, city: st
         suite_root = results_path
     else:
         suite_root = results_path / f"{query_set}_{rag_config.RETRIEVAL_MODE}"
+    if os.environ.get("REGULATORY_SCORING") == "continuous":   # old graded legal score: own results
+        suite_root = suite_root.with_name(f"{suite_root.name}_continuous")
     if city != "turin":
         suite_root = suite_root.with_name(f"{suite_root.name}_{city}")
     suite_root.mkdir(parents=True, exist_ok=True)
@@ -381,6 +383,10 @@ async def run_query(query, architecture="multiagent", disabled=None, use_knowled
             # the SQL matched nothing and the graph returned the nearest / best-EPC
             # buildings with every constraint dropped (graph_agent._fallback_results)
             "fallback": bool(gr.get("fallback_activated")),
+            # requested surface bounds dropped because they were below the legal minimum
+            "surface_conflicts": gr.get("surface_conflicts") or [],
+            # inferred building surfaces (capacity estimate, 'large'/'small') used for ranking only
+            "soft_surface_preferences": gr.get("soft_surface_preferences") or [],
             "sql_source": (gr.get("constraint_layer") or {}).get("sql_source"),
             "execution_time_ms": duration,
             "final_sql": res.get("filters_applied", {}).get("final_sql", ""),
@@ -1381,8 +1387,10 @@ async def run_single_model_suite(model: str, max_concurrent: int, limit: int = N
         sens_configs = [c for c in sens_configs if c[0].startswith("baseline")]
     else:
         sens_configs = [c for c in sens_configs if not c[0].startswith("baseline")]
-    if QUERY_SET == "curated" and rag_config.RETRIEVAL_MODE != "rag":
-        sens_configs = []   # ablations run only in the rag arm (RAG study design)
+    # Curated set: ablations run only in the rag arm, and only with RUN_ABLATIONS=1
+    # (deferred in the Gemma study; a later run with the flag adds just the ablations)
+    if QUERY_SET == "curated" and (rag_config.RETRIEVAL_MODE != "rag" or os.environ.get("RUN_ABLATIONS") != "1"):
+        sens_configs = []
 
     from collections import defaultdict
     jobs_by_query = defaultdict(list)

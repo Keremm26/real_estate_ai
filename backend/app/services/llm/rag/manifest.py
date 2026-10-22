@@ -43,6 +43,16 @@ class DocSpec(TypedDict):
     # of newer-vs-older behaviour. ``superseded_by`` is the replacing doc_key.
     repealed_date: NotRequired[str]
     superseded_by: NotRequired[str]
+    # Geographic scope narrower than the city slice (e.g. one London borough).
+    # Absent = applies everywhere the slice applies. A scoped document is
+    # retrieved only for requests the router places inside that area.
+    scope_area: NotRequired[str]
+
+
+def scoped_areas(country: str) -> List[str]:
+    """The scope areas declared by the documents of ``country`` (sorted, unique)."""
+    return sorted({s["scope_area"] for specs in MANIFESTS.values() for s in specs
+                   if s["country"] == country and s.get("scope_area")})
 
 
 # --------------------------------------------------------------------------
@@ -325,6 +335,7 @@ LONDON: List[DocSpec] = [
         "use_case": UseCase.GENERAL,
         "lang": "en",
         "effective_date": "2020-01-15",
+        "scope_area": "Tower Hamlets",
     },
     {
         "doc_key": "th_article4_class_e",
@@ -337,6 +348,7 @@ LONDON: List[DocSpec] = [
         "use_case": UseCase.GENERAL,
         "lang": "en",
         "effective_date": "2022-08-18",
+        "scope_area": "Tower Hamlets",
     },
     # --- municipal HOUSING tier: the borough's own HMO space/amenity standard.
     #     8.5 m² for one occupier with a separate kitchen vs the 6.51 m² national
@@ -352,6 +364,7 @@ LONDON: List[DocSpec] = [
         "use_case": UseCase.GENERAL,
         "lang": "en",
         "effective_date": "2014-12-03",   # document date (PDF metadata); no date printed in the text
+        "scope_area": "Tower Hamlets",
     },
     # --- national accessibility tier (Building Regulations 2010, Part M).
     {
@@ -373,12 +386,12 @@ LONDON: List[DocSpec] = [
 # Spain keeps three clean tiers (unlike England's three parallel regimes), and
 # the student rule is MUNICIPAL: the PGOUM classifies student housing as
 # "residencia comunitaria" (establishment >= 40 m², one bedroom 12 m²).
-# NOT INCLUDED: Ordenanza 6/2022 (licence / change-of-use pathway) —
-# sede.madrid.es returns 403 to automated fetch on both the HTML and PDF ELI
-# URLs; save it manually into the raw cache to add it.
-# NOT INCLUDED: Decreto 111/2018 (abolishes the regional habitability
-# certificate) — the URL in the corpus spreadsheet is WRONG: that BOCM item is
-# "Ley 3/2018 ... contra la Violencia de Género". Needs a corrected source.
+# Ordenanza 6/2022 (licence / change-of-use pathway): sede.madrid.es returns
+# 403 to automated fetch on both ELI URLs, so the PDF was saved by hand into the
+# raw cache (fetch is cache-first) as madrid_ordenanza_6_2022.pdf.
+# DELIBERATELY EXCLUDED: Decreto 111/2018 (abolishes the regional habitability
+# certificate) — procedural, no technical content; the corpus spreadsheet URL
+# is also wrong (that BOCM item is Ley 3/2018).
 # DELIBERATELY EXCLUDED: Instrucción 2/2014 — ceased to have effect on
 # 21 Mar 2024; ingesting it would inject obsolete student-residence criteria.
 # --------------------------------------------------------------------------
@@ -406,6 +419,18 @@ MADRID: List[DocSpec] = [
         "use_case": UseCase.GENERAL,
         "lang": "es",
         "effective_date": "2025-09-01",
+    },
+    {
+        "doc_key": "madrid_ordenanza_6_2022",
+        "doc_name": "Ordenanza 6/2022, de 26 de abril, de Licencias y Declaraciones Responsables Urbanísticas del Ayuntamiento de Madrid",
+        "url": "https://sede.madrid.es/eli/es-md-01860896/odnz/2022/05/17/6/con/20230711/spa/html",
+        "fetch_url": "https://sede.madrid.es/eli/es-md-01860896/odnz/2022/05/17/6/con/20230711/spa/pdf",
+        "country": "ES",
+        "jurisdiction_level": JurisdictionLevel.MUNICIPAL,
+        "doc_type": DocType.PLANNING,
+        "use_case": UseCase.GENERAL,
+        "lang": "es",
+        "effective_date": "2023-07-11",   # consolidated version used
     },
     {
         "doc_key": "ley_9_2001_suelo_madrid",

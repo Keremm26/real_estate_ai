@@ -8,18 +8,27 @@ through here so the collection is configured identically on both sides.
 
 from __future__ import annotations
 
+import threading
+
 import chromadb
 
 from app.services.llm.rag import config
 
 _client = None
+_client_lock = threading.Lock()
 
 
 def get_client() -> "chromadb.ClientAPI":
+    """One client per process. Concurrent first calls (the suite runs queries in
+    parallel threads) must not each open the store: parallel PersistentClient
+    construction fails ("Could not connect to tenant default_tenant"), and a
+    failed retrieval silently degrades to "no documents"."""
     global _client
     if _client is None:
-        config.CHROMA_PATH.mkdir(parents=True, exist_ok=True)
-        _client = chromadb.PersistentClient(path=str(config.CHROMA_PATH))
+        with _client_lock:
+            if _client is None:
+                config.CHROMA_PATH.mkdir(parents=True, exist_ok=True)
+                _client = chromadb.PersistentClient(path=str(config.CHROMA_PATH))
     return _client
 
 

@@ -1,0 +1,866 @@
+{
+  "PQ-L08__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3352,
+      "output": 406
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain residential properties near Stratford, all within 0.9 km. A is closer on average and has more units in Stratford or Olympic Park (8 of 10 vs 6 of 10 for B). B has larger units, which suit 5 tenants, and one class B property, but it includes more Maryland properties.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "All properties in both lists are at least 85 m², well above the 26–41 m² minimum, so both are legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "A puts the high-quality, close properties at the top, though it is not sorted strictly by distance. B leads with larger properties, which suit a 5-tenant HMO, but it ranks some Maryland properties above closer Stratford and Olympic Park ones. Neither ordering is clearly better, though A's is slightly more consistent with proximity.",
+        "verdict": "tie"
+      },
+      "rationale": "Legal adequacy is equal. A is more concentrated near Stratford and has closer properties, while B offers larger units that suit an HMO, so the lists are close. A edges ahead on location fit, which is the explicit request.",
+      "overall": "A"
+    }
+  },
+  "PQ-L20__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3390,
+      "output": 334
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain residential homes near Greenwich with similar education indices. List B's homes are all larger and suit a five-person family. List A has several small homes (78, 76, 78 m²) that are poor fits for a 3-bed, 5-person home.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum is 86 m². In List A, three properties (78, 76, 78 m²) fall below it. All 10 in List B are at least 88 m², so all are legally adequate.",
+        "verdict": "B"
+      },
+      "ranking_quality": {
+        "reason": "The top 6 are identical in both lists. List A then places three undersized properties at ranks 7, 9 and 10, while List B fills the lower ranks with compliant, larger homes.",
+        "verdict": "B"
+      },
+      "rationale": "The lists share the same top 6. After that, List A adds three homes below the 86 m² legal minimum, while all of List B's homes meet it. List B is clearly better.",
+      "overall": "B"
+    }
+  },
+  "PQ-L18__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3388,
+      "output": 376
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists share the same top 6 and all are residential with EPC B or C. A's items 7-10 are 0.30-1.41 km from LSE and are EPC B or C. B's items 7-9 are 1.46-1.52 km away and have EPC B, so they fit the request but are farther away. A's last items are closer.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum is 50 m². All of A's properties are 51 m² or larger. B has three properties of 44, 48 and 45 m², all below the minimum and so not legally adequate.",
+        "verdict": "A"
+      },
+      "ranking_quality": {
+        "reason": "The top 6 are identical. A's positions 7-10 are all legally adequate and close to LSE. B's positions 7-9 are undersized, so its ranking is worse at the bottom.",
+        "verdict": "A"
+      },
+      "rationale": "The lists are identical in the top 6. A fills the remaining slots with legally adequate flats (at least 51 m²) that are close to LSE, while B includes three undersized flats below 50 m². A is clearly better.",
+      "overall": "A"
+    }
+  },
+  "PQ-L01__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3328,
+      "output": 410
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain only residential properties in central London. The request gives no landmark, size or energy class, so neither list has a clear edge. A offers larger houses, which suit a 6-tenant HMO, and mostly energy class C. B has smaller units, several in the same building, and a class E.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum surface is 31-49 m². Every property in both lists is 69 m² or more, so all pass. There is no meaningful difference.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "All of A's properties are large and none is clearly better placed than another. B's top ranks include a class E unit and smaller units, while larger ones rank lower. The ordering is roughly neutral in both lists, and A's top items are bigger and closer to ideal for 6 tenants.",
+        "verdict": "A"
+      },
+      "rationale": "All properties in both lists clear the legal minimum, so legality is a tie. A's properties are larger, giving more practical room for a 6-tenant HMO conversion, and have mostly class C or D ratings. B's lists are smaller, repeat the same building several times, and include a class E unit. A is slightly better overall.",
+      "overall": "A"
+    }
+  },
+  "PQ-L08__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3352,
+      "output": 463
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain residential dwellings near Stratford. A has 4 properties in Stratford zone and 3 in Maryland, with distances 0.29-0.90 km. B has more in Stratford or Olympic Park (7 of 10), with distances 0.29-0.90 km. B is somewhat more tightly focused on Stratford, while A has larger homes that may suit 5 tenants better.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "All properties in both lists far exceed the 26-41 m² minimum (smallest is 85 m²), so all are legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "A puts the closest Stratford-zone properties first, with Maryland ones lower, which is sensible and has larger sizes at top. B starts with Olympic Park at 0.70 km, ahead of closer options such as 0.29 km, and its ordering is less aligned with distance. A's ranking is more logical for proximity.",
+        "verdict": "A"
+      },
+      "rationale": "Both lists are legally fine. B has more properties in the Stratford area, but A ranks by proximity and size more coherently and its top four are all in Stratford zone. The differences are small; A's stronger ranking and larger spaces for 5 tenants give it a slight edge, offset partly by B's tighter location focus.",
+      "overall": "tie"
+    }
+  },
+  "PQ-L12__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3290,
+      "output": 319
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the same 10 properties, all residential in Stratford within about 0.6 km. Only the order of the last two differs.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "All properties are 69-78 m², well above the 33-41 m² minimum, so both lists are equally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The orders are identical for ranks 1-8. A puts id 25129 (77 m², 0.60 km) at 9 and id 6534 (71 m², 0.52 km) at 10. B swaps them. 6534 is closer and has slightly better indices, while 25129 is larger with the same class B. The difference is negligible.",
+        "verdict": "tie"
+      },
+      "rationale": "The lists contain identical properties and differ only in the order of positions 9 and 10. All are legally adequate and relevant, so the difference is negligible.",
+      "overall": "tie"
+    }
+  },
+  "PQ-L02__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3346,
+      "output": 355
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain nearly identical residential properties near King's Cross. A includes M02301 (0.77 km, Clerkenwell), while B swaps it for M00669 (0.23 km, class C, Caledonian), which is closer and has a good energy class.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "All properties in both lists are 98 m² or more, far above the 39-49 m² minimum, so all are legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "B puts the closest property (0.21 km) first, and its list is generally ordered with proximity in mind. A puts the 0.56 km Foxcroft first and the 0.21 km property second; this is a small difference. B's last item is close and class C, whereas A's last items include one that is farther away.",
+        "verdict": "B"
+      },
+      "rationale": "The lists are almost identical and both are legally fine. B includes a closer, better-rated property (M00669) instead of the farther M02301, and its ordering is slightly better.",
+      "overall": "B"
+    }
+  },
+  "PQ-L05__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3407,
+      "output": 417
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "All properties are residential and close to Imperial (0.30-0.78 km for A, 0.30-0.75 km for B). B's are larger and generally closer on average, with several under 0.6 km, though A also has several close ones. Energy class and size are roughly comparable; B gives more space for 6 students.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "Every property in both lists is 80 m² or larger, well above the 31-38 m² minimum, so both are legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "A puts the closest and good-class properties near the top (0.41, 0.53, 0.45, 0.30 km), a reasonable order. B starts with an E-class property at 0.53 km, and its closer properties (0.36, 0.35 km) are ranked 5th and 10th, so its ordering is less coherent on distance. A's ranking is slightly better.",
+        "verdict": "A"
+      },
+      "rationale": "Both lists are legally adequate. B offers larger houses, which suit 6 students in three doubles, while A has somewhat tighter proximity ordering. The differences are small, and B's extra space and several very close options roughly offset A's better ordering.",
+      "overall": "tie"
+    }
+  },
+  "PQ-L03__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3350,
+      "output": 412
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the same 10 properties, all residential in Clapham Town, 1.3-1.75 km from Brixton, with high mobility indices. Only the order differs.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "All 10 properties exceed the 52-65 m² minimum (smallest is 82 m²), so both lists are legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The orders are nearly identical. A puts 27566 and 23955 ahead of 9506 (151 m², class D, closest at 1.30 km). B moves 9506 up to 4th, which suits an 8-tenant HMO because of its size and proximity, though its energy class is weaker. B also places 19011 (82 m², smallest) 9th, ahead of 7085, whereas A puts it last. A's ordering of 19011 is slightly better on size. Overall the differences are marginal, with A favoring energy class and mobility and B favoring size and distance.",
+        "verdict": "tie"
+      },
+      "rationale": "The lists contain identical properties, all legally adequate, and differ only in minor reordering of mid-ranked items. The difference is negligible.",
+      "overall": "tie"
+    }
+  },
+  "PQ-L11__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3351,
+      "output": 479
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain residential homes near UCL (0.39-0.76 km). A has larger homes (87-110 m²) with a few close ones (0.39, 0.44, 0.48 km). B has homes of 69-79 m², also close (0.43-0.76 km). Both fit the type and place; the request gives no surface or energy preference beyond housing 5 students, so the fit is roughly equal.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum is 33-41 m². Every property in both lists is well above it (smallest is 69 m² in B, 87 m² in A). All are legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "Neither list is clearly ordered by distance or energy class. A ranks 0.53 and 0.54 km properties first while the 0.39 km one is third, and its closest ones are lower. B is similarly unordered, with a 0.43 km property at fourth. A has more spacious homes and better energy classes at the top, but ordering quality is about the same.",
+        "verdict": "tie"
+      },
+      "rationale": "Both lists meet the legal minimum comfortably and are near UCL. Differences are small: A offers larger homes, which is better for 5 students, and slightly better energy classes, while B has no clear advantage in proximity. Overall it is close, with a slight edge to A for space, but the difference is negligible.",
+      "overall": "tie"
+    }
+  },
+  "PQ-L31__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3281,
+      "output": 429
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the same 10 properties, all residential rather than hotels, with distances of 0.72-2.02 km from King's Cross. Neither fits better on type or place.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "No regulatory minimum applies, and both lists hold identical properties, so there is no difference.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The first six positions are identical. A puts M02297 (770 m², 0.72 km) at 7, M00363 at 8, M02291 (0.95 km) at 9 and M00589 (2.02 km) at 10. B puts M00363 at 7, M02297 at 8, M00589 at 9 and M02291 at 10. A's order is slightly better because it ranks the closer properties (0.72 km and 0.95 km) above the farther ones (1.83 km and 2.02 km). A 40-room hotel likely needs more surface, which favors the larger M00363 and M00589, but the difference is marginal.",
+        "verdict": "A"
+      },
+      "rationale": "The lists are identical in content and differ only in the order of positions 7-10. A ranks the closer properties higher, which suits the 'near King's Cross' request, so A is marginally better.",
+      "overall": "A"
+    }
+  },
+  "PQ-L37__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3277,
+      "output": 511
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "All properties in both lists are residential. For a 30-child nursery, size matters: A's units are about 142-153 m², which is tight for 30 children. B's units are about 300-700 m², which is far more plausible. Distance to Hackney Central is similar (A 0.42-1.09 km, B 0.35-1.92 km), and B has the closest property (Atkins Square, 0.35 km, Hackney Central zone) but also some farther ones.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "The reference says no specific surface minimum applies, so the criterion is mostly a tie. Both lists are residential, so neither has a clear advantage on use class. A's ~145 m² homes are arguably unsuitable for 30 children, though no rule is stated.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "A's order is roughly by suitability, but every item is small. B puts large, nearby properties high, including Atkins Square at rank 2, but it puts the Homerton one at 0.94 km first and leaves 17007 (0.69 km, 701 m²) at rank 8. Its ordering is imperfect but the content is better.",
+        "verdict": "B"
+      },
+      "rationale": "B offers spaces large enough for 30 children, with several within about 1 km of Hackney Central. A offers only small houses of about 145 m², which are poorly suited to a nursery of this size. Legal adequacy is a tie because no surface minimum applies, so B wins on fit and ranking.",
+      "overall": "B"
+    }
+  },
+  "PQ-L07__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3336,
+      "output": 405
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain only residential units well above the area threshold. List A is closer to Hackney Central, with several properties in the zone and distances from 0.29 to 0.87 km. List B has more properties in Lea Bridge, Dalston and Homerton, with distances up to 0.90 km, so it is slightly less central.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum is 65-81 m². All properties in both lists (107-153 m²) clear it, so all are legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "A's order is only loosely tied to proximity, since the closest property (0.29 km) sits at rank 7. B ranks by size and quality, with the 0.29 km property at rank 4 and the Lea Bridge properties mixed in. Neither ordering is strong, but A's top picks are mostly in or near Hackney Central.",
+        "verdict": "A"
+      },
+      "rationale": "Both lists are legally adequate. A is more local to Hackney Central, while B offers larger units that may suit a 10-tenant HMO better. Since size is already sufficient, location proximity decides, so A is slightly better.",
+      "overall": "A"
+    }
+  },
+  "PQ-L18__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3388,
+      "output": 349
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists are residential with EPC B. A includes three flats 1.4-1.5 km away. B replaces those with flats at 0.30-0.45 km, which are closer to LSE and include EPC C, still within the B or C request.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum is 50 m². A has 3 flats under 50 m² (44, 48, 45), so 3 of its 10 are inadequate. All of B's 10 are at least 51 m², so B is fully adequate.",
+        "verdict": "B"
+      },
+      "ranking_quality": {
+        "reason": "The top 6 are identical. A's positions 7-9 are illegal (too small) and further away. B's positions 7-10 are all compliant, though the closest ones sit at the bottom rather than higher up. B is still better.",
+        "verdict": "B"
+      },
+      "rationale": "B shares the strong top 6 with A but fills the rest with compliant, nearer flats, while A includes three undersized flats that fail the legal minimum.",
+      "overall": "B"
+    }
+  },
+  "PQ-L24__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3341,
+      "output": 458
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "A matches the stated 50-60 m² range on all ten items and keeps them all within about 0.5 km of Camden Town. B violates the surface range on every item (70 to 448 m²), although its locations are closer.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "The reference requires at least 70 m² for a 2-bed, 4-person flat. All of A's properties are 50-59 m², so none are legally adequate. B has 70, 83, 76 and 78 m² in its top five, and 90 m² and above further down, so all meet the minimum. Some are likely too large for the request but are still legally suitable.",
+        "verdict": "B"
+      },
+      "ranking_quality": {
+        "reason": "A is ordered by distance and all items fit the user's bounds, but none are legally adequate. B puts the legal-compliant and closest options at the top, though the 448 m² item at rank 4 is an odd fit and the sizes drift well above the request.",
+        "verdict": "B"
+      },
+      "rationale": "A follows the user's literal size bounds, but every property is under the 70 m² legal minimum, so none is usable for four people. B breaks the user's stated range, but it offers several legally adequate flats in Camden Town, with the 70 m² and 76-78 m² ones being close to the request. Because legal adequacy decides suitability here, B is the more useful list.",
+      "overall": "B"
+    }
+  },
+  "PQ-L07__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3336,
+      "output": 466
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain only residential properties near Hackney Central, with distances of 0.3-0.9 km. B's properties are generally slightly closer and more often in Hackney Central or Homerton, with more energy class C or better. A has several Lea Bridge and London Fields entries at 0.8-0.9 km. A's properties are larger, which is better for ten tenants, but the request does not ask for the largest.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "All properties in both lists are well above the 65-81 m² minimum (A: 135-153 m², B: 107-135 m²), so both are legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "A's top results are not the closest: the #1 pick is 0.42 km away in Homerton, while the closest property (0.29 km, Hackney Central) is ranked 4th. B's top 3 are close and have good energy classes, but its closest property, 10270, sits at rank 7. Both orderings are imperfect, and B's is slightly more coherent on proximity and energy.",
+        "verdict": "B"
+      },
+      "rationale": "Both lists meet the legal minimum surface for every property, so the decision rests on request fit and ranking. B is closer to Hackney Central and has better energy classes on average. A's larger surface does not matter once the minimum is met. B is slightly better.",
+      "overall": "B"
+    }
+  },
+  "PQ-L37__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3277,
+      "output": 466
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain only residential properties, so type fit is the same. For a 30-child nursery, A's 300-700 m² properties give far more room than B's ~145 m². A is also closer on average, with M00302 at 0.35 km and 12257 at 0.54 km, though several A entries are 1-1.9 km away. B's properties are 0.4-1.1 km away but small, and 144 m² is tight for 30 children.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "The reference says no regulatory surface minimum applies, so the request implies no constraint. Neither list has clearly unsuitable properties.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "A puts a 0.94 km property first and the closest one (0.35 km) second, but its large, close options are scattered, and 17007 at 0.69 km is ranked 8th. B's order is not clearly by distance either: its closest property, M00337 at 0.42 km, is 2nd, and the rest are fairly similar. Both rankings are mediocre, and A's is slightly better because its top entries are larger and closer.",
+        "verdict": "A"
+      },
+      "rationale": "Both lists are all residential, and there is no regulatory minimum. A offers much more space, which suits 30 children, and has some very close options. B is close to the landmark but its properties are small. A serves the user better.",
+      "overall": "A"
+    }
+  },
+  "PQ-L11__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3351,
+      "output": 386
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain residential properties 0.4-0.8 km from UCL. A's are 69-79 m² and slightly closer on average. B's are larger (87-110 m²), which suits 5 students with single rooms better, and distances are similar.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum is 33-41 m². All properties in both lists are well above it, so both are legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "A is ordered roughly by proximity and energy class, with a good top (0.49 km, class B) but some inconsistency, such as 0.43 km ranked 4th and class E at 7. B puts nearer and larger properties at the top, but its order is mixed: 0.39 km is 3rd and the 0.44 km and 0.48 km properties are last. Neither is clearly better.",
+        "verdict": "tie"
+      },
+      "rationale": "Both lists satisfy the legal minimum for every property and are near UCL. B offers more space for 5 students, but A is slightly closer and has comparable energy classes. The differences are negligible overall.",
+      "overall": "tie"
+    }
+  },
+  "PQ-L22__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3345,
+      "output": 360
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain residential properties near Shoreditch. A's are all within about 1.1 km and 61-65 m². B's are mostly closer (0.2-0.7 km) but are smaller. Neither is a building to convert, but A fits the two-bedroom, three-person requirement better.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum is 61 m². All 10 of A's properties meet it (61-65 m²). In B only 3 of 10 do (61, 62, 62); the other 7 are 56-60 m² and fall below the minimum.",
+        "verdict": "A"
+      },
+      "ranking_quality": {
+        "reason": "A's list is entirely adequate and starts with close, adequate properties. B puts two inadequate 60 m² properties at ranks 1 and 2 and scatters inadequate ones through the rest of the list.",
+        "verdict": "A"
+      },
+      "rationale": "A returns only legally adequate properties near Shoreditch. B returns mostly undersized properties, including at the top, so A serves the user better.",
+      "overall": "A"
+    }
+  },
+  "PQ-L03__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3350,
+      "output": 370
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the same 10 properties, all in Clapham Town at 1.3-1.75 km with similar mobility indices, so they fit the request equally.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "All 10 properties exceed the 52-65 m² minimum (smallest is 82 m²), so both lists are legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "Only the order differs. A places id 9506 (151 m², class D, mobility 85.28) 4th, ahead of better-rated properties. B moves it to 6th, so higher-mobility and better-energy properties such as 27566 and 23955 rank earlier. A puts 19011 (82 m²) 9th while B puts it last, which is slightly better since it has the smallest surface. The differences are minor, but B's order is marginally better.",
+        "verdict": "B"
+      },
+      "rationale": "The sets are identical and all properties are legally adequate. The only difference is order, where B is slightly better, putting the D-class property lower and the smallest property last.",
+      "overall": "B"
+    }
+  },
+  "PQ-L15__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3407,
+      "output": 395
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists are nearly identical residential properties 0.3-0.7 km from the university in the Mile End area. A has M00185 (259 m², 0.52 km) at rank 10, B has 7041 (145 m², 0.57 km). Both are comparable; surfaces are far larger than needed in both.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "All properties in both lists are well above the 42 m² maximum threshold, so all are legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "Top 6 are identical. A places the large 291 m² M00187 at 7 and the 168 m² M00101 at 8; B swaps them, putting the closer-to-need 168 m² property higher. Differences are marginal; large surfaces are not clearly better for this request, so B's order is slightly more sensible (smaller, more fitting sizes first) but negligible.",
+        "verdict": "tie"
+      },
+      "rationale": "The lists share 9 of 10 properties, all legally adequate and near the university. The only differences are one swapped pair and the last item (M00185 vs 7041), which are negligible.",
+      "overall": "tie"
+    }
+  },
+  "PQ-L22__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3345,
+      "output": 387
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "All properties are residential and near Shoreditch. A is closer on average (0.2-0.69 km), while B includes several at 0.87-1.08 km, which is still reasonably near. Both fit the request roughly equally, with A slightly closer.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum is 61 m². In A, only 3 of 10 (61, 62, 62) meet it; 7 are below (60, 60, 58, 60, 59, 59, 56). In B, all 10 are 61 m² or more and so legally adequate.",
+        "verdict": "B"
+      },
+      "ranking_quality": {
+        "reason": "A places two sub-61 m² properties at the top and mixes non-compliant ones throughout, with compliant ones at ranks 3-5. B puts compliant, close properties first and every item is compliant, so the ordering is sound.",
+        "verdict": "B"
+      },
+      "rationale": "The legal minimum of 61 m² decides this. B's list is entirely compliant, while A has 7 of 10 below the threshold. A's slight advantage in proximity does not offset that, so B serves the user better.",
+      "overall": "B"
+    }
+  },
+  "PQ-L10__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3396,
+      "output": 572
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain residential properties of 80-96 m² near Shoreditch. Nine of the ten properties are shared. A's tenth is M00202 (94 m², 0.67 km, class D). B's tenth is 2979 (80 m², 0.16 km, class C). B's extra property is closer to Shoreditch but smaller, and A's extra is larger. The fit is about equal.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "All properties in both lists are 80 m² or larger, well above the 39-49 m² minimum. All are legally adequate. The user's 15 m² per room preference (90 m² for 6 rooms) is not met by most properties, but that is a preference, not a legal requirement. A's properties are slightly larger, with M00202 at 94 m².",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "Proximity to Shoreditch and size both matter. A puts 16864 (0.39 km) at rank 2, ahead of the closer 9019 and 5456, and places the far-away M00366 and M00505 at ranks 6-7 ahead of the closer 8213. B orders more by distance and quality: 9019 and 5456 sit at ranks 2-3. B still places 15471, the closest property, at rank 5, and ranks 2979 last despite its 0.16 km distance. B's ordering is a little more coherent, and its top 3 is stronger.",
+        "verdict": "B"
+      },
+      "rationale": "The lists are nearly identical and all properties are legally adequate. A has slightly larger properties, and B has slightly better ordering and a closer tenth property. The difference is small, with a slight edge to B on ranking.",
+      "overall": "B"
+    }
+  },
+  "PQ-L38__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3420,
+      "output": 456
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain only residential flats with EPC B, built after 2000, within about 0.65 km of Canary Wharf. The only difference is that A includes id 12453 (Manilla Street, built 2005, 0.60 km, Canary Wharf zone) at rank 5, while B instead includes id 15935 (Brannan Street, 122 m²) at rank 10. Both fit, but 12453 sits in the Canary Wharf zone and is slightly closer.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "No regulatory constraint applies, and neither list contains clearly unsuitable properties.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The top 4 are identical. A then places a Canary Wharf-zone property at rank 5 at 0.60 km, ahead of the Brannan Street units at 0.63 km, which is consistent with distance ordering. B places Brannan Street units at ranks 5-10, which is acceptable but gives slightly less diversity.",
+        "verdict": "A"
+      },
+      "rationale": "The lists are nearly identical and differ only in one item. A's extra property, id 12453, is in the Canary Wharf zone and closer than the Brannan Street units, so it adds slightly more variety than B's sixth Brannan Street unit. A is marginally better.",
+      "overall": "A"
+    }
+  },
+  "PQ-L19__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3371,
+      "output": 407
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain residential units near King's College London within about 1.1 km. A's units are very small, and four of them are 17-19 m² and over 1 km away. B's units are all within 0.65 km and are proper flats of 38-46 m², which suits a studio for one person. Energy classes are C or D in B and all C in A, a minor difference.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "The legal minimum is 37 m² with a shower room. All 10 of A's properties are below 37 m² (15-36 m²), so none is legally adequate. All 10 of B's properties are at or above 38 m², so all meet the minimum.",
+        "verdict": "B"
+      },
+      "ranking_quality": {
+        "reason": "B's list is compliant throughout and its ordering is reasonable, with only minor quirks such as rank 7 at 44 m² ahead of rank 8 at 42 m². A's top ranks are the smallest and least adequate units (15 m² and 28 m²), so its ordering is poor.",
+        "verdict": "B"
+      },
+      "rationale": "B returns only legally adequate, nearby studio-sized flats. A returns only undersized units that fail the minimum surface rule.",
+      "overall": "B"
+    }
+  },
+  "PQ-L15__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3407,
+      "output": 368
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Lists share 9 of 10 properties, all residential, within 0.33-0.72 km of the university. A includes 7041 (145 m², 0.57 km) while B includes M00185 (259 m², 0.52 km); both are comparable, and M00185 is very large for 4 people but is still a fit.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "All properties in both lists are far above the 26-42 m² minimum, so every one is legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "Top 6 are identical. A places M00101 (0.72 km, farthest) at 7 and then the very large M00187 and M00186, while B puts M00187 at 7 and M00101 at 8. Differences are negligible; A's ordering is slightly closer to compact, near properties, but the effect is minimal.",
+        "verdict": "tie"
+      },
+      "rationale": "The lists are nearly identical, all properties are legally adequate, and the only differences are one swapped property and a minor reordering, so the difference is negligible.",
+      "overall": "tie"
+    }
+  },
+  "PQ-L02__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3346,
+      "output": 321
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain residential properties near King's Cross at similar distances. A has M00669 at 0.23 km in position 10, while B has M02301 at 0.77 km, which is farther away. A is slightly closer overall.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "All properties in both lists are 98 m² or larger, well above the 39-49 m² minimum, so all are legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The two orderings are nearly identical. A puts the closest property (0.21 km) first, while B puts a 0.56 km Clerkenwell property first. Neither ranks by distance strictly, and the difference is minor.",
+        "verdict": "A"
+      },
+      "rationale": "Both lists are legally fine. A is marginally better because it includes a closer tenth property and ranks the closest property first, whereas B includes a farther property (0.77 km).",
+      "overall": "A"
+    }
+  },
+  "PQ-L01__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3328,
+      "output": 424
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "All properties in both lists are residential. The request is for a house to convert into a HMO for 6 tenants, with no stated location or energy constraint. B's properties are larger (97-137 m²) and so suit a 6-person HMO conversion better. A's range from 69-110 m² and are also adequate but smaller, so they offer less room for conversion.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "The reference requires a minimum of 31-49 m². Every property in both lists is 69 m² or more, so all are legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "A is ordered by distance and proximity rather than size, with larger properties such as 110 m² at rank 5 and smaller ones at the top. B puts its largest and best-suited properties near the top, but its ordering is not strictly by size either. For a HMO, more space is generally preferable, so B's ranking is slightly better.",
+        "verdict": "B"
+      },
+      "rationale": "Both lists satisfy the legal minimum throughout. B offers consistently larger properties, which better suit a 6-tenant HMO conversion, and it places large ones high. A is adequate but with smaller units and less relevant ordering, so B is modestly better.",
+      "overall": "B"
+    }
+  },
+  "PQ-L24__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3341,
+      "output": 495
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "List B has all 10 properties within 50-60 m², exactly the surface range asked, and all within 0.5 km of Camden Town. List A matches location better (closer) but only 0 of 10 are within 50-60 m²; sizes range 70-448 m², far from the request.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "The reference requires at least 70 m² for a 2b4p flat. All of B's properties (50-59 m²) fall below the minimum, so none is legally adequate. List A has 70, 83, 76, 78, 90 m² and others above 70, so all 10 meet the minimum, though several are much too large (448 m²).",
+        "verdict": "A"
+      },
+      "ranking_quality": {
+        "reason": "A's top items (70, 83, 76 m²) are legally adequate and nearest, though the 448 m² at rank 4 is a poor fit and ordering is mainly by distance. B's ordering is by distance and all meet the stated size, but none is legally adequate, so the ranking does not surface suitable properties.",
+        "verdict": "A"
+      },
+      "rationale": "B follows the user's stated bounds but every listing is below the legal space standard for a 2-bed 4-person home, so none can be legally used as intended. A ignores the user's size bounds but supplies legally adequate flats, several near 70-83 m², close to the minimum and very near Camden Town. Since the user's bounds are themselves below the standard, A is the more useful list.",
+      "overall": "A"
+    }
+  },
+  "PQ-L31__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3281,
+      "output": 389
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the same 10 properties, all residential, none a hotel. Fit is identical in content.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "No regulatory minimum applies, and both lists contain the same properties, so there is no difference.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The orderings differ only slightly. A puts M00363 (1.83 km, 1,361 m²) at 7 and M02297 (0.72 km, 770 m²) at 8, and puts M00589 (2.02 km) at 9 and M02291 (0.95 km, 735 m²) at 10. B puts the closer M02297 at 7 and M02291 at 9, ahead of the more distant M00589 at 10. B is slightly better on proximity, but A's placement of larger surfaces higher is arguable for 40 rooms. The difference is marginal.",
+        "verdict": "B"
+      },
+      "rationale": "The two lists contain identical properties, so request fit and legal adequacy tie. B ranks the nearer properties to King's Cross slightly higher, giving it a marginal edge.",
+      "overall": "B"
+    }
+  },
+  "PQ-L10__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3396,
+      "output": 500
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain residential units of 80-96 m² within about 0.8 km of Shoreditch. Nine properties are shared. A's tenth is id 2979 (80 m², 0.16 km, very close). B's tenth is id M00202 (94 m², 0.67 km, energy D). Neither can give 6 rooms of 15 m² (90 m² net), though the larger units come close. A's extra property is closer, B's is larger.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "All properties in both lists are at least 80 m², well above the 39-49 m² legal minimum, so all are legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The user wants 15 m² rooms and proximity. A ranks by a mix: 93, 85, 85, 86 m², with close properties like 15471 (0.08 km) at 5th. B puts 93 and 86 m² at the top and the 90-92 m² units mid-list, which is similar. Neither orders by surface or distance clearly. The difference is negligible.",
+        "verdict": "tie"
+      },
+      "rationale": "Both lists are largely the same set, all legally adequate, with only minor differences in the tenth item and ordering. There is no meaningful difference. A's tenth item is closer to Shoreditch; B's is larger but farther and has a worse energy class. This is a marginal call that leans slightly to A on proximity, but the overall difference is negligible.",
+      "overall": "tie"
+    }
+  },
+  "PQ-L19__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3371,
+      "output": 385
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain residential units near King's College London (0.3-1.1 km). A's units are all 38-46 m², plausible studios for one person, at 0.32-0.64 km. B's units include very small ones (15-19 m²) and several at 1.08 km, so they fit a one-person studio less well.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum is 37 m² with a shower room. All 10 of A's properties are 38 m² or larger, so all meet it. All 10 of B's are under 37 m² (15-36 m²), so none are legally adequate.",
+        "verdict": "A"
+      },
+      "ranking_quality": {
+        "reason": "A's list is mostly ordered by ascending size, with a minor inversion at ranks 7 and 8, and every item is compliant, so the top is good. B's top is poor: it opens with 15 m² and 28 m² units, and its smallest units are all below the minimum.",
+        "verdict": "A"
+      },
+      "rationale": "A returns only legally adequate studios close to King's College London. B returns only undersized units, several of them far too small and farther away. A is clearly better.",
+      "overall": "A"
+    }
+  },
+  "PQ-L05__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3407,
+      "output": 393
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "All properties are residential and well above the size needed. Both lists are within 0.30-0.78 km of Imperial. A has larger homes (95-112 m²) giving more room for 6 students; B has smaller homes (80-99 m²) but a few are closer or have higher greenery. A's distances are somewhat better on average.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "The minimum is about 31-38 m². Every property in both lists is 80 m² or more, so all are legally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "A is ordered with close, good-energy options near the top, though it is not strictly by distance. B starts with an 86 m² property and places 80-81 m² ones lower, and its order is not clearly tied to distance or suitability. A's ordering is slightly more sensible.",
+        "verdict": "A"
+      },
+      "rationale": "Both lists are legally fine, since all properties far exceed the minimum surface. A offers larger homes, which suit 6 students better, and slightly closer ones, with a reasonable ordering. B is acceptable but has smaller homes and a less coherent order.",
+      "overall": "A"
+    }
+  },
+  "PQ-L12__ab": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3290,
+      "output": 352
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists contain the same ten residential properties in Stratford, all within 0.6 km of the centre. Only the order of the last two differs.",
+        "verdict": "tie"
+      },
+      "legal_adequacy": {
+        "reason": "All properties are 69-78 m², well above the 33-41 m² minimum, so both lists are equally adequate.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The lists are identical for positions 1-8. A places id 6534 (71 m², B, 0.52 km) at 9 and id 25129 (77 m², B, 0.60 km) at 10. B swaps them. Since 25129 is larger but farther away, with lower greenery, mobility and education indices, the difference is negligible. A's order is slightly more consistent with proximity and indices, but B's has more surface, so there is no clear winner.",
+        "verdict": "tie"
+      },
+      "rationale": "The two lists contain the same properties, all legally adequate, and differ only in the order of the last two positions, which is a negligible difference.",
+      "overall": "tie"
+    }
+  },
+  "PQ-L38__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3420,
+      "output": 440
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "All properties in both lists are residential, EPC B, built after 2000 and within about 0.65 km of Canary Wharf. B adds id 12453 (Canary Wharf, 0.60 km, built 2005), which fits well and is in the Canary Wharf zone. A instead includes id 15935, another Brannan Street unit at the same location. Both fit, but B has slightly more variety and one more Canary Wharf-zone property.",
+        "verdict": "B"
+      },
+      "legal_adequacy": {
+        "reason": "No regulatory constraint applies, and neither list has clearly unsuitable properties.",
+        "verdict": "tie"
+      },
+      "ranking_quality": {
+        "reason": "The top 4 are identical. B places id 12453 (0.60 km, Canary Wharf) at rank 5, ahead of the Brannan Street units at 0.63 km, which is consistent with distance ordering. A fills the slots with near-duplicate Brannan Street units, so its ordering is also fine but less diverse.",
+        "verdict": "B"
+      },
+      "rationale": "The lists are almost identical. B swaps the last Brannan Street duplicate (id 15935) for id 12453, a closer Canary Wharf-zone flat built in 2005 that fits the request. This gives B a slight edge in diversity and relevance.",
+      "overall": "B"
+    }
+  },
+  "PQ-L20__ba": {
+    "status": "succeeded",
+    "stop_reason": "end_turn",
+    "usage": {
+      "input": 3390,
+      "output": 370
+    },
+    "verdict": {
+      "request_fit": {
+        "reason": "Both lists are residential properties near Greenwich with similar education indices. A's ten are all close to Greenwich with decent sizes. B shares the first six, but includes three small properties (78, 76, 78 m²) and one in Island Gardens, which fit a five-person family home less well.",
+        "verdict": "A"
+      },
+      "legal_adequacy": {
+        "reason": "All of A's properties are at least 88 m², which meets the 86 m² minimum. B has three properties below 86 m² (78, 76, 78), which are not legally adequate for the intended use.",
+        "verdict": "A"
+      },
+      "ranking_quality": {
+        "reason": "The top six are identical in both lists. B then places an inadequate 78 m² property at rank 7 and another at rank 9, above or among adequate ones, while A's ranks 7-10 are all adequate.",
+        "verdict": "A"
+      },
+      "rationale": "A has all ten properties meeting the minimum surface and good Greenwich proximity. B includes three undersized properties that are legally unsuitable for a 3-bed, 5-person home and ranks them within the top 10.",
+      "overall": "A"
+    }
+  }
+}

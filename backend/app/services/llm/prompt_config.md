@@ -221,13 +221,13 @@ Your job is twofold:
 4. IDENTIFICATION AND CATASTO: `id`, `codice_comune`, `foglio`, `particella`, `subalterno`.
 5. SURFACES (`surface_area`):
    - If the user specifies explicit surfaces, extract the resulting total value.
-   - If a capacity is specified (people, beds, places, students, guests, or a number of rooms, e.g., "100 people"), calculate the estimate (e.g., 10sqm/person; for rooms, the people they host) and use it as a threshold.
+   - If a capacity is specified (people, beds, places, students, guests, or a number of rooms), estimate the surface it requires and use it as a threshold.
 6. **PERCENTILES (RELATIVE THRESHOLDS)**: Consult the DATA DISTRIBUTION to calibrate relative thresholds.
    - If the user uses terms like 'large', 'wide', 'massive', use the 75th percentile value (75% in the percentiles field) for `surface_area` as a `>=` threshold.
    - If the user uses terms like 'small', 'minimal', 'reduced', use the 25th percentile value (25%) for `surface_area` as a `<=` threshold.
    - **IMPORTANT**: The `min`, `max`, and percentile values are informative; NEVER use them as SQL filters (e.g., NO `>= min`) unless explicitly requested by the user.
 
-7. **CADASTRAL UNITS (`cadastral_units_count`)**: the number of separately registered properties (cadastral units, e.g. apartments) in the building. Use it ONLY when the user asks for a number of separate apartments or dwellings in the same building (e.g., "a building with at least 10 apartments"), with the `>=` operator. A capacity (beds, places, students, guests, occupants, workstations) or a number of rooms is NOT a number of cadastral units: never derive this column from it; a capacity is handled by rule 5 (e.g., "a guesthouse with 12 rooms" or "a dormitory for 40 people" gives a surface requirement, not a cadastral-units requirement).
+7. **CADASTRAL UNITS (`cadastral_units_count`)**: the number of separately registered properties (cadastral units, e.g. apartments) in the building. Use it ONLY when the user asks for a number of separate apartments or dwellings in the same building (e.g., "a building with at least 10 apartments"), with the `>=` operator. A capacity (beds, places, students, guests, occupants, workstations) or a number of rooms is NOT a number of cadastral units: never derive this column from it; a capacity is handled by rule 5.
 
 # REFERENCE COLUMNS
 Use EXCLUSIVELY these columns for the `target_column` property:

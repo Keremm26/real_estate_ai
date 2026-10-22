@@ -147,6 +147,10 @@ def representative(packs: List[Dict[str, Any]]) -> Dict[str, Any]:
 
 def out_dir(model: str) -> Path:
     d = RESULTS / f"curated_compare{_city_suffix()}" / model
+    if tuple(ARMS) != ("none", "rag"):  # other arm pairs (e.g. none,rag_gate) get their own folder
+        d = d / f"{ARMS[0]}_vs_{ARMS[1]}"
+    if RUBRIC != "v1":                  # other judge rubrics never touch the v1 files
+        d = d / f"rubric_{RUBRIC}"
     d.mkdir(parents=True, exist_ok=True)
     return d
 
@@ -423,9 +427,42 @@ Rules
 - Answer tie when the difference is negligible.
 - Give a short reason for each criterion before its verdict."""
 
+# Rubric v2 (sensitivity check, reported next to v1): request fit counts only stated
+# requirements, overall puts legal suitability first; the reference note states the legal minimum
+# with no upper limit (a bare range was read by the judge as a target band).
+JUDGE_SYSTEM_V2 = """You evaluate property-search results for a public real-estate portfolio in Turin, Italy.
+A user described what they need. Two systems, A and B, each returned their top-10 properties from the same
+dataset, best first. Decide which list serves the user better, criterion by criterion.
+
+Criteria
+1. request_fit: do the properties satisfy what the user explicitly asked for (property type, place /
+   distance from the landmark, surface, energy class, nearby services, intended use)? Judge only stated
+   requirements: a property larger than needed is not a worse fit unless the user set a maximum size or the
+   size is clearly implausible for the use (e.g. a whole building for one flat).
+2. legal_adequacy: for the intended use, are the properties legally suitable, mainly large enough for the
+   stated capacity? Use the REFERENCE note when one is given; it states what the applicable rules imply.
+   When the request implies no regulatory constraint, answer tie unless a list contains clearly unsuitable
+   properties.
+3. ranking_quality: are the most suitable properties placed at the top?
+4. overall: which list would you hand to this user? Legal suitability comes first: if one list contains
+   properties that are not legally adequate for the intended use and the other does not, prefer the
+   adequate list; otherwise decide on request fit and ranking quality.
+
+Rules
+- Judge only from the data shown. Missing fields are unknown, not bad.
+- Lists may overlap. A shorter or empty list is worse only if the missing properties would have been relevant.
+- The order in which the lists are shown (A first, B second) carries no information.
+- Answer tie when the difference is negligible.
+- Give a short reason for each criterion before its verdict."""
+
+RUBRIC = "v1"
+ARMS = ("none", "rag")
+
+
 def judge_system() -> str:
-    """The judge instructions for the configured city (Turin's text unchanged)."""
-    return JUDGE_SYSTEM.replace("Turin, Italy", JUDGE_PLACE[CITY])
+    """The judge instructions for the configured city and rubric (Turin's v1 text unchanged)."""
+    text = JUDGE_SYSTEM_V2 if RUBRIC == "v2" else JUDGE_SYSTEM
+    return text.replace("Turin, Italy", JUDGE_PLACE[CITY])
 
 
 _VERDICT = {"type": "string", "enum": ["A", "B", "tie"]}
@@ -472,6 +509,16 @@ def reference_note(item: Dict[str, Any]) -> str:
     r = item["regulatory"]
     rng = (f"{r['value_min']:,.0f}–{r['value_max']:,.0f} m²"
            if r.get("value_min") is not None and r.get("value_max") is not None else None)
+    if RUBRIC == "v2" and rng:          # a minimum without upper limit, without the query file's annotation
+        lo, hi = f"{r['value_min']:,.0f}", f"{r['value_max']:,.0f}"
+        floor = (f"needs a total surface of at least {lo} m² (up to {hi} m² under stricter readings of the "
+                 f"rules). This is a minimum only: there is no upper limit, and larger properties are equally "
+                 f"legally adequate.")
+        if r.get("activate") is True:
+            return (f"REFERENCE: under the applicable rules the property {floor} Properties below {lo} m² are "
+                    f"not legally adequate for the intended use.")
+        if r.get("activate") == "either":
+            return f"REFERENCE: a regulatory minimum may apply to this request; if it does, the property {floor}"
     if r.get("activate") is True and rng:
         return (f"REFERENCE: for this request the applicable rules require a minimum total surface between {rng}, "
                 f"depending on the room mix ({r.get('basis')}). Properties below the lower value are not legally "
@@ -515,7 +562,8 @@ def _submit(args, items, runs, a: str, b: str) -> Dict[str, Any]:
                                                                    runs[y]["rep"][qid], not args.no_reference)}],
                 output_config={"effort": JUDGE_EFFORT, "format": {"type": "json_schema", "schema": JUDGE_SCHEMA}},
             )))
-    state = {"arms": [a, b], "judge_model": JUDGE_MODEL, "effort": JUDGE_EFFORT, "use_reference": not args.no_reference,
+    state = {"arms": [a, b], "judge_model": JUDGE_MODEL, "effort": JUDGE_EFFORT, "rubric": RUBRIC,
+             "use_reference": not args.no_reference,
              "representative": "most typical trial (max mean top-10 IoU to the other trials)",
              "created": datetime.now().isoformat(timespec="seconds"), "requests": mapping, "identical": identical,
              "batch_id": None}
@@ -629,7 +677,8 @@ def _judge_summary(state: Dict[str, Any], pairs: Dict[str, Any], raw: Dict[str, 
 def _judge_md(state: Dict[str, Any], summ: Dict[str, Any], model: str) -> str:
     a, b = state["arms"]
     lines = [f"# Blind pairwise judge — {a} vs {b} ({model})", "",
-             f"Judge {state['judge_model']} (effort {state['effort']}, Batch API) · reference note "
+             f"Judge {state['judge_model']} (effort {state['effort']}, Batch API, rubric "
+             f"{state.get('rubric', 'v1')}) · reference note "
              f"{'shown' if state['use_reference'] else 'hidden'} · {summ['n_pairs']} pairs "
              f"({summ['identical_pairs']} identical → tie) · requests {summ['requests']} · "
              f"cost ≈ ${summ['tokens']['cost_usd']:.2f}", "",
@@ -766,11 +815,16 @@ def main(argv=None) -> int:
     p.add_argument("--human", default=None, help="agreement: the filled human_sample.csv")
     p.add_argument("--city", choices=sorted(JUDGE_PLACE), default="turin",
                    help="city whose query sets and suite results to compare (test_suite.py --city)")
+    p.add_argument("--rubric", choices=["v1", "v2"], default="v1",
+                   help="judge: rubric version (v2 = sensitivity check; outputs in <model>/rubric_v2/)")
     args = p.parse_args(argv)
+    global RUBRIC, ARMS
+    RUBRIC = args.rubric
     configure_city(args.city)
     args.arms = [x.strip() for x in args.arms.split(",")]
     if len(args.arms) != 2:
         p.error("--arms takes exactly two arms")
+    ARMS = tuple(args.arms)
     args.ids = [i.strip() for i in args.ids.split(",")] if args.ids else None
     if args.command == "agreement" and not args.human:
         p.error("agreement needs --human")

@@ -1,0 +1,3244 @@
+{
+  "meta": {
+    "country": "ES",
+    "use_case": "student_housing",
+    "embed_model": "bge-m3",
+    "k_values": [
+      1,
+      3,
+      5,
+      8
+    ],
+    "n_items": 40,
+    "n_runs": 80,
+    "n_chunks_in_scope": 3164,
+    "gold": "gold_queries_madrid.json",
+    "include_superseded": false
+  },
+  "aggregate": {
+    "recall": {
+      "1": 0.4,
+      "3": 0.6625,
+      "5": 0.7625,
+      "8": 0.8291666666666666
+    },
+    "hit": {
+      "1": 0.4875,
+      "3": 0.7125,
+      "5": 0.775,
+      "8": 0.8375
+    },
+    "ndcg": {
+      "1": 0.4875,
+      "3": 0.5805096182921144,
+      "5": 0.6261364185936745,
+      "8": 0.650701267505395
+    },
+    "precision": {
+      "1": 0.4875,
+      "3": 0.2708333333333333,
+      "5": 0.19,
+      "8": 0.1296875
+    },
+    "mrr": 0.6139037698412698,
+    "n": 80,
+    "precedence": {
+      "n": 4,
+      "pair_recall": 1.0,
+      "winner_first": 1.0
+    },
+    "dump_tokens": 1129433,
+    "rag_avg_tokens": 5433.8375,
+    "reduction_pct": 99.51888801726176
+  },
+  "breakdown": {
+    "lang": {
+      "en": {
+        "recall": {
+          "1": 0.3875,
+          "3": 0.65,
+          "5": 0.725,
+          "8": 0.775
+        },
+        "hit": {
+          "1": 0.475,
+          "3": 0.675,
+          "5": 0.725,
+          "8": 0.775
+        },
+        "ndcg": {
+          "1": 0.475,
+          "3": 0.5695720345432598,
+          "5": 0.604309268575559,
+          "8": 0.6205292238285356
+        },
+        "precision": {
+          "1": 0.475,
+          "3": 0.275,
+          "5": 0.185,
+          "8": 0.121875
+        },
+        "mrr": 0.5844742063492063,
+        "n": 40,
+        "precedence": {
+          "n": 2,
+          "pair_recall": 1.0,
+          "winner_first": 1.0
+        }
+      },
+      "es": {
+        "recall": {
+          "1": 0.4125,
+          "3": 0.675,
+          "5": 0.8,
+          "8": 0.8833333333333334
+        },
+        "hit": {
+          "1": 0.5,
+          "3": 0.75,
+          "5": 0.825,
+          "8": 0.9
+        },
+        "ndcg": {
+          "1": 0.5,
+          "3": 0.5914472020409691,
+          "5": 0.6479635686117902,
+          "8": 0.6808733111822545
+        },
+        "precision": {
+          "1": 0.5,
+          "3": 0.26666666666666666,
+          "5": 0.195,
+          "8": 0.1375
+        },
+        "mrr": 0.6433333333333333,
+        "n": 40,
+        "precedence": {
+          "n": 2,
+          "pair_recall": 1.0,
+          "winner_first": 1.0
+        }
+      }
+    },
+    "type": {
+      "conflict": {
+        "recall": {
+          "1": 0.5,
+          "3": 0.875,
+          "5": 0.875,
+          "8": 1.0
+        },
+        "hit": {
+          "1": 1.0,
+          "3": 1.0,
+          "5": 1.0,
+          "8": 1.0
+        },
+        "ndcg": {
+          "1": 1.0,
+          "3": 0.8631471927654584,
+          "5": 0.8631471927654584,
+          "8": 0.9177490519699993
+        },
+        "precision": {
+          "1": 1.0,
+          "3": 0.5833333333333333,
+          "5": 0.35000000000000003,
+          "8": 0.25
+        },
+        "mrr": 1.0,
+        "n": 4,
+        "precedence": {
+          "n": 4,
+          "pair_recall": 1.0,
+          "winner_first": 1.0
+        }
+      },
+      "factual": {
+        "recall": {
+          "1": 0.40625,
+          "3": 0.671875,
+          "5": 0.75,
+          "8": 0.8125
+        },
+        "hit": {
+          "1": 0.421875,
+          "3": 0.671875,
+          "5": 0.75,
+          "8": 0.8125
+        },
+        "ndcg": {
+          "1": 0.421875,
+          "3": 0.5660784113259807,
+          "5": 0.5983555252117504,
+          "8": 0.6196244718419864
+        },
+        "precision": {
+          "1": 0.421875,
+          "3": 0.234375,
+          "5": 0.15625,
+          "8": 0.10546875
+        },
+        "mrr": 0.5616505456349207,
+        "n": 64
+      },
+      "lex_specialis": {
+        "recall": {
+          "1": 0.5,
+          "3": 0.75,
+          "5": 1.0,
+          "8": 1.0
+        },
+        "hit": {
+          "1": 1.0,
+          "3": 1.0,
+          "5": 1.0,
+          "8": 1.0
+        },
+        "ndcg": {
+          "1": 1.0,
+          "3": 0.766433990956823,
+          "5": 0.8984680522431184,
+          "8": 0.8984680522431184
+        },
+        "precision": {
+          "1": 1.0,
+          "3": 0.5,
+          "5": 0.4,
+          "8": 0.25
+        },
+        "mrr": 1.0,
+        "n": 2
+      },
+      "multi_article": {
+        "recall": {
+          "1": 0.3,
+          "3": 0.5,
+          "5": 0.75,
+          "8": 0.8333333333333334
+        },
+        "hit": {
+          "1": 0.6,
+          "3": 0.8,
+          "5": 0.8,
+          "8": 0.9
+        },
+        "ndcg": {
+          "1": 0.6,
+          "3": 0.5226294385530916,
+          "5": 0.6546634998393872,
+          "8": 0.6932202890178238
+        },
+        "precision": {
+          "1": 0.6,
+          "3": 0.3333333333333333,
+          "5": 0.3,
+          "8": 0.2125
+        },
+        "mrr": 0.7166666666666667,
+        "n": 10
+      }
+    },
+    "tier": {
+      "municipal": {
+        "recall": {
+          "1": 0.5,
+          "3": 0.7631578947368421,
+          "5": 0.8947368421052632,
+          "8": 0.9473684210526315
+        },
+        "hit": {
+          "1": 0.6842105263157895,
+          "3": 0.868421052631579,
+          "5": 0.9210526315789473,
+          "8": 0.9473684210526315
+        },
+        "ndcg": {
+          "1": 0.6842105263157895,
+          "3": 0.7146102879458004,
+          "5": 0.7766659287327643,
+          "8": 0.7969329868109133
+        },
+        "precision": {
+          "1": 0.6842105263157895,
+          "3": 0.35964912280701755,
+          "5": 0.2578947368421053,
+          "8": 0.17105263157894737
+        },
+        "mrr": 0.7913324979114452,
+        "n": 38,
+        "precedence": {
+          "n": 4,
+          "pair_recall": 1.0,
+          "winner_first": 1.0
+        }
+      },
+      "national": {
+        "recall": {
+          "1": 0.2916666666666667,
+          "3": 0.5416666666666666,
+          "5": 0.6666666666666666,
+          "8": 0.7638888888888888
+        },
+        "hit": {
+          "1": 0.2916666666666667,
+          "3": 0.5416666666666666,
+          "5": 0.6666666666666666,
+          "8": 0.7916666666666666
+        },
+        "ndcg": {
+          "1": 0.2916666666666667,
+          "3": 0.4384882922619096,
+          "5": 0.4923228620210837,
+          "8": 0.5289718132370106
+        },
+        "precision": {
+          "1": 0.2916666666666667,
+          "3": 0.18055555555555555,
+          "5": 0.13333333333333333,
+          "8": 0.09895833333333333
+        },
+        "mrr": 0.4548611111111111,
+        "n": 24
+      },
+      "regional": {
+        "recall": {
+          "1": 0.3333333333333333,
+          "3": 0.6111111111111112,
+          "5": 0.6111111111111112,
+          "8": 0.6666666666666666
+        },
+        "hit": {
+          "1": 0.3333333333333333,
+          "3": 0.6111111111111112,
+          "5": 0.6111111111111112,
+          "8": 0.6666666666666666
+        },
+        "ndcg": {
+          "1": 0.3333333333333333,
+          "3": 0.48676997261905086,
+          "5": 0.48676997261905086,
+          "8": 0.504295799107147
+        },
+        "precision": {
+          "1": 0.3333333333333333,
+          "3": 0.2037037037037037,
+          "5": 0.12222222222222223,
+          "8": 0.08333333333333333
+        },
+        "mrr": 0.4513888888888889,
+        "n": 18
+      }
+    }
+  },
+  "per_run": [
+    {
+      "id": "es01",
+      "lang": "en",
+      "type": "multi_article",
+      "tier": "municipal",
+      "query": "What is the minimum floor area of a bedroom in a student residence in Madrid?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Ayuntamiento de Madrid 20 > b",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 3750
+    },
+    {
+      "id": "es01",
+      "lang": "es",
+      "type": "multi_article",
+      "tier": "municipal",
+      "query": "¿Cuál es la superficie mínima de un dormitorio en una residencia de estudiantes en Madrid?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Ayuntamiento de Madrid 20 > b",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.6131471927654584,
+        "8": 0.8315546295836225
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.25
+      },
+      "rag_tokens": 3818
+    },
+    {
+      "id": "es03",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "How is collective student accommodation classified in the Madrid urban planning norms?",
+      "num_relevant": 1,
+      "first_hit_rank": 2,
+      "top1": "PGOUM Madrid 1997 — Co TÍTULO 7 > 7.5 > 7.5.35 > 10",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.6309297535714575,
+        "5": 0.6309297535714575,
+        "8": 0.6309297535714575
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 6845
+    },
+    {
+      "id": "es03",
+      "lang": "es",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "¿Qué se entiende por residencia comunitaria en las Normas Urbanísticas?",
+      "num_relevant": 1,
+      "first_hit_rank": 5,
+      "top1": "Ayuntamiento de Madrid 20 > b",
+      "rr": 0.2,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.38685280723454163,
+        "8": 0.38685280723454163
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4749
+    },
+    {
+      "id": "es05",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What is the minimum clear width of a stair flight of restricted use?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "CTE Documento Básico D SUA 1 > 4",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 6976
+    },
+    {
+      "id": "es05",
+      "lang": "es",
+      "type": "factual",
+      "tier": "national",
+      "query": "¿Cuál es la anchura mínima de un tramo de escalera de uso restringido?",
+      "num_relevant": 1,
+      "first_hit_rank": 2,
+      "top1": "CTE Documento Básico D Artículo 11 > 28",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.6309297535714575,
+        "5": 0.6309297535714575,
+        "8": 0.6309297535714575
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 6324
+    },
+    {
+      "id": "es07",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What minimum ventilation flow rate must a main bedroom and a living room have in a dwelling?",
+      "num_relevant": 1,
+      "first_hit_rank": 2,
+      "top1": "CTE Documento Básico D 1 > 5 (part 2)",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.6309297535714575,
+        "5": 0.6309297535714575,
+        "8": 0.6309297535714575
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 6776
+    },
+    {
+      "id": "es07",
+      "lang": "es",
+      "type": "factual",
+      "tier": "national",
+      "query": "¿Qué caudal mínimo de ventilación deben tener el dormitorio principal y la sala de estar de una vivienda?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "CTE Documento Básico D 3 > 3 (part 1)",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 11923
+    },
+    {
+      "id": "es08",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "How is the occupancy of a building calculated for fire evacuation purposes?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "CTE Documento Básico D Artículo 11 > 23",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 6695
+    },
+    {
+      "id": "es08",
+      "lang": "es",
+      "type": "factual",
+      "tier": "national",
+      "query": "¿Cómo se calcula la ocupación de un edificio a efectos de evacuación en caso de incendio?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "CTE Documento Básico D Artículo 11 > 23",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 6665
+    },
+    {
+      "id": "es09",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "What minimum kitchen area is required in a dwelling in Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.4 > 2",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3844
+    },
+    {
+      "id": "es09",
+      "lang": "es",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "¿Qué superficie mínima debe tener la cocina de una vivienda en Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.4 > 2",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3509
+    },
+    {
+      "id": "es10",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "What makes a dwelling count as 'exterior' in Madrid, and which room must face the street?",
+      "num_relevant": 1,
+      "first_hit_rank": 9,
+      "top1": "Ayuntamiento de Madrid 18 > b",
+      "rr": 0.1111111111111111,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "rag_tokens": 6247
+    },
+    {
+      "id": "es10",
+      "lang": "es",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "¿Qué condiciones debe cumplir una vivienda para considerarse exterior en Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 5,
+      "top1": "Ayuntamiento de Madrid 18 > b",
+      "rr": 0.2,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.38685280723454163,
+        "8": 0.38685280723454163
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 6938
+    },
+    {
+      "id": "es11",
+      "lang": "en",
+      "type": "factual",
+      "tier": "regional",
+      "query": "Which acts of land use and building require a municipal planning licence in the Community of Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 8,
+      "top1": "Ley 9/2001, de 17 de j Artículo 246 > 1",
+      "rr": 0.125,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.31546487678572877
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.125
+      },
+      "rag_tokens": 2978
+    },
+    {
+      "id": "es11",
+      "lang": "es",
+      "type": "factual",
+      "tier": "regional",
+      "query": "¿Qué actos de uso del suelo y edificación están sujetos a licencia urbanística municipal en la Comunidad de Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Ley 9/2001, de 17 de j Artículo 152",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3693
+    },
+    {
+      "id": "es12",
+      "lang": "en",
+      "type": "factual",
+      "tier": "regional",
+      "query": "Which planning title is needed for works that do not appear in the list of acts subject to a licence?",
+      "num_relevant": 1,
+      "first_hit_rank": null,
+      "top1": "Ley 9/2001, de 17 de j Artículo 160",
+      "rr": 0.0,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "rag_tokens": 3576
+    },
+    {
+      "id": "es12",
+      "lang": "es",
+      "type": "factual",
+      "tier": "regional",
+      "query": "¿Qué título habilitante se necesita para las obras no incluidas en la lista de actos sujetos a licencia?",
+      "num_relevant": 1,
+      "first_hit_rank": null,
+      "top1": "Ley 9/2001, de 17 de j Artículo 160",
+      "rr": 0.0,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "rag_tokens": 3043
+    },
+    {
+      "id": "es13",
+      "lang": "en",
+      "type": "lex_specialis",
+      "tier": "municipal",
+      "query": "Which dwelling conditions must a student residence comply with, and does each room have to meet them individually?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Ayuntamiento de Madrid 20 > b",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.9197207891481876,
+        "5": 0.9197207891481876,
+        "8": 0.9197207891481876
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 2640
+    },
+    {
+      "id": "es13",
+      "lang": "es",
+      "type": "lex_specialis",
+      "tier": "municipal",
+      "query": "¿Qué condiciones de vivienda deben cumplir las residencias de estudiantes y se aplican a cada unidad de alojamiento por separado?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Ayuntamiento de Madrid 20 > b",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.8772153153380493,
+        "8": 0.8772153153380493
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 3962
+    },
+    {
+      "id": "es14",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "What are the minimum size requirements for a private accommodation unit in a residencia compartida in Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.11 > 3",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4063
+    },
+    {
+      "id": "es14",
+      "lang": "es",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "¿Qué superficie mínima debe tener una unidad de alojamiento privativa en una residencia compartida en Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.11 > 3",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4453
+    },
+    {
+      "id": "es15",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "Can accommodation units of a residence in Madrid be located below ground level or on a basement floor?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.11 > 4",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2509
+    },
+    {
+      "id": "es15",
+      "lang": "es",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "¿Pueden situarse las unidades de alojamiento de una residencia por debajo de la rasante o en plantas inferiores a la baja?",
+      "num_relevant": 1,
+      "first_hit_rank": 3,
+      "top1": "Ayuntamiento de Madrid 20 > e",
+      "rr": 0.3333333333333333,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2625
+    },
+    {
+      "id": "es16",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "Can a residencia compartida be set up in part of an existing residential building in Madrid?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Ayuntamiento de Madrid 20 > a",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.9197207891481876,
+        "5": 0.9197207891481876,
+        "8": 0.9197207891481876
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 3185
+    },
+    {
+      "id": "es16",
+      "lang": "es",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "¿Puede implantarse una residencia compartida en parte de un edificio residencial existente en Madrid?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Ayuntamiento de Madrid 20 > a",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 3185
+    },
+    {
+      "id": "es17",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "What is the minimum useful area and the minimum programme of a dwelling in Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.4 > 1",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3736
+    },
+    {
+      "id": "es17",
+      "lang": "es",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "¿Cuál es la superficie útil mínima y el programa mínimo de una vivienda en Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.4 > 1",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3682
+    },
+    {
+      "id": "es18",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "What is the minimum area of a living-dining room and of a bathroom in a dwelling in Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.4 > 1",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3647
+    },
+    {
+      "id": "es18",
+      "lang": "es",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "¿Qué superficie mínima deben tener la estancia-comedor y el baño de una vivienda en Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 2,
+      "top1": "Ayuntamiento de Madrid 17 > a",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.6309297535714575,
+        "5": 0.6309297535714575,
+        "8": 0.6309297535714575
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3649
+    },
+    {
+      "id": "es19",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "What is the minimum clear floor-to-ceiling height of habitable rooms in Madrid, and of kitchens?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.5",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 3365
+    },
+    {
+      "id": "es19",
+      "lang": "es",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "¿Cuál es la altura libre mínima de piso de las piezas habitables en Madrid y la de la cocina?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.5",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2794
+    },
+    {
+      "id": "es20",
+      "lang": "en",
+      "type": "multi_article",
+      "tier": "municipal",
+      "query": "What minimum area must a dwelling created by converting a commercial premises have in Madrid?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Ayuntamiento de Madrid 21 > a",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.8772153153380493,
+        "8": 0.8772153153380493
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 4075
+    },
+    {
+      "id": "es20",
+      "lang": "es",
+      "type": "multi_article",
+      "tier": "municipal",
+      "query": "¿Qué superficie mínima debe tener una vivienda resultante de la transformación de un local comercial en Madrid?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Ayuntamiento de Madrid 21 > a",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.8772153153380493,
+        "8": 0.8772153153380493
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 6301
+    },
+    {
+      "id": "es21",
+      "lang": "en",
+      "type": "multi_article",
+      "tier": "municipal",
+      "query": "What minimum area must a dwelling used for tourist accommodation have in Madrid?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Ayuntamiento de Madrid 25 > a",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 3373
+    },
+    {
+      "id": "es21",
+      "lang": "es",
+      "type": "multi_article",
+      "tier": "municipal",
+      "query": "¿Qué superficie mínima debe tener una vivienda de uso turístico en Madrid?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Ayuntamiento de Madrid 25 > a",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.8772153153380493,
+        "8": 0.8772153153380493
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 3373
+    },
+    {
+      "id": "es22",
+      "lang": "en",
+      "type": "conflict",
+      "tier": "municipal",
+      "query": "How many car parking spaces must a student residence provide in Madrid?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Ayuntamiento de Madrid 24",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 4450,
+      "precedence": {
+        "rule": "lex_specialis",
+        "winner_rank": 1,
+        "loser_rank": 2,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "es22",
+      "lang": "es",
+      "type": "conflict",
+      "tier": "municipal",
+      "query": "¿Cuál es la dotación de plazas de aparcamiento de vehículos exigible a una residencia de estudiantes en Madrid?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Ayuntamiento de Madrid 24",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.9197207891481876,
+        "5": 0.9197207891481876,
+        "8": 0.9197207891481876
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 4428,
+      "precedence": {
+        "rule": "lex_specialis",
+        "winner_rank": 1,
+        "loser_rank": 3,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "es23",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "What are the car parking standards for residential use inside and outside the M-30 in Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "PGOUM Madrid 1997 — Co TÍTULO 7 > 7.5 > 7.5.35 > 10",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 5729
+    },
+    {
+      "id": "es23",
+      "lang": "es",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "¿Cuáles son los estándares de dotación de aparcamiento para uso residencial dentro y fuera de la Calle 30 en Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "PGOUM Madrid 1997 — Co TÍTULO 7 > 7.5 > 7.5.35 > 10",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4333
+    },
+    {
+      "id": "es24",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "How much floor area for bicycle storage is excluded from the buildability count in Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 7,
+      "top1": "Ayuntamiento de Madrid 23 > a",
+      "rr": 0.14285714285714285,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.3333333333333333
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.125
+      },
+      "rag_tokens": 7091
+    },
+    {
+      "id": "es24",
+      "lang": "es",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "¿Qué superficie destinada a la guarda de bicicletas se excluye del cómputo de edificabilidad en Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 12,
+      "top1": "Ayuntamiento de Madrid 23 > a",
+      "rr": 0.08333333333333333,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "rag_tokens": 4047
+    },
+    {
+      "id": "es25",
+      "lang": "en",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "When is compliance with the green factor required for works on an existing building in Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 2,
+      "top1": "PGOUM Madrid 1997 — Co TÍTULO 6 > 6.10 > 6.10.21 > 7",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.6309297535714575,
+        "5": 0.6309297535714575,
+        "8": 0.6309297535714575
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 5755
+    },
+    {
+      "id": "es25",
+      "lang": "es",
+      "type": "factual",
+      "tier": "municipal",
+      "query": "¿Cuándo es exigible el cumplimiento del factor verde en obras sobre edificios existentes en Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 2,
+      "top1": "PGOUM Madrid 1997 — Co TÍTULO 6 > 6.10 > 6.10.21 > 7",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.6309297535714575,
+        "5": 0.6309297535714575,
+        "8": 0.6309297535714575
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4480
+    },
+    {
+      "id": "es26",
+      "lang": "en",
+      "type": "factual",
+      "tier": "regional",
+      "query": "What planning titles exist in the Community of Madrid for acts of building and land use?",
+      "num_relevant": 1,
+      "first_hit_rank": null,
+      "top1": "Ley 9/2001, de 17 de j Artículo 246 > 1",
+      "rr": 0.0,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "rag_tokens": 3958
+    },
+    {
+      "id": "es26",
+      "lang": "es",
+      "type": "factual",
+      "tier": "regional",
+      "query": "¿Qué títulos habilitantes de naturaleza urbanística existen en la Comunidad de Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 2,
+      "top1": "Ley 9/2001, de 17 de j Artículo 167 ter",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.6309297535714575,
+        "5": 0.6309297535714575,
+        "8": 0.6309297535714575
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4751
+    },
+    {
+      "id": "es27",
+      "lang": "en",
+      "type": "factual",
+      "tier": "regional",
+      "query": "Which acts need no planning title at all in the Community of Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 3,
+      "top1": "Ordenanza 6/2022, de 2 Artículo 6",
+      "rr": 0.3333333333333333,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 9304
+    },
+    {
+      "id": "es27",
+      "lang": "es",
+      "type": "factual",
+      "tier": "regional",
+      "query": "¿Qué actos no requieren ningún título habilitante urbanístico en la Comunidad de Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Ley 9/2001, de 17 de j Artículo 160",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 5535
+    },
+    {
+      "id": "es28",
+      "lang": "en",
+      "type": "factual",
+      "tier": "regional",
+      "query": "From when does a declaración responsable urbanística allow the works to start in Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 3,
+      "top1": "Ordenanza 6/2022, de 2 Artículo 28 > 1",
+      "rr": 0.3333333333333333,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 7307
+    },
+    {
+      "id": "es28",
+      "lang": "es",
+      "type": "factual",
+      "tier": "regional",
+      "query": "¿Desde cuándo habilita una declaración responsable urbanística para iniciar la actuación en Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Ley 9/2001, de 17 de j Artículo 157 > 1",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 7601
+    },
+    {
+      "id": "es29",
+      "lang": "en",
+      "type": "factual",
+      "tier": "regional",
+      "query": "Which planning rules apply to a licence application decided after the legal deadline in Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": null,
+      "top1": "Ley 9/2001, de 17 de j Artículo 248 > 7 (part 2)",
+      "rr": 0.0,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "rag_tokens": 5380
+    },
+    {
+      "id": "es29",
+      "lang": "es",
+      "type": "factual",
+      "tier": "regional",
+      "query": "¿Qué normativa se aplica a una licencia urbanística resuelta fuera del plazo legal en Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 3,
+      "top1": "Ley 9/2001, de 17 de j Artículo 248 > 7 (part 2)",
+      "rr": 0.3333333333333333,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 11784
+    },
+    {
+      "id": "es30",
+      "lang": "en",
+      "type": "factual",
+      "tier": "regional",
+      "query": "Does splitting or grouping plots require a planning licence in the Community of Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": null,
+      "top1": "Ley 9/2001, de 17 de j Artículo 81",
+      "rr": 0.0,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "rag_tokens": 2174
+    },
+    {
+      "id": "es30",
+      "lang": "es",
+      "type": "factual",
+      "tier": "regional",
+      "query": "¿La parcelación o segregación de fincas requiere licencia urbanística en la Comunidad de Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 2,
+      "top1": "Ordenanza 6/2022, de 2 Artículo 83 > 9 > 13.1",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.6309297535714575,
+        "5": 0.6309297535714575,
+        "8": 0.6309297535714575
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 2363
+    },
+    {
+      "id": "es31",
+      "lang": "en",
+      "type": "factual",
+      "tier": "regional",
+      "query": "What land must be handed over when a non-residential building is converted to residential use without increasing buildability in Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Ley 9/2001, de 17 de j Artículo 19 bis > 5",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4254
+    },
+    {
+      "id": "es31",
+      "lang": "es",
+      "type": "factual",
+      "tier": "regional",
+      "query": "¿Qué suelo debe entregarse en una actuación de dotación que cambia el uso de no residencial a residencial sin incrementar la edificabilidad en Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Ley 9/2001, de 17 de j Artículo 19 bis > 5",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 4036
+    },
+    {
+      "id": "es32",
+      "lang": "en",
+      "type": "factual",
+      "tier": "regional",
+      "query": "Who regulates the procedure for granting planning licences in the Community of Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": null,
+      "top1": "Ley 9/2001, de 17 de j Artículo 246 > 1",
+      "rr": 0.0,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "rag_tokens": 1873
+    },
+    {
+      "id": "es32",
+      "lang": "es",
+      "type": "factual",
+      "tier": "regional",
+      "query": "¿Dónde se regula el procedimiento de otorgamiento de las licencias urbanísticas en la Comunidad de Madrid?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "Ley 9/2001, de 17 de j Artículo 154 > 1",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 6447
+    },
+    {
+      "id": "es33",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What minimum useful width must a general-use stair have according to its number of users?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "CTE Documento Básico D SUA 1 > 4",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 5842
+    },
+    {
+      "id": "es33",
+      "lang": "es",
+      "type": "factual",
+      "tier": "national",
+      "query": "¿Qué anchura útil mínima debe tener una escalera de uso general según el número de personas?",
+      "num_relevant": 1,
+      "first_hit_rank": 4,
+      "top1": "CTE Documento Básico D Artículo 11 > 28",
+      "rr": 0.25,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.43067655807339306,
+        "8": 0.43067655807339306
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 6809
+    },
+    {
+      "id": "es34",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What height differences may be resolved with a slope rather than a step, and what slope is allowed?",
+      "num_relevant": 1,
+      "first_hit_rank": 4,
+      "top1": "CTE Documento Básico D SUA 1 > 3",
+      "rr": 0.25,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.43067655807339306,
+        "8": 0.43067655807339306
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 8763
+    },
+    {
+      "id": "es34",
+      "lang": "es",
+      "type": "factual",
+      "tier": "national",
+      "query": "¿Qué desniveles pueden resolverse con una pendiente en lugar de un escalón y qué pendiente se admite?",
+      "num_relevant": 1,
+      "first_hit_rank": 6,
+      "top1": "CTE Documento Básico D Sección SUA 1 > 3 (part 1)",
+      "rr": 0.16666666666666666,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.3562071871080222
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.125
+      },
+      "rag_tokens": 6507
+    },
+    {
+      "id": "es35",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "Do kitchens need a ventilation system in addition to the general one?",
+      "num_relevant": 1,
+      "first_hit_rank": 3,
+      "top1": "CTE Documento Básico D 1 > 5 (part 2)",
+      "rr": 0.3333333333333333,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 15384
+    },
+    {
+      "id": "es35",
+      "lang": "es",
+      "type": "factual",
+      "tier": "national",
+      "query": "¿Necesitan las cocinas un sistema de ventilación adicional al general?",
+      "num_relevant": 1,
+      "first_hit_rank": 6,
+      "top1": "CTE Documento Básico D 1 > 5 (part 2)",
+      "rr": 0.16666666666666666,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.3562071871080222
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.125
+      },
+      "rag_tokens": 8289
+    },
+    {
+      "id": "es36",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "Which rooms of a dwelling must have a complementary natural ventilation system?",
+      "num_relevant": 1,
+      "first_hit_rank": null,
+      "top1": "CTE Documento Básico D 3.2.6",
+      "rr": 0.0,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "rag_tokens": 6192
+    },
+    {
+      "id": "es36",
+      "lang": "es",
+      "type": "factual",
+      "tier": "national",
+      "query": "¿Qué locales de la vivienda deben disponer de un sistema complementario de ventilación natural?",
+      "num_relevant": 1,
+      "first_hit_rank": null,
+      "top1": "CTE Documento Básico D 3.2.6",
+      "rr": 0.0,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "rag_tokens": 4266
+    },
+    {
+      "id": "es37",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What does the basic fire requirement SI 3 on evacuation of occupants require of a building?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "CTE Documento Básico D Artículo 11 > 3",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 6068
+    },
+    {
+      "id": "es37",
+      "lang": "es",
+      "type": "factual",
+      "tier": "national",
+      "query": "¿Qué exige la exigencia básica SI 3 de evacuación de ocupantes a un edificio?",
+      "num_relevant": 1,
+      "first_hit_rank": 2,
+      "top1": "CTE Documento Básico D Artículo 11 > 23",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.6309297535714575,
+        "5": 0.6309297535714575,
+        "8": 0.6309297535714575
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 6529
+    },
+    {
+      "id": "es38",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What ventilation flow must be provided for an air cavity ventilated to a habitable room?",
+      "num_relevant": 1,
+      "first_hit_rank": null,
+      "top1": "CTE Documento Básico D 78",
+      "rr": 0.0,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "rag_tokens": 9936
+    },
+    {
+      "id": "es38",
+      "lang": "es",
+      "type": "factual",
+      "tier": "national",
+      "query": "¿Qué caudal de ventilación debe garantizarse al ventilar una cámara de aire a un local habitable?",
+      "num_relevant": 1,
+      "first_hit_rank": null,
+      "top1": "CTE Documento Básico D 87 > 2",
+      "rr": 0.0,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "rag_tokens": 10558
+    },
+    {
+      "id": "es39",
+      "lang": "en",
+      "type": "multi_article",
+      "tier": "national",
+      "query": "Which fire safety and accessibility rules must residences in Madrid comply with?",
+      "num_relevant": 3,
+      "first_hit_rank": null,
+      "top1": "PGOUM Madrid 1997 — Co TÍTULO 6 > 6.9 > 6.9.4",
+      "rr": 0.0,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.0
+      },
+      "rag_tokens": 4098
+    },
+    {
+      "id": "es39",
+      "lang": "es",
+      "type": "multi_article",
+      "tier": "national",
+      "query": "¿Qué normativa de incendios y de accesibilidad deben cumplir las residencias en Madrid?",
+      "num_relevant": 3,
+      "first_hit_rank": 6,
+      "top1": "CTE Documento Básico D Artículo 11 > 5",
+      "rr": 0.16666666666666666,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.3333333333333333
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.16716045496620227
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.0,
+        "8": 0.125
+      },
+      "rag_tokens": 6696
+    },
+    {
+      "id": "es40",
+      "lang": "en",
+      "type": "conflict",
+      "tier": "municipal",
+      "query": "In Madrid, is the general 12 m² bedroom minimum applied to every room of a student residence?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Ayuntamiento de Madrid 20 > b",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.9197207891481876,
+        "5": 0.9197207891481876,
+        "8": 0.9197207891481876
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.6666666666666666,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 3912,
+      "precedence": {
+        "rule": "lex_specialis",
+        "winner_rank": 1,
+        "loser_rank": 3,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "es40",
+      "lang": "es",
+      "type": "conflict",
+      "tier": "municipal",
+      "query": "En Madrid, ¿se aplica el mínimo general de 12 m² por dormitorio a todas las habitaciones de una residencia de estudiantes?",
+      "num_relevant": 2,
+      "first_hit_rank": 1,
+      "top1": "Ayuntamiento de Madrid 20 > b",
+      "rr": 1.0,
+      "recall": {
+        "1": 0.5,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 0.6131471927654584,
+        "5": 0.6131471927654584,
+        "8": 0.8315546295836225
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.25
+      },
+      "rag_tokens": 3876,
+      "precedence": {
+        "rule": "lex_specialis",
+        "winner_rank": 1,
+        "loser_rank": 6,
+        "pair_retrieved": true,
+        "winner_first": true
+      }
+    },
+    {
+      "id": "es41",
+      "lang": "en",
+      "type": "multi_article",
+      "tier": "municipal",
+      "query": "How many lifts must a residential building in Madrid install, and from how many served floors are two required?",
+      "num_relevant": 2,
+      "first_hit_rank": 2,
+      "top1": "PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.7 > 7",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 0.5,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.38685280723454163,
+        "5": 0.6509209298071326,
+        "8": 0.6509209298071326
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 5706
+    },
+    {
+      "id": "es41",
+      "lang": "es",
+      "type": "multi_article",
+      "tier": "municipal",
+      "query": "¿Cuántos ascensores debe instalar un edificio residencial en Madrid y a partir de cuántas plantas servidas se exigen dos?",
+      "num_relevant": 2,
+      "first_hit_rank": 2,
+      "top1": "PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.7 > 7",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 0.5,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.38685280723454163,
+        "5": 0.6509209298071326,
+        "8": 0.6509209298071326
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.4,
+        "8": 0.25
+      },
+      "rag_tokens": 6182
+    },
+    {
+      "id": "es42",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What are the five basic fire safety requirements of the Spanish Technical Building Code?",
+      "num_relevant": 1,
+      "first_hit_rank": 2,
+      "top1": "CTE Documento Básico D Artículo 11 > 4",
+      "rr": 0.5,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.6309297535714575,
+        "5": 0.6309297535714575,
+        "8": 0.6309297535714575
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 6056
+    },
+    {
+      "id": "es42",
+      "lang": "es",
+      "type": "factual",
+      "tier": "national",
+      "query": "¿Cuáles son las exigencias básicas de seguridad en caso de incendio del Código Técnico de la Edificación?",
+      "num_relevant": 1,
+      "first_hit_rank": 1,
+      "top1": "CTE Documento Básico D Artículo 11 > 3",
+      "rr": 1.0,
+      "recall": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 1.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "precision": {
+        "1": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 5979
+    },
+    {
+      "id": "es43",
+      "lang": "en",
+      "type": "factual",
+      "tier": "national",
+      "query": "What minimum stair width applies where a stair connects to an accessible zone?",
+      "num_relevant": 1,
+      "first_hit_rank": 4,
+      "top1": "CTE Documento Básico D Sección SUA 1 > 3 (part 1)",
+      "rr": 0.25,
+      "recall": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.43067655807339306,
+        "8": 0.43067655807339306
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.0,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 8759
+    },
+    {
+      "id": "es43",
+      "lang": "es",
+      "type": "factual",
+      "tier": "national",
+      "query": "¿Qué anchura mínima debe tener una escalera que comunica con una zona accesible?",
+      "num_relevant": 1,
+      "first_hit_rank": 3,
+      "top1": "CTE Documento Básico D Artículo 11 > 28",
+      "rr": 0.3333333333333333,
+      "recall": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "hit": {
+        "1": 0.0,
+        "3": 1.0,
+        "5": 1.0,
+        "8": 1.0
+      },
+      "ndcg": {
+        "1": 0.0,
+        "3": 0.5,
+        "5": 0.5,
+        "8": 0.5
+      },
+      "precision": {
+        "1": 0.0,
+        "3": 0.3333333333333333,
+        "5": 0.2,
+        "8": 0.125
+      },
+      "rag_tokens": 8254
+    }
+  ]
+}

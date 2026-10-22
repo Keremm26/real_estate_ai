@@ -1,0 +1,120 @@
+Corpus scope : country=ES use_case=student_housing
+Embed model  : bge-m3   |   retrieval depth=8   |   superseded docs excluded
+Gold items   : 40  ->  80 runs   (gold_queries_madrid.json)
+
+Per-run (rank of first correct article, top-1 retrieved):
+  id     lang type          tier      rank    RR  top-1 retrieved
+  es01   en   multi_article municipal    1  1.00  Ayuntamiento de Madrid 20 > b
+  es01   es   multi_article municipal    1  1.00  Ayuntamiento de Madrid 20 > b
+  es03   en   factual       municipal    2  0.50  PGOUM Madrid 1997 — Co TÍTULO 7 > 7.5 > 7.5.35 > 10
+  es03   es   factual       municipal    5  0.20  Ayuntamiento de Madrid 20 > b
+  es05   en   factual       national     1  1.00  CTE Documento Básico D SUA 1 > 4
+  es05   es   factual       national     2  0.50  CTE Documento Básico D Artículo 11 > 28
+  es07   en   factual       national     2  0.50  CTE Documento Básico D 1 > 5 (part 2)
+  es07   es   factual       national     1  1.00  CTE Documento Básico D 3 > 3 (part 1)
+  es08   en   factual       national     1  1.00  CTE Documento Básico D Artículo 11 > 23
+  es08   es   factual       national     1  1.00  CTE Documento Básico D Artículo 11 > 23
+  es09   en   factual       municipal    1  1.00  PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.4 > 2
+  es09   es   factual       municipal    1  1.00  PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.4 > 2
+  es10   en   factual       municipal    9  0.11  Ayuntamiento de Madrid 18 > b
+  es10   es   factual       municipal    5  0.20  Ayuntamiento de Madrid 18 > b
+  es11   en   factual       regional     8  0.12  Ley 9/2001, de 17 de j Artículo 246 > 1
+  es11   es   factual       regional     1  1.00  Ley 9/2001, de 17 de j Artículo 152
+  es12   en   factual       regional  miss  0.00  Ley 9/2001, de 17 de j Artículo 160
+  es12   es   factual       regional  miss  0.00  Ley 9/2001, de 17 de j Artículo 160
+  es13   en   lex_specialis municipal    1  1.00  Ayuntamiento de Madrid 20 > b
+  es13   es   lex_specialis municipal    1  1.00  Ayuntamiento de Madrid 20 > b
+  es14   en   factual       municipal    1  1.00  PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.11 > 3
+  es14   es   factual       municipal    1  1.00  PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.11 > 3
+  es15   en   factual       municipal    1  1.00  PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.11 > 4
+  es15   es   factual       municipal    3  0.33  Ayuntamiento de Madrid 20 > e
+  es16   en   factual       municipal    1  1.00  Ayuntamiento de Madrid 20 > a
+  es16   es   factual       municipal    1  1.00  Ayuntamiento de Madrid 20 > a
+  es17   en   factual       municipal    1  1.00  PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.4 > 1
+  es17   es   factual       municipal    1  1.00  PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.4 > 1
+  es18   en   factual       municipal    1  1.00  PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.4 > 1
+  es18   es   factual       municipal    2  0.50  Ayuntamiento de Madrid 17 > a
+  es19   en   factual       municipal    1  1.00  PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.5
+  es19   es   factual       municipal    1  1.00  PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.5
+  es20   en   multi_article municipal    1  1.00  Ayuntamiento de Madrid 21 > a
+  es20   es   multi_article municipal    1  1.00  Ayuntamiento de Madrid 21 > a
+  es21   en   multi_article municipal    1  1.00  Ayuntamiento de Madrid 25 > a
+  es21   es   multi_article municipal    1  1.00  Ayuntamiento de Madrid 25 > a
+  es22   en   conflict      municipal    1  1.00  Ayuntamiento de Madrid 24   [prec w=1 l=2 ok]
+  es22   es   conflict      municipal    1  1.00  Ayuntamiento de Madrid 24   [prec w=1 l=3 ok]
+  es23   en   factual       municipal    1  1.00  PGOUM Madrid 1997 — Co TÍTULO 7 > 7.5 > 7.5.35 > 10
+  es23   es   factual       municipal    1  1.00  PGOUM Madrid 1997 — Co TÍTULO 7 > 7.5 > 7.5.35 > 10
+  es24   en   factual       municipal    7  0.14  Ayuntamiento de Madrid 23 > a
+  es24   es   factual       municipal   12  0.08  Ayuntamiento de Madrid 23 > a
+  es25   en   factual       municipal    2  0.50  PGOUM Madrid 1997 — Co TÍTULO 6 > 6.10 > 6.10.21 > 7
+  es25   es   factual       municipal    2  0.50  PGOUM Madrid 1997 — Co TÍTULO 6 > 6.10 > 6.10.21 > 7
+  es26   en   factual       regional  miss  0.00  Ley 9/2001, de 17 de j Artículo 246 > 1
+  es26   es   factual       regional     2  0.50  Ley 9/2001, de 17 de j Artículo 167 ter
+  es27   en   factual       regional     3  0.33  Ordenanza 6/2022, de 2 Artículo 6
+  es27   es   factual       regional     1  1.00  Ley 9/2001, de 17 de j Artículo 160
+  es28   en   factual       regional     3  0.33  Ordenanza 6/2022, de 2 Artículo 28 > 1
+  es28   es   factual       regional     1  1.00  Ley 9/2001, de 17 de j Artículo 157 > 1
+  es29   en   factual       regional  miss  0.00  Ley 9/2001, de 17 de j Artículo 248 > 7 (part 2)
+  es29   es   factual       regional     3  0.33  Ley 9/2001, de 17 de j Artículo 248 > 7 (part 2)
+  es30   en   factual       regional  miss  0.00  Ley 9/2001, de 17 de j Artículo 81
+  es30   es   factual       regional     2  0.50  Ordenanza 6/2022, de 2 Artículo 83 > 9 > 13.1
+  es31   en   factual       regional     1  1.00  Ley 9/2001, de 17 de j Artículo 19 bis > 5
+  es31   es   factual       regional     1  1.00  Ley 9/2001, de 17 de j Artículo 19 bis > 5
+  es32   en   factual       regional  miss  0.00  Ley 9/2001, de 17 de j Artículo 246 > 1
+  es32   es   factual       regional     1  1.00  Ley 9/2001, de 17 de j Artículo 154 > 1
+  es33   en   factual       national     1  1.00  CTE Documento Básico D SUA 1 > 4
+  es33   es   factual       national     4  0.25  CTE Documento Básico D Artículo 11 > 28
+  es34   en   factual       national     4  0.25  CTE Documento Básico D SUA 1 > 3
+  es34   es   factual       national     6  0.17  CTE Documento Básico D Sección SUA 1 > 3 (part 1)
+  es35   en   factual       national     3  0.33  CTE Documento Básico D 1 > 5 (part 2)
+  es35   es   factual       national     6  0.17  CTE Documento Básico D 1 > 5 (part 2)
+  es36   en   factual       national  miss  0.00  CTE Documento Básico D 3.2.6
+  es36   es   factual       national  miss  0.00  CTE Documento Básico D 3.2.6
+  es37   en   factual       national     1  1.00  CTE Documento Básico D Artículo 11 > 3
+  es37   es   factual       national     2  0.50  CTE Documento Básico D Artículo 11 > 23
+  es38   en   factual       national  miss  0.00  CTE Documento Básico D 78
+  es38   es   factual       national  miss  0.00  CTE Documento Básico D 87 > 2
+  es39   en   multi_article national  miss  0.00  PGOUM Madrid 1997 — Co TÍTULO 6 > 6.9 > 6.9.4
+  es39   es   multi_article national     6  0.17  CTE Documento Básico D Artículo 11 > 5
+  es40   en   conflict      municipal    1  1.00  Ayuntamiento de Madrid 20 > b   [prec w=1 l=3 ok]
+  es40   es   conflict      municipal    1  1.00  Ayuntamiento de Madrid 20 > b   [prec w=1 l=6 ok]
+  es41   en   multi_article municipal    2  0.50  PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.7 > 7
+  es41   es   multi_article municipal    2  0.50  PGOUM Madrid 1997 — Co TÍTULO 7 > 7.3 > 7.3.7 > 7
+  es42   en   factual       national     2  0.50  CTE Documento Básico D Artículo 11 > 4
+  es42   es   factual       national     1  1.00  CTE Documento Básico D Artículo 11 > 3
+  es43   en   factual       national     4  0.25  CTE Documento Básico D Sección SUA 1 > 3 (part 1)
+  es43   es   factual       national     3  0.33  CTE Documento Básico D Artículo 11 > 28
+
+Aggregate (mean over runs):
+  metric      @1     @3     @5     @8     
+  recall      0.400  0.662  0.762  0.829  
+  hit         0.487  0.713  0.775  0.838  
+  nDCG        0.487  0.581  0.626  0.651  
+  precision*  0.487  0.271  0.190  0.130  
+
+  MRR        0.614
+  * precision is capped at 1/k for single-relevant items — reported, not headline.
+
+By lang:
+  en             n=40  recall 0.388  0.650  0.725  0.775   MRR 0.584
+  es             n=40  recall 0.412  0.675  0.800  0.883   MRR 0.643
+
+By type:
+  conflict       n=4   recall 0.500  0.875  0.875  1.000   MRR 1.000
+  factual        n=64  recall 0.406  0.672  0.750  0.812   MRR 0.562
+  lex_specialis  n=2   recall 0.500  0.750  1.000  1.000   MRR 1.000
+  multi_article  n=10  recall 0.300  0.500  0.750  0.833   MRR 0.717
+
+By tier:
+  municipal      n=38  recall 0.500  0.763  0.895  0.947   MRR 0.791
+  national       n=24  recall 0.292  0.542  0.667  0.764   MRR 0.455
+  regional       n=18  recall 0.333  0.611  0.611  0.667   MRR 0.451
+
+Precedence (4 runs): pair_recall 1.000   winner_first 1.000
+
+Context cost (approx tokens sent to the LLM):
+  dump (all in-scope) : 3164 chunks, ~1129433 tokens
+  rag  (top-8)        : ~5434 tokens/query  ->  99.5% smaller
+
+Wrote eval_results/gold_v2_rechunked/madrid.json
+Wrote eval_results/gold_v2_rechunked/madrid_summary.md

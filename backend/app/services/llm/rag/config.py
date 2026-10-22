@@ -82,8 +82,11 @@ CHUNK_DETECT_TIMEOUT = float(os.getenv("RAG_CHUNK_TIMEOUT", "180"))
 # Plan policies, CTE sections, DM 1256 Allegato §7) are refined. The blind
 # line-packing cap above remains the last resort once levels are exhausted.
 # 0 disables descent and reproduces the single-level behaviour exactly.
+# Four levels: plans organised título > capítulo > artículo (Madrid PGOUM) only
+# reach their numbered paragraphs at the fourth; with three, 9k-char articles
+# stayed whole and lost retrieval to short chunks that summarise them.
 CHUNK_TARGET_CHARS = int(os.getenv("RAG_CHUNK_TARGET_CHARS", "2000"))
-CHUNK_MAX_DEPTH = int(os.getenv("RAG_CHUNK_MAX_DEPTH", "3"))
+CHUNK_MAX_DEPTH = int(os.getenv("RAG_CHUNK_MAX_DEPTH", "4"))
 
 # --------------------------------------------------------------------------
 # Retrieval
@@ -125,6 +128,13 @@ QUERY_FRAMING_TEXT = (
 )
 QUANT_ONLY = os.getenv("RAG_QUANT_ONLY", "1") == "1"
 
+# Citation following (citations.py): after the top-k, add up to CITATION_MAX
+# chunks that the retrieved ones cite ("artículos 7.3.3, 7.3.4 y 7.3.5"), one
+# hop, in scope but not narrowed by QUANT_ONLY (the citing pointer often has no
+# figure of its own). rag mode only.
+FOLLOW_CITATIONS = os.getenv("RAG_FOLLOW_CITATIONS", "1") == "1"
+CITATION_MAX = int(os.getenv("RAG_CITATION_MAX", "6"))
+
 # --------------------------------------------------------------------------
 # Turin vertical-slice defaults (single-city dataset; threaded from graph
 # state later when the pipeline goes multi-city)
@@ -140,3 +150,10 @@ DEFAULT_USE_CASE = "student_housing"
 # downstream eval) are never routed.
 USE_CASE_ROUTING = os.getenv("RAG_USE_CASE_ROUTING", "1") == "1"
 ROUTER_FALLBACK_USE_CASE = "general"
+
+# Area routing (router.route_area): when a country slice has documents limited
+# to part of the city (manifest ``scope_area``, e.g. a London borough), one LLM
+# call places the request in one of those areas or in none, and the cascade
+# keeps scoped documents only for their own area. Slices without scoped
+# documents (Turin, Madrid) make no call and are unaffected.
+AREA_ROUTING = os.getenv("RAG_AREA_ROUTING", "1") == "1"

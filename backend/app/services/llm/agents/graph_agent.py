@@ -1,9 +1,11 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import os
+import re
 import time
+from types import SimpleNamespace
 from datetime import datetime
-from typing import Any, Callable, Dict, List, Optional, TypedDict, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, TypedDict, Union
 
 from langgraph.graph import END, StateGraph
 import numpy as np
@@ -15,6 +17,7 @@ from sqlglot import exp, parse_one
 from app.services.analysis.ranking import calculate_ranking_score
 from app.core.config import settings
 from app.core.constants import (
+    COLUMN_ALIASES,
     resolve_column,
     SCORE_LEGEND,
     ENERGY_SCORE_LEGEND, 
@@ -61,7 +64,7 @@ from app.services.llm.agents.relaxation_agent import RelaxationAgent
 from app.utils.logger import logger
 from app.utils.json_parser import safe_extract_json
 from app.utils.run_json_logger import get_run_logger
-from app.utils.scoring import requirement_is_scorable
+from app.utils.scoring import normalize_operator, requirement_is_scorable, to_number, to_range
 from dataclasses import dataclass, field
 import sqlparse
 
@@ -189,6 +192,152 @@ def _count_scorable(requirements, df: pd.DataFrame, exclude=(), allowed_columns=
         if requirement_is_scorable(req, df, allowed_columns=allowed_columns, require_value=require_value):
             count += 1
     return count
+
+
+_SURFACE_COLUMNS = {"surface_area"} | set(COLUMN_ALIASES.get("surface_area", ()))
+
+
+def _surface_upper_bound(req: Dict[str, Any]) -> Optional[float]:
+    """The upper bound a building requirement puts on the surface (<=, <, BETWEEN, ==), else None."""
+    op = normalize_operator(req.get("operator", ""))
+    if op in ("<=", "<", "=="):
+        return to_number(req.get("value"))
+    if op == "BETWEEN":
+        bounds = to_range(req.get("value"))
+        return bounds[1] if bounds else None
+    return None
+
+
+def resolve_surface_conflicts(regulatory_raw: str, building_raw: str) -> Tuple[Optional[str], List[Dict[str, Any]]]:
+    """The law wins over a requested maximum surface.
+
+    When the regulatory agent's legal minimum (surface >= R) is above an upper
+    bound the building agent extracted (surface <= U, BETWEEN [L, U] or == U with
+    U < R), no building can satisfy both. The bound is dropped, so SQL and ranking
+    work with the legal minimum, and each dropped bound is returned as a conflict
+    record. Returns (new building raw text, or None when nothing changed; conflicts)."""
+    reg = safe_extract_json(regulatory_raw or "", schema=RegulatoryResponse)
+    if not reg or not reg.found:
+        return None, []
+    legal = []
+    for r in reg.requirements:
+        if isinstance(r, dict) and r.get("target_column") in _SURFACE_COLUMNS \
+                and normalize_operator(r.get("operator", ">=")) in (">=", ">"):
+            value = to_number(r.get("value"))
+            if value is not None and value > 0:
+                legal.append((value, r))
+    if not legal:
+        return None, []
+    minimum, rule = max(legal, key=lambda x: x[0])
+
+    building = safe_extract_json(building_raw or "")
+    if not isinstance(building, dict) or not building.get("requirements"):
+        return None, []
+    kept, conflicts = [], []
+    for req in building["requirements"]:
+        bound = (_surface_upper_bound(req)
+                 if isinstance(req, dict) and req.get("target_column") in _SURFACE_COLUMNS else None)
+        if bound is not None and bound < minimum:
+            conflicts.append({
+                "requested": f"{req.get('target_column')} {req.get('operator')} {req.get('value')}",
+                "legal_minimum": minimum,
+                "regulation": rule.get("regulation"),
+                "action": "requested bound dropped; the legal minimum applies",
+            })
+            continue
+        kept.append(req)
+    if not conflicts:
+        return None, []
+    return json.dumps({**building, "requirements": kept}, ensure_ascii=False), conflicts
+
+
+_NUMBER = re.compile(r"\d{1,3}(?:[.,]\d{3})+(?!\d)|\d+(?:[.,]\d+)?")
+
+
+def _query_numbers(text: str) -> List[float]:
+    """Every number written in the request, read both as a thousands-grouped
+    integer ('2.000' -> 2000) and as a decimal ('2,70' -> 2.7)."""
+    out: List[float] = []
+    for tok in _NUMBER.findall(text or ""):
+        if re.fullmatch(r"\d{1,3}(?:[.,]\d{3})+", tok):
+            out.append(float(re.sub(r"[.,]", "", tok)))
+        try:
+            out.append(float(tok.replace(",", ".")))
+        except ValueError:
+            pass
+    return out
+
+
+def _stated_by_user(req: Dict[str, Any], numbers: List[float]) -> bool:
+    """True when every number of the requirement appears in the request itself."""
+    if normalize_operator(req.get("operator", "")) == "BETWEEN":
+        values = list(to_range(req.get("value")) or ())
+    else:
+        values = [to_number(req.get("value"))]
+    return bool(values) and all(v is not None and any(abs(v - n) <= 0.5 for n in numbers) for v in values)
+
+
+def split_inferred_surface(building_raw: str, query: str) -> Tuple[str, List[Dict[str, Any]]]:
+    """A surface threshold the building agent INFERRED — from a capacity ("60 beds"
+    -> 1200 m2) or from 'large'/'small' read as a dataset percentile — is a
+    preference, not a requirement: it stays in building_result for the ranking
+    (bigger, or smaller, scores better) but is left out of the SQL. A surface the
+    user stated (its number appears in the request) still filters, as does the
+    legal minimum the regulatory agent adds; that floor is RAG's job, and an
+    inferred guess must not override it. Matches constraint_ir.assign_severity
+    (building surface = soft, regulatory = hard).
+    Returns (building raw text for the SQL agent, the inferred surface requirements)."""
+    building = safe_extract_json(building_raw or "")
+    if not isinstance(building, dict) or not building.get("requirements"):
+        return building_raw, []
+    numbers = _query_numbers(query)
+    hard, soft = [], []
+    for req in building["requirements"]:
+        if isinstance(req, dict) and req.get("target_column") in _SURFACE_COLUMNS \
+                and not _stated_by_user(req, numbers):
+            soft.append(req)
+        else:
+            hard.append(req)
+    if not soft:
+        return building_raw, []
+    return json.dumps({**building, "requirements": hard}, ensure_ascii=False), soft
+
+
+def mark_surface_scoring(requirements: List[Dict[str, Any]], query: str,
+                         surface_stats: Optional[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """How the building ranker scores each surface threshold, by where its number
+    comes from — never "bigger is better" unless the user asked for size:
+      stated by the user (>=, >, <=, <)  -> ``pass_fail``: it already filters in the
+                                            SQL; every building meeting it scores alike
+      guessed from a capacity (>=, >)    -> ``closeness``: a target, closest is best
+      'large' / 'small'                  -> unchanged (the agent copies the surface
+                                            75% / 25% percentile; the direction is the
+                                            user's own)"""
+    numbers = _query_numbers(query)
+    pct = [to_number(v) for v in ((surface_stats or {}).get("percentiles") or {}).values()]
+    pct = [p for p in pct if p is not None]
+    out = []
+    for req in requirements or []:
+        req = dict(req)
+        value = to_number(req.get("value"))
+        op = normalize_operator(req.get("operator", ""))
+        if req.get("target_column") in _SURFACE_COLUMNS and value is not None:
+            if _stated_by_user(req, numbers):
+                if op in (">=", ">", "<=", "<"):
+                    req["pass_fail"] = True
+            elif op in (">=", ">") and not any(abs(value - p) <= 0.5 for p in pct):
+                req["closeness"] = True
+        out.append(req)
+    return out
+
+
+def _surface_conflict_note(state: Dict[str, Any]) -> str:
+    """User-facing note for status_msg when the legal minimum overrode a requested bound."""
+    conflicts = (state.get("gemini_responses") or {}).get("surface_conflicts") or []
+    return "".join(
+        f" Nota: il limite richiesto ({c['requested']}) è inferiore al minimo di legge "
+        f"({c['legal_minimum']:g} m², {c['regulation']}): è stato applicato il minimo di legge."
+        for c in conflicts)
 
 
 class GraphOrchestratorAgent(BaseAgent):
@@ -1419,6 +1568,15 @@ class GraphOrchestratorAgent(BaseAgent):
             use_case_parts.append(f"Regulatory: {regulatory_result.raw_text[:200]}")
         state["use_case_str"] = "\n".join(use_case_parts)
 
+        # The law wins over a requested maximum surface below the legal minimum:
+        # SQL and ranking both read building_result, so resolve it once here.
+        if building_result and regulatory_result:
+            new_raw, conflicts = resolve_surface_conflicts(regulatory_result.raw_text, building_result.raw_text)
+            if conflicts:
+                building_result.raw_text = new_raw
+                state["gemini_responses"]["surface_conflicts"] = conflicts
+                logger.info(f"Surface conflict resolved in favour of the legal minimum: {conflicts}")
+
         return state
 
     def _fix_sql_quotes(self, sql: str) -> str:
@@ -1724,8 +1882,12 @@ class GraphOrchestratorAgent(BaseAgent):
                     all_reqs.append(f"tipologia_bene_immobile: {', '.join(typs)}")
             except: pass
             
-            # BuildingAgent now also extracts structured requirements (ID, contracts, surfaces)
-            building_fmt = self._format_agent_requirements(building_result)
+            # BuildingAgent now also extracts structured requirements (ID, contracts, surfaces).
+            # Inferred surface thresholds rank (building_result keeps them) but do not filter.
+            sql_building_raw, soft_surface = split_inferred_surface(building_result.raw_text, query)
+            if soft_surface:
+                state["gemini_responses"]["soft_surface_preferences"] = soft_surface
+            building_fmt = self._format_agent_requirements(SimpleNamespace(raw_text=sql_building_raw))
             if building_fmt != "N/D" and "Nessun requisito" not in building_fmt:
                 all_reqs.append(building_fmt)
 
@@ -2564,11 +2726,14 @@ class GraphOrchestratorAgent(BaseAgent):
                 data = safe_extract_json(res.raw_text, schema=BuildingResponse)
                 if data and (data.typologies or data.requirements):
                     # For ranking, typologies is the main driver, but we pass requirements for numerical scoring
+                    surface_stats = global_stats.get("surface_area") or global_stats.get(
+                        resolve_column("surface_area", df_cols) or "")
                     tmp = self.building_agent.run(
                         mode="ranking",
                         df=df.copy(),
                         ranked_typologies=data.typologies,
-                        requirements=_resolve_requirements(data.requirements, df_cols),
+                        requirements=mark_surface_scoring(
+                            _resolve_requirements(data.requirements, df_cols), state["query"], surface_stats),
                         global_stats=global_stats
                     )
                     return tmp, (time.time() - start_t) * 1000
@@ -2686,7 +2851,10 @@ class GraphOrchestratorAgent(BaseAgent):
         self._update_progress(state, "ranking", "", status="done")
 
         # Sort by total score
-        df = df.sort_values(by="final_ranking_score", ascending=False)
+        # Stable sort, ties broken by distance: this order decides which buildings
+        # get an LLM evaluation, and _finalize_results keeps it (rank_position).
+        keys = [c for c in ("final_ranking_score", "distanza_km") if c in df.columns]
+        df = df.sort_values(by=keys, ascending=[False, True][:len(keys)], kind="mergesort", na_position="last")
         state["selected_data"] = df
         
         return state
@@ -2932,7 +3100,7 @@ class GraphOrchestratorAgent(BaseAgent):
         if state["selected_data"].empty:
             state["status_msg"] = (
                 "La ricerca non ha prodotto risultati specifici. Mostro un campione di immobili."
-            )
+            ) + _surface_conflict_note(state)
 
             # Fallback: Fetch a sample from DuckDB since working_dataset is not in state
             dataset_path = state.get("dataset_path")
@@ -2997,7 +3165,12 @@ class GraphOrchestratorAgent(BaseAgent):
             enriched_data["id"] = enriched_data["id"].astype(str)
 
         # Sovrascrivi/aggiungi colonne di matching e ranking solo dove l'agente ha lavorato
-        overlay_cols = ["id", "is_match", "final_ranking_score", "distanza_km"]
+        # rank_position = order produced by _rank_results (score, then distance):
+        # the final sort keeps it, so the top results are the evaluated ones.
+        if not enriched_data.empty:
+            enriched_data = enriched_data.copy()
+            enriched_data["rank_position"] = np.arange(len(enriched_data))
+        overlay_cols = ["id", "is_match", "final_ranking_score", "rank_position", "distanza_km"]
         
         # Drop existing columns from map_df to avoid suffix collisions and ensure overlay wins
         cols_to_drop = [c for c in overlay_cols if c != "id" and c in map_df.columns]
@@ -3058,27 +3231,21 @@ class GraphOrchestratorAgent(BaseAgent):
                 valutazioni_df["id"] = valutazioni_df["id"].astype(str)
                 evaluated_total = len(valutazioni_df)
 
-                # Keep a backup of deterministic final_ranking_score before merging
-                det_scores = map_df[["id", "final_ranking_score"]].copy() if "final_ranking_score" in map_df.columns else pd.DataFrame(columns=["id", "final_ranking_score"])
-
-                if "final_ranking_score" in map_df.columns:
-                    map_df = map_df.drop(columns=["final_ranking_score"])
-
+                # The deterministic final_ranking_score stays the ranking key. The
+                # evaluation LLM only echoes it back as an integer (EvaluationResult),
+                # and sorting on that echo pushed rounded-down evaluated buildings
+                # below unevaluated ones with a higher float score: keep the echo
+                # next to it for transparency instead.
                 map_df = pd.merge(
                     map_df,
                     valutazioni_df[
                         ["id", "final_ranking_score", "motivazione", "pro", "contro"]
-                    ].drop_duplicates("id"),
+                    ].rename(columns={"final_ranking_score": "llm_ranking_score"}).drop_duplicates("id"),
                     on="id",
                     how="left",
                 )
-
-                # For buildings not evaluated, fall back to the deterministic score
-                if not det_scores.empty:
-                    map_df = pd.merge(map_df, det_scores, on="id", how="left", suffixes=("", "_det"))
-                    if "final_ranking_score_det" in map_df.columns:
-                        map_df["final_ranking_score"] = map_df["final_ranking_score"].fillna(map_df["final_ranking_score_det"])
-                        map_df = map_df.drop(columns=["final_ranking_score_det"])
+                if "final_ranking_score" not in map_df.columns:
+                    map_df["final_ranking_score"] = 0
 
                 map_df["final_ranking_score"] = pd.to_numeric(
                     map_df["final_ranking_score"], errors="coerce"
@@ -3123,6 +3290,9 @@ class GraphOrchestratorAgent(BaseAgent):
         if "final_ranking_score" in map_df.columns:
             sort_cols.append("final_ranking_score")
             ascending.append(False)
+        if "rank_position" in map_df.columns:
+            sort_cols.append("rank_position")
+            ascending.append(True)
         if "distanza_km" in map_df.columns:
             sort_cols.append("distanza_km")
             ascending.append(True)
@@ -3158,7 +3328,7 @@ class GraphOrchestratorAgent(BaseAgent):
                 "Nessuna valutazione LLM disponibile."
             )
 
-        state["status_msg"] = msg
+        state["status_msg"] = msg + _surface_conflict_note(state)
         logger.info(msg)
 
         state["selected_data"] = map_df  # Risultato finale per la mappa

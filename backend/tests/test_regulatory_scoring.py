@@ -84,6 +84,19 @@ def test_value_grounding_ignores_the_user_query():
     assert rs.value_grounded("no figures", "12.5")[0] is None
 
 
+def test_the_largest_minimum_is_the_main_requirement():
+    # a room programme returned as separate minimums: all of them filter, the largest binds
+    parts = [{"target_column": "surface_area", "operator": ">=", "value": v, "regulation": "DM 1256/2021"}
+             for v in (40, 600, 3, 7)]
+    ans = json.dumps({"found": True, "requirements": parts})
+    r = rs.score_output(EXPECT, ans, HITS, COLS, key2name=KEY2NAME)
+    assert r["main_value"] == 600 and r["value_in_range"]
+    # no minimum on the expected column: the first requirement on it, as before
+    upper = json.dumps({"found": True, "requirements": [
+        {"target_column": "surface_area", "operator": "<=", "value": 900, "regulation": "DM 1256/2021"}]})
+    assert rs.score_output(EXPECT, upper, HITS, COLS, key2name=KEY2NAME)["main_value"] == 900
+
+
 def test_unusable_column_is_not_activation():
     ans = json.dumps({"found": True, "requirements": [
         {"target_column": "not_a_column", "operator": ">=", "value": 750, "regulation": "DM 1256/2021"}]})

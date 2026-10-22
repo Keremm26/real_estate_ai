@@ -8,7 +8,8 @@
       "programme": "PGOUM art. 7.3.4: minimum dwelling 40 m2 useful with living-dining 14, kitchen 7, bedroom 12 (additional bedrooms 7) and bathroom 3. P(R) = max(40, 29 + 7 R) for R bedrooms.",
       "res_comunitaria": "Art. 7.3.11.2 (+ FAQ 20.b): residencias comunitarias (incl. student residences, art. 7.3.1) meet 7.3.3 / 7.3.4 / 7.3.5 for the establishment AS A WHOLE, so the rooms are bedrooms of one programme: rooms known [P(R), 1.25 P(R)]; only beds known (1-2 per room) [P(ceil(N/2)), 1.25 P(N)].",
       "res_compartida": "Art. 7.3.11.3: private unit (bedroom + bathroom) >= 15 m2 and >= 10 m2 per person (single 15, double 20); common areas >= 25 m2 for one unit + 5 per additional unit. C = 20 s + 25 d + 20; known [C, 1.25 C]; persons only [most doubles, 1.25 x all singles]. Only in an exclusive building (7.3.11.5).",
-      "dwelling": "Art. 7.3.4 (conversions 7.3.14 / FAQ 21, tourist dwellings 7.6.3.2 / FAQ 25): [P(R), 1.25 P(R)]; bedrooms unknown with N persons (1-2 per room): [P(ceil(N/2)), 1.25 P(N)]."
+      "dwelling": "Art. 7.3.4 (conversions 7.3.14 / FAQ 21, tourist dwellings 7.6.3.2 / FAQ 25): [P(R), 1.25 P(R)]; bedrooms unknown with N persons (1-2 per room): [P(ceil(N/2)), 1.25 P(N)].",
+      "no_capacity": "Art. 7.3.4.1: the minimum dwelling (40 m2 useful) does not depend on occupancy, and 7.3.11.2 (+ FAQ 20.b) applies it to a residencia comunitaria as a whole: a dwelling or student-residence request without a number of rooms or people may decline or state it -> activate 'either', [40, 1.25 x 40]."
     },
     "metrics": "As the Turin set (regulatory_scoring). The lex-specialis item (DQ-M04) is scored by value: both readings live in the same document, so winner_cited is not used. Items with activate 'either' are scored on grounding only.",
     "caveats": [
@@ -22,6 +23,9 @@
       "Co-living items (art. 7.3.11.3: DQ-M12, M14, M15) and dwelling / studio items (art. 7.3.4: DQ-M19, M22, M23) often retrieve FAQ sections (4, 17, 19) or CTE chunks instead of the article.",
       "Procedural items (Ley 9/2001 arts. 152 / 155 / 157: DQ-M33, M34) retrieve PGOUM chunks instead of the regional law; the height item (art. 7.3.5: DQ-M35) misses its article.",
       "Spanish queries retrieve slightly worse than English ones (25 vs 28 of 36)."
+    ],
+    "changelog": [
+      "2026-10-21: DQ-M27, DQ-M28, DQ-M30, DQ-M31, DQ-M35 activate false -> either [40, 50]: PGOUM 7.3.4.1 sets a minimum dwelling (40 m2) that does not depend on occupancy, and 7.3.11.2 / FAQ 20.b apply it to a residencia comunitaria as a whole, so a dwelling or student-residence request without a number of people may also be answered with 40 (the decline labels followed the Turin logic, where the minimum depends on the number of inhabitants; inconsistent with DQ-M22 / PQ-M21 'studio for one' = 40). Turin and London set minimums per inhabitant or bedspace only, so their no-capacity items keep 'decline'. Found reviewing the 2026-10-21 study."
     ]
   },
   "queries": [
@@ -1095,7 +1099,7 @@
     {
       "id": "DQ-M27",
       "type": "no_capacity",
-      "tier": null,
+      "tier": "municipal",
       "use_case": "student_housing",
       "queries": {
         "es": "¿Qué superficie mínima debe tener una residencia de estudiantes en Madrid?",
@@ -1104,14 +1108,14 @@
       "capacity": null,
       "user_values": [],
       "expect": {
-        "activate": false,
-        "target_column": null,
-        "operator": null,
-        "value_min": null,
-        "value_max": null,
-        "basis": "No number of rooms or beds"
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40,
+        "value_max": 50.0,
+        "basis": "No number of rooms or beds: a residencia comunitaria as a whole meets the minimum dwelling (7.3.11.2 -> 7.3.4.1, FAQ 20.b: >= 40 m2) whatever the capacity; declining is also right"
       },
-      "rule_family": null,
+      "rule_family": "es_res_comunitaria",
       "heuristic_stratum": null,
       "sources": [
         {
@@ -1131,12 +1135,12 @@
         "no-capacity",
         "question-form"
       ],
-      "note": "Retrieval should find 7.3.11 / FAQ 20; extraction should decline."
+      "note": "Retrieval should find 7.3.11 / FAQ 20; extraction may decline or state the 40 m2 whole-residence minimum."
     },
     {
       "id": "DQ-M28",
       "type": "no_capacity",
-      "tier": null,
+      "tier": "municipal",
       "use_case": "student_housing",
       "queries": {
         "es": "Quiero transformar un edificio de oficinas en residencia de estudiantes.",
@@ -1145,26 +1149,34 @@
       "capacity": null,
       "user_values": [],
       "expect": {
-        "activate": false,
-        "target_column": null,
-        "operator": null,
-        "value_min": null,
-        "value_max": null,
-        "basis": "No capacity"
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40,
+        "value_max": 50.0,
+        "basis": "No number of rooms or beds: a residencia comunitaria as a whole meets the minimum dwelling (7.3.11.2 -> 7.3.4.1, FAQ 20.b: >= 40 m2) whatever the capacity; declining is also right"
       },
-      "rule_family": null,
+      "rule_family": "es_res_comunitaria",
       "heuristic_stratum": null,
       "sources": [
         {
           "doc_key": "pgoum_nnuu_compendio",
           "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        },
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
         }
       ],
       "covers": [
         "no-capacity",
         "change-of-use"
       ],
-      "note": ""
+      "note": "No capacity: decline, or the 40 m2 whole-residence minimum."
     },
     {
       "id": "DQ-M29",
@@ -1199,7 +1211,7 @@
     {
       "id": "DQ-M30",
       "type": "negative",
-      "tier": null,
+      "tier": "municipal",
       "use_case": "general",
       "queries": {
         "es": "Piso con certificado energético A o B en Chamberí.",
@@ -1208,21 +1220,26 @@
       "capacity": null,
       "user_values": [],
       "expect": {
-        "activate": false,
-        "target_column": null,
-        "operator": null,
-        "value_min": null,
-        "value_max": null,
-        "basis": "Energy preference only"
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40,
+        "value_max": 50.0,
+        "basis": "Dwelling without a number of people: art. 7.3.4.1 sets the minimum dwelling (40 m2 useful) whatever the occupancy; declining is also right"
       },
-      "rule_family": null,
+      "rule_family": "es_dwelling",
       "heuristic_stratum": null,
-      "sources": [],
+      "sources": [
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
+        }
+      ],
       "covers": [
         "energy",
         "negative"
       ],
-      "note": ""
+      "note": "Energy request for a flat: decline, or the 40 m2 minimum dwelling."
     },
     {
       "id": "DQ-M31",
@@ -1236,26 +1253,34 @@
       "capacity": null,
       "user_values": [],
       "expect": {
-        "activate": false,
-        "target_column": null,
-        "operator": null,
-        "value_min": null,
-        "value_max": null,
-        "basis": "Art. 7.3.11.4 forbids units below the ground floor: a prohibition, not an area"
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40,
+        "value_max": 50.0,
+        "basis": "Art. 7.3.11.4 forbids units below the ground floor (a prohibition, not an area); the whole-residence minimum (7.3.11.2 -> 7.3.4.1, FAQ 20.b: >= 40 m2) still applies; declining is also right"
       },
-      "rule_family": null,
+      "rule_family": "es_res_comunitaria",
       "heuristic_stratum": null,
       "sources": [
         {
           "doc_key": "pgoum_nnuu_compendio",
           "article_ref": "TÍTULO 7 > 7.3 > 7.3.11"
+        },
+        {
+          "doc_key": "pgoum_preguntas_interes",
+          "article_ref": "20"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
         }
       ],
       "covers": [
         "basement",
         "non-surface"
       ],
-      "note": ""
+      "note": "The prohibition cannot become a surface threshold; the 40 m2 minimum may be stated."
     },
     {
       "id": "DQ-M32",
@@ -1379,26 +1404,30 @@
       "capacity": null,
       "user_values": [],
       "expect": {
-        "activate": false,
-        "target_column": null,
-        "operator": null,
-        "value_min": null,
-        "value_max": null,
-        "basis": "Art. 7.3.5 sets clear heights (250 / 220 cm), not areas"
+        "activate": "either",
+        "target_column": "surface_area",
+        "operator": ">=",
+        "value_min": 40,
+        "value_max": 50.0,
+        "basis": "Art. 7.3.5 sets clear heights (250 / 220 cm), not areas; as a dwelling it must still reach the 40 m2 minimum (7.3.4.1); declining is also right"
       },
-      "rule_family": null,
+      "rule_family": "es_dwelling",
       "heuristic_stratum": null,
       "sources": [
         {
           "doc_key": "pgoum_nnuu_compendio",
           "article_ref": "TÍTULO 7 > 7.3 > 7.3.5"
+        },
+        {
+          "doc_key": "pgoum_nnuu_compendio",
+          "article_ref": "TÍTULO 7 > 7.3 > 7.3.4"
         }
       ],
       "covers": [
         "height-rule",
         "attic"
       ],
-      "note": ""
+      "note": "Heights cannot become a surface threshold; the 40 m2 minimum dwelling may be stated."
     },
     {
       "id": "DQ-M36",

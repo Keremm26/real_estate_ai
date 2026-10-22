@@ -202,6 +202,22 @@ def test_regulatory_ranker_scores_surface_threshold():
     assert _nonzero(out, "regulatory_score") == 2
 
 
+def test_regulatory_score_is_pass_fail_by_default():
+    # A legal minimum is met or not: every building at or above it scores 100,
+    # with no extra credit for size (that was the old graded score, now opt-in).
+    reqs = [{"target_column": "surface_area", "operator": ">=", "value": 500}]
+    out = _regulatory(reqs)
+    assert sorted(set(out["regulatory_score"])) == [0.0, 100.0]
+    os.environ["REGULATORY_SCORING"] = "continuous"
+    try:
+        graded = _regulatory(reqs)
+    finally:
+        del os.environ["REGULATORY_SCORING"]
+    assert len(set(graded["regulatory_score"])) > 2          # 600 m2 and 1500 m2 scored differently
+    between = _regulatory([{"target_column": "surface_area", "operator": "BETWEEN", "value": [100, 700]}])
+    assert sorted(set(between["regulatory_score"])) == [0.0, 100.0]
+
+
 def test_regulatory_numeric_equality_no_longer_crashes():
     # Used undefined col_stats / diff (NameError -> whole regulatory score 0).
     stats = {"superficie_di_riferimento_mq": {"min": 40.0, "max": 1500.0}}

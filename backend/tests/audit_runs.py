@@ -7,12 +7,15 @@ results/curated_<arm>[_<city>]/agent_errors.jsonl (AGENT_ERROR_LOG: written by
 app.utils.decorators.handle_agent_error and by the LLM client's failed-call
 recorder, with the query or the prompt that contains it). This lists the result
 files whose run overlapped a failure for the same query; --delete removes them
-so that re-running the suite (it skips cached files) refills exactly those.
+and marks them as pending in the suite CSV, so that re-running the suite refills
+exactly those (test_suite.py picks its jobs from the CSV status columns, not
+from the result files). Trials marked done whose result file is missing are
+marked pending too.
 
     python tests/audit_runs.py --arm rag --city london --model gemma-4 [--delete]
 
-Exit code 0 when no result file is affected, 2 when some are (after --delete,
-they are gone and the suite must be re-run).
+Exit code 0 when no result file is affected or missing, 2 when some are (after
+--delete, they are pending and the suite must be re-run).
 """
 
 import argparse
@@ -21,6 +24,10 @@ import os
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
+
+import pandas as pd
+
+from utils import file_lock
 
 suite_path = Path(__file__).resolve().parent
 RESULTS = Path(os.environ.get("EXPERIMENT_RESULTS_DIR", str(suite_path / "results")))
@@ -70,6 +77,38 @@ def affected_files(root: Path, model: str, errors):
     return files, hits, [e for i, e in enumerate(errors) if i not in matched]
 
 
+def missing_trials(root: Path, model: str, df: pd.DataFrame):
+    """(row, status column, file name) of every trial the suite CSV marks as done
+    whose result file does not exist."""
+    cons = root / "outputs" / "benchmarks" / model / "consistency"
+    out = []
+    for tr in (1, 2, 3):
+        col = f"status_{model.replace('-', '_')}_consistency_tr{tr}"
+        if col not in df.columns:
+            continue
+        for i, qid in df.loc[df[col] == 1, "query_id"].items():
+            name = f"query_{qid}_tr{tr}.json"
+            if not (cons / name).exists():
+                out.append((i, col, name))
+    return out
+
+
+def mark_missing_pending(root: Path, model: str, write: bool):
+    """Trials marked done without a result file; with write=True their status
+    goes back to 0, so the next suite run re-runs them."""
+    csv_path = root / "benchmark_queries_suite.csv"
+    if not csv_path.exists():
+        return []
+    with file_lock(csv_path):
+        df = pd.read_csv(csv_path, dtype={"query_id": str})
+        missing = missing_trials(root, model, df)
+        if missing and write:
+            for i, col, _ in missing:
+                df.at[i, col] = 0
+            df.to_csv(csv_path, index=False)
+    return missing
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(description="Find (and remove) result files affected by failed agent calls.")
     p.add_argument("--arm", required=True)
@@ -97,8 +136,14 @@ def main(argv=None) -> int:
         for f, _ in hits:
             f.unlink(missing_ok=True)
         if hits:
-            print(f"[audit] deleted {len(hits)} files: re-run the suite to refill them")
-    return 2 if hits else 0
+            print(f"[audit] deleted {len(hits)} files")
+    missing = mark_missing_pending(root, args.model, write=args.delete)
+    if missing:
+        print(f"[audit] {len(missing)} trials marked done without a result file: "
+              + ", ".join(name for _, _, name in missing))
+        if args.delete:
+            print("[audit] marked them as pending: re-run the suite to refill them")
+    return 2 if hits or missing else 0
 
 
 if __name__ == "__main__":

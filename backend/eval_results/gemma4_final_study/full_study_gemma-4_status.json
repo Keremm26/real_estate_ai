@@ -1,0 +1,11 @@
+{
+  "pipeline turin none": "ok",
+  "pipeline turin rag": "ok",
+  "pipeline london none": "ok",
+  "pipeline london rag": "ok",
+  "pipeline madrid none": "ok",
+  "pipeline madrid rag": "ok",
+  "metrics turin": "ok",
+  "metrics london": "ok",
+  "metrics madrid": "ok"
+}

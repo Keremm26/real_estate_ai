@@ -30,10 +30,11 @@ _ARTICLE_RE = re.compile(
 # alternative catches ratios like the DM Sanità 1/8 aero-illumination rule but
 # excludes year-shaped denominators, otherwise every "Ley 9/2001" / "RD 314/2006"
 # citation would be flagged.
-_UNITS = r"m²|m2|mq|sqm|sq\.?\s*m\b|square\s+met(?:re|er)s?|metros?\s+cuadrados?|metri(?:\s+quadr[io])?|cm"
+_UNITS = (r"m²|m2|mq|sqm|sq\.?\s*m\b|square\s+met(?:re|er)s?|metros?\s+cuadrados?|metri(?:\s+quadr[io])?|cm"
+          r"|m³|m3|mc|cubic\s+met(?:re|er)s?|metros?\s+c[uú]bicos?")   # volumes: "30 m³", "mc. 20"
 _QUANT_RE = re.compile(
     rf"\d+(?:[.,]\d+)?\)?\s*(?:{_UNITS}|m\.?\b|%|per\s*cent[o]?\b)"  # number then unit ("(15) per cento")
-    rf"|(?:{_UNITS})\s*\d+(?:[.,]\d+)?"                        # worded unit then number
+    rf"|(?:{_UNITS})\.?\s*\d+(?:[.,]\d+)?"                     # unit then number, abbreviation dot allowed ("mq. 28,00")
     r"|\bm\.?\s*\d+(?:[.,]\d+)?"                               # bare 'm 2,70' / 'm2'
     r"|(?<!\d)\d{1,2}\s*/\s*\d{1,3}(?!\d)",                    # ratio (1/8), not 9/2001
     re.IGNORECASE,
