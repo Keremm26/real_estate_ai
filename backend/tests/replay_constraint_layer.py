@@ -3,7 +3,7 @@ Replay harness — the "before picture" for the constraint layer (v1, observe-on
 
 What it does
 ------------
-Loads every saved agent trace (data/agent_logs/trace_*.json), rebuilds the
+Loads every saved agent trace (data/agent_logs/1_june_trisql/trace_*.json), rebuilds the
 ConstraintIR from each run's agent outputs, validates the run's generated SQL
 against it (using the REAL dataset schema), and prints an aggregate report.
 
@@ -26,7 +26,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from app.services.llm.constraint_ir import build_constraint_ir
 from app.services.llm.constraint_validation import validate_sql_semantics
 
-TRACE_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "agent_logs")
+TRACE_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "agent_logs", "1_june_trisql")
 
 # Agent trace names -> IR source-agent names.
 NAME_MAP = {

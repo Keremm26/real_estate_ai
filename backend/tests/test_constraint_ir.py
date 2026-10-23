@@ -247,7 +247,7 @@ def test_builder_on_real_trace_if_available():
     """If an agent trace file is present, build an IR from it and sanity-check."""
     import glob
     import json
-    trace_dir = os.path.join(os.path.dirname(__file__), "..", "data", "agent_logs")
+    trace_dir = os.path.join(os.path.dirname(__file__), "..", "data", "agent_logs", "1_june_trisql")
     files = sorted(glob.glob(os.path.join(trace_dir, "trace_*.json")))
     if not files:
         return  # no traces in this checkout; skip quietly

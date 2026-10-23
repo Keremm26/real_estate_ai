@@ -23,7 +23,7 @@ Run:
     python tests/run_replay_ab.py                      # all 24 queries
     REPLAY_LIMIT=8 python tests/run_replay_ab.py
     REPLAY_TIERS=3,4 python tests/run_replay_ab.py
-    REPLAY_CACHE=data/agent_logs/replay_cache_XXten.json python tests/run_replay_ab.py  # replay only
+    REPLAY_CACHE=data/agent_logs/1_june_trisql/replay_cache_XXten.json python tests/run_replay_ab.py  # replay only
 """
 
 import asyncio
@@ -278,14 +278,14 @@ async def main():
         print(f"Loaded {len(captured)} cached captures from {path} (Phase 1 skipped).")
     else:
         captured = await capture()
-        cache_out = os.path.join(HERE, "..", "data", "agent_logs",
+        cache_out = os.path.join(HERE, "..", "data", "agent_logs", "1_june_trisql",
                                  f"replay_cache_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
         with open(cache_out, "w", encoding="utf-8") as f:
             json.dump(captured, f, indent=2, ensure_ascii=False, default=str)
         print(f"\nCaptured {len(captured)} queries -> {cache_out}")
 
     results = replay(captured)
-    out = os.path.join(HERE, "..", "data", "agent_logs",
+    out = os.path.join(HERE, "..", "data", "agent_logs", "1_june_trisql",
                        f"replay_ab_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
     with open(out, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2, ensure_ascii=False, default=str)
